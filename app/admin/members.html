@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress Teams — Members</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --coral:     #C45A5A;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6; overflow-x: hidden;
+}
+
+.admin-page {
+  max-width: 1040px; margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400;
+}
+
+.action-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 20px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border: none; border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .18s;
+}
+.action-btn:hover { background: #111; }
+
+/* Stats chips */
+.stats-row {
+  display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;
+}
+
+.stat-chip {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 100px;
+  background: var(--surface); border: 1px solid var(--warm-1);
+  font-size: 13px; color: var(--text-soft);
+}
+.stat-chip strong { color: var(--text); }
+.stat-chip.risk { background: rgba(196,90,90,.06); border-color: rgba(196,90,90,.2); }
+.stat-chip.risk strong { color: var(--coral); }
+
+/* Table */
+.members-table-wrap {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 18px; overflow: hidden;
+}
+
+table {
+  width: 100%; border-collapse: collapse;
+}
+
+thead th {
+  padding: 12px 16px; text-align: left;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .09em;
+  color: var(--text-muted); font-weight: 400;
+  border-bottom: 1px solid var(--warm-1);
+  background: var(--surface);
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--warm-1);
+  transition: background .14s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--bg); }
+tbody tr.at-risk { background: rgba(196,90,90,.03); }
+tbody tr.at-risk:hover { background: rgba(196,90,90,.06); }
+
+td {
+  padding: 13px 16px; font-size: 13px;
+  color: var(--text-soft); vertical-align: middle;
+}
+
+.member-cell {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.member-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500; color: white;
+  flex-shrink: 0;
+}
+
+.member-name { font-weight: 500; color: var(--text); font-size: 13.5px; }
+.member-email { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+
+.habit-chips { display: flex; flex-wrap: wrap; gap: 5px; max-width: 220px; }
+.habit-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 100px; font-size: 11.5px;
+  background: var(--warm-1); color: var(--text-soft);
+}
+.habit-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── PAGINATION ── */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 0;
+}
+.pagination-info { font-size: 12.5px; color: var(--text-muted); }
+.pagination-btns { display: flex; align-items: center; gap: 4px; }
+.pg-btn {
+  min-width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--warm-1); background: var(--surface);
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--text-soft); cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; padding: 0 10px;
+}
+.pg-btn:hover { background: var(--warm-1); color: var(--text); }
+.pg-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 500; }
+.pg-btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
+
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 100px; font-size: 11.5px;
+}
+.status-badge.on-track { background: rgba(143,166,140,.12); color: var(--sage); }
+.status-badge.at-risk  { background: rgba(196,90,90,.1); color: var(--coral); }
+.status-badge.new      { background: var(--warm-1); color: var(--text-muted); }
+
+/* ── ORG NAME MODAL ──────────────────────────────────────────── */
+.org-modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(44,40,37,.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; backdrop-filter: blur(3px);
+}
+.org-modal-box {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 20px; padding: 36px 36px 32px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.14);
+}
+.org-modal-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; color: var(--text-muted);
+  text-align: center; margin-bottom: 24px; display: block;
+}
+.org-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 400; margin-bottom: 6px;
+}
+.org-modal-sub {
+  font-size: 13px; color: var(--text-soft);
+  margin-bottom: 22px; line-height: 1.6;
+}
+.org-modal-input {
+  width: 100%; padding: 11px 14px;
+  background: var(--bg); border: 1.5px solid var(--warm-2);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--text); outline: none;
+  transition: border-color .16s; margin-bottom: 14px;
+}
+.org-modal-input:focus { border-color: var(--amber); }
+.org-modal-input::placeholder { color: var(--text-muted); }
+.org-modal-btn {
+  width: 100%; padding: 12px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: background .18s;
+}
+.org-modal-btn:hover { background: #111; }
+
+/* ── COACH MARKS ─────────────────────────────────────────────── */
+.coach-spotlight {
+  position: fixed; inset: 0; z-index: 390;
+  background: rgba(44,40,37,.28); display: none; pointer-events: none;
+}
+.coach-mark {
+  position: fixed; z-index: 400; width: 264px;
+  background: var(--dark); border-radius: 14px;
+  padding: 18px 18px 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.24); display: none;
+}
+.coach-mark::before {
+  content: ''; position: absolute; top: -7px;
+  left: var(--arrow-left, 20px);
+  width: 14px; height: 7px; background: var(--dark);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+.coach-step {
+  font-size: 10.5px; color: rgba(255,255,255,.32);
+  letter-spacing: .06em; text-transform: uppercase; margin-bottom: 7px;
+}
+.coach-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 400;
+  color: rgba(255,255,255,.9); margin-bottom: 6px;
+}
+.coach-text {
+  font-size: 12.5px; color: rgba(255,255,255,.5);
+  line-height: 1.6; margin-bottom: 14px;
+}
+.coach-footer { display: flex; align-items: center; justify-content: space-between; }
+.coach-skip {
+  font-size: 12px; color: rgba(255,255,255,.3);
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: color .15s;
+}
+.coach-skip:hover { color: rgba(255,255,255,.55); }
+.coach-next {
+  padding: 7px 16px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 100px; font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,.85);
+  cursor: pointer; transition: background .15s;
+}
+.coach-next:hover { background: rgba(255,255,255,.18); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<script src="./nav.js"></script>
+
+<div class="admin-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Members</h1>
+    <button class="action-btn" id="inviteBtn">+ Invite member</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-chip"><strong>24</strong> active members</div>
+    <div class="stat-chip"><strong>78%</strong> checked in this week</div>
+    <div class="stat-chip risk"><strong>3</strong> at risk</div>
+  </div>
+
+  <div class="members-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Habits</th>
+          <th>Last check-in</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#8FA68C">SK</div><div><div class="member-name">Sarah Kim</div><div class="member-email">s.kim@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span><span class="habit-chip"><span class="habit-chip-dot" style="background:#7B9BAF"></span>Evening Walk</span></div></td>
+          <td>Today</td>
+          <td><span class="status-badge on-track">● On track</span></td>
+        </tr>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#7B9BAF">AR</div><div><div class="member-name">Alex Rivera</div><div class="member-email">alex.r@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span></div></td>
+          <td>Yesterday</td>
+          <td><span class="status-badge on-track">● On track</span></td>
+        </tr>
+        <tr class="at-risk">
+          <td><div class="member-cell"><div class="member-avatar" style="background:#C45A5A">JL</div><div><div class="member-name">Jordan Lee</div><div class="member-email">j.lee@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span><span class="habit-chip"><span class="habit-chip-dot" style="background:#C4887A"></span>Mindfulness</span></div></td>
+          <td>4 days ago</td>
+          <td><span class="status-badge at-risk">⚠ At risk</span></td>
+        </tr>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#C4887A">MP</div><div><div class="member-name">Maya Patel</div><div class="member-email">m.patel@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#7B9BAF"></span>Evening Cooldown</span></div></td>
+          <td>Today</td>
+          <td><span class="status-badge on-track">● On track</span></td>
+        </tr>
+        <tr class="at-risk">
+          <td><div class="member-cell"><div class="member-avatar" style="background:#9B8FA6">TC</div><div><div class="member-name">Tyler Chen</div><div class="member-email">t.chen@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span></div></td>
+          <td>5 days ago</td>
+          <td><span class="status-badge at-risk">⚠ At risk</span></td>
+        </tr>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#8FA68C">RN</div><div><div class="member-name">Riley Nash</div><div class="member-email">r.nash@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#7B9BAF"></span>Evening Cooldown</span><span class="habit-chip"><span class="habit-chip-dot" style="background:#C4887A"></span>Mindfulness</span><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span></div></td>
+          <td>Today</td>
+          <td><span class="status-badge on-track">● On track</span></td>
+        </tr>
+        <tr class="at-risk">
+          <td><div class="member-cell"><div class="member-avatar" style="background:#C45A5A">DM</div><div><div class="member-name">Dana Morris</div><div class="member-email">d.morris@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span></div></td>
+          <td>3 days ago</td>
+          <td><span class="status-badge at-risk">⚠ At risk</span></td>
+        </tr>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#7B9BAF">SS</div><div><div class="member-name">Sam Sato</div><div class="member-email">s.sato@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span><span class="habit-chip"><span class="habit-chip-dot" style="background:#7B9BAF"></span>Evening Walk</span></div></td>
+          <td>Today</td>
+          <td><span class="status-badge on-track">● On track</span></td>
+        </tr>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#C4887A">EW</div><div><div class="member-name">Emma Walsh</div><div class="member-email">e.walsh@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#7B9BAF"></span>Evening Cooldown</span></div></td>
+          <td>2 days ago</td>
+          <td><span class="status-badge on-track">● On track</span></td>
+        </tr>
+        <tr>
+          <td><div class="member-cell"><div class="member-avatar" style="background:#9B8FA6">CB</div><div><div class="member-name">Chris Brooks</div><div class="member-email">c.brooks@example.com</div></div></div></td>
+          <td><div class="habit-chips"><span class="habit-chip"><span class="habit-chip-dot" style="background:#8FA68C"></span>Morning Stretch</span></div></td>
+          <td>Today</td>
+          <td><span class="status-badge new">New</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span class="pagination-info">Showing 1–10 of 24 members</span>
+    <div class="pagination-btns">
+      <button class="pg-btn" disabled>← Prev</button>
+      <button class="pg-btn active">1</button>
+      <button class="pg-btn">2</button>
+      <button class="pg-btn">3</button>
+      <button class="pg-btn">Next →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Org name modal — shown on first visit -->
+<div class="org-modal-overlay" id="orgModal">
+  <div class="org-modal-box">
+    <span class="org-modal-logo">𖢻 PetalProgress</span>
+    <h2 class="org-modal-title">What's your organization called?</h2>
+    <p class="org-modal-sub">This will appear on your members' invites and in your dashboard.</p>
+    <input class="org-modal-input" type="text" id="orgNameInput" placeholder="e.g. Riverdale CrossFit" autofocus>
+    <button class="org-modal-btn" onclick="saveOrg()">Save &amp; continue</button>
+  </div>
+</div>
+
+<!-- Coach mark tooltip (reused for each step) -->
+<div class="coach-spotlight" id="coachSpotlight"></div>
+<div class="coach-mark" id="coachMark">
+  <div class="coach-step"  id="coachStep"></div>
+  <div class="coach-title" id="coachTitle"></div>
+  <div class="coach-text"  id="coachText"></div>
+  <div class="coach-footer">
+    <button class="coach-skip" onclick="dismissCoach()">Skip tour</button>
+    <button class="coach-next" id="coachNextBtn" onclick="nextCoach()">Next →</button>
+  </div>
+</div>
+
+<script>
+const coachSteps = [
+  {
+    getTarget: () => document.getElementById('ppAdmAvBtn'),
+    align: 'right',
+    title: 'Your free trial',
+    text: 'Your account starts with 1–10 members for 7 days, no card required. Upgrade anytime via Account → Billing & plan.',
+  },
+  {
+    getTarget: () => document.querySelector('[data-page="habits"]'),
+    align: 'center',
+    title: 'Create a habit mandala',
+    text: 'Head to Habits to build an assigned habit. Each member gets a mandala that fills as they check in daily.',
+  },
+  {
+    getTarget: () => document.getElementById('inviteBtn'),
+    align: 'left',
+    title: 'Invite your members',
+    text: 'Add members by email or share a unique link — they\'ll each get their own mandala once they join.',
+    isLast: true,
+  },
+];
+
+let currentCoach = 0;
+
+function showCoach(n) {
+  const step   = coachSteps[n];
+  const mark   = document.getElementById('coachMark');
+  const target = step.getTarget();
+
+  document.getElementById('coachStep').textContent    = n + 1 + ' of ' + coachSteps.length;
+  document.getElementById('coachTitle').textContent   = step.title;
+  document.getElementById('coachText').textContent    = step.text;
+  document.getElementById('coachNextBtn').textContent = step.isLast ? 'Got it ✓' : 'Next →';
+
+  document.getElementById('coachSpotlight').style.display = 'block';
+
+  // Measure mark off-screen first so getBoundingClientRect is accurate
+  mark.style.visibility = 'hidden';
+  mark.style.display = 'block';
+
+  requestAnimationFrame(function () {
+    if (!target) { mark.style.visibility = ''; return; }
+    const tr = target.getBoundingClientRect();
+    const mr = mark.getBoundingClientRect();
+
+    let left;
+    if      (step.align === 'right')  left = tr.right  - mr.width;
+    else if (step.align === 'center') left = tr.left + tr.width / 2 - mr.width / 2;
+    else                              left = tr.left;
+
+    left = Math.max(12, Math.min(left, window.innerWidth - mr.width - 12));
+
+    mark.style.top  = (tr.bottom + 10) + 'px';
+    mark.style.left = left + 'px';
+    mark.style.visibility = '';
+
+    // Arrow tip aligned to target center
+    const arrowLeft = Math.max(12, Math.min(
+      tr.left + tr.width / 2 - left - 7,
+      mr.width - 26
+    ));
+    mark.style.setProperty('--arrow-left', arrowLeft + 'px');
+  });
+}
+
+function nextCoach() {
+  currentCoach++;
+  if (currentCoach >= coachSteps.length) dismissCoach();
+  else showCoach(currentCoach);
+}
+
+function dismissCoach() {
+  document.getElementById('coachMark').style.display      = 'none';
+  document.getElementById('coachSpotlight').style.display = 'none';
+}
+
+function saveOrg() {
+  const val = document.getElementById('orgNameInput').value.trim();
+  if (!val) { document.getElementById('orgNameInput').focus(); return; }
+  document.getElementById('orgModal').style.display = 'none';
+  setTimeout(function () { currentCoach = 0; showCoach(0); }, 200);
+}
+
+document.getElementById('orgNameInput').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') saveOrg();
+});
+</script>
+
+</body>
+</html>

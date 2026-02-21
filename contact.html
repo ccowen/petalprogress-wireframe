@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress — Contact</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6; overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.contact-hero {
+  text-align: center;
+  padding: 72px 52px 52px;
+}
+
+.contact-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 14px; border-radius: 100px;
+  background: rgba(143,166,140,0.1); border: 1px solid rgba(143,166,140,0.25);
+  font-size: 11px; color: var(--sage); letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 18px;
+}
+
+.contact-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(34px,5vw,52px); font-weight: 400; line-height: 1.15;
+  margin-bottom: 14px; letter-spacing: -.01em;
+}
+.contact-title em { font-style: italic; color: var(--text-soft); }
+
+.contact-sub {
+  font-size: 15px; color: var(--text-soft); max-width: 480px;
+  margin: 0 auto; line-height: 1.8; font-weight: 300;
+}
+
+/* ── BODY ── */
+.contact-body {
+  max-width: 960px; margin: 0 auto;
+  padding: 0 52px 100px;
+  display: grid; grid-template-columns: 1fr 1.6fr; gap: 52px;
+  align-items: flex-start;
+}
+
+/* ── LEFT CONTEXT ── */
+.contact-info { padding-top: 8px; }
+
+.contact-info-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; margin-bottom: 12px;
+}
+
+.contact-info-text {
+  font-size: 13px; color: var(--text-soft); line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+.contact-reasons { display: flex; flex-direction: column; gap: 12px; }
+
+.contact-reason {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 12px;
+}
+
+.reason-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.reason-text { font-size: 13px; color: var(--text-soft); line-height: 1.6; }
+.reason-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
+
+.contact-response {
+  margin-top: 28px; font-size: 12px; color: var(--text-muted); line-height: 1.7;
+}
+
+/* ── FORM CARD ── */
+.contact-form-card {
+  background: var(--surface);
+  border: 1px solid var(--warm-1);
+  border-radius: 22px; padding: 36px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.04);
+}
+
+.field-group { margin-bottom: 16px; }
+
+.field-label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--text-soft); margin-bottom: 7px; letter-spacing: .02em;
+}
+
+.field-input, .field-select, .field-textarea {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg); border: 1.5px solid var(--warm-2);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; color: var(--text); outline: none;
+  transition: border-color .16s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--sage);
+}
+.field-input::placeholder, .field-textarea::placeholder { color: var(--text-muted); }
+
+.field-select { appearance: none; cursor: pointer; }
+
+.field-textarea {
+  resize: vertical; min-height: 120px; line-height: 1.6;
+}
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.form-submit {
+  display: block; width: 100%; padding: 13px; margin-top: 8px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; font-weight: 500; cursor: pointer;
+  transition: background .18s;
+}
+.form-submit:hover { background: #111; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<script src="./nav.js"></script>
+
+<!-- HERO -->
+<div class="contact-hero">
+  <div class="contact-eyebrow">✉ Get in touch</div>
+  <h1 class="contact-title">We'd love to <em>hear from you</em></h1>
+  <p class="contact-sub">Questions, feedback, or interested in setting up PetalProgress for your team or gym? Reach out below.</p>
+</div>
+
+<!-- BODY -->
+<div class="contact-body">
+
+  <!-- LEFT: context -->
+  <div class="contact-info">
+    <h2 class="contact-info-title">How can we help?</h2>
+    <p class="contact-info-text">Whether you have a question about the app or want to explore what PetalProgress can do for a team, we're happy to talk.</p>
+
+    <div class="contact-reasons">
+      <div class="contact-reason">
+        <div class="reason-icon">🌸</div>
+        <div class="reason-text">
+          <strong>General question</strong>
+          Curious about how the app works, your account, or subscription options.
+        </div>
+      </div>
+      <div class="contact-reason">
+        <div class="reason-icon">◈</div>
+        <div class="reason-text">
+          <strong>Teams &amp; demo request</strong>
+          Setting up PetalProgress for a gym, studio, or coaching practice. We'll walk you through the admin tools.
+        </div>
+      </div>
+      <div class="contact-reason">
+        <div class="reason-icon">◎</div>
+        <div class="reason-text">
+          <strong>Feedback</strong>
+          Something we could do better, or an idea you'd like to share.
+        </div>
+      </div>
+    </div>
+
+    <p class="contact-response">We typically respond within 1–2 business days.</p>
+  </div>
+
+  <!-- RIGHT: form -->
+  <div class="contact-form-card">
+    <form onsubmit="return false">
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">First name</label>
+          <input class="field-input" type="text" placeholder="Alex">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Last name</label>
+          <input class="field-input" type="text" placeholder="Rivera">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Email</label>
+        <input class="field-input" type="email" placeholder="you@example.com">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">What brings you here?</label>
+        <select class="field-select">
+          <option value="" disabled selected>Select a topic…</option>
+          <option>General question</option>
+          <option>Teams &amp; demo request</option>
+          <option>Billing or subscription</option>
+          <option>Feedback or suggestion</option>
+          <option>Something else</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Message</label>
+        <textarea class="field-textarea" placeholder="Tell us what's on your mind…"></textarea>
+      </div>
+
+      <button class="form-submit">Send message</button>
+
+    </form>
+  </div>
+
+</div>
+
+<script src="./footer.js"></script>
+</body>
+</html>

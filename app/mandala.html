@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --blue:      #7B9BAF;
+  --coral:     #C4887A;
+  --red-petal: #C45A5A;
+  --toolbar-w: 64px;
+  --settings-w: 296px;
+  --right-w:   276px;
+  --top-h:     54px;
+  --ease:      cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  overflow: hidden; display: flex; flex-direction: column;
+  font-size: 13px;
+}
+
+/* ─── TOP BAR ─── */
+.topbar {
+  height: var(--top-h); background: var(--surface);
+  border-bottom: 1px solid var(--warm-1);
+  display: flex; align-items: center; flex-shrink: 0;
+  z-index: 100; padding: 0 24px;
+}
+.logo-zone {
+  min-width: var(--toolbar-w); display: flex;
+  align-items: center; justify-content: flex-start; gap: 8px; flex-shrink: 0;
+}
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--text); line-height: 1; }
+.logo-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); letter-spacing: 0.01em; white-space: nowrap; }
+.nav-tabs { display: flex; gap: 2px; margin-left: 20px; }
+.nav-tab {
+  padding: 6px 18px; border-radius: 100px; font-size: 12.5px;
+  color: var(--text-soft); cursor: pointer; transition: all 0.18s; letter-spacing: 0.01em;
+}
+.nav-tab:hover { background: var(--warm-1); color: var(--text); }
+.nav-tab.active { background: var(--text); color: var(--bg); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.mandala-name-tag {
+  font-family: 'Cormorant Garamond', serif; font-size: 14.5px;
+  font-style: italic; color: var(--text-soft); letter-spacing: 0.03em;
+}
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--warm-1); color: var(--text-soft);
+  font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+/* ─── BODY LAYOUT ─── */
+.body-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+/* ─── LEFT TOOLBAR — floating pill ─── */
+.toolbar {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  z-index: 200; width: var(--toolbar-w);
+  background: var(--surface);
+  border: 1px solid var(--warm-1);
+  border-radius: 22px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 0; gap: 2px;
+}
+.tbtn {
+  width: 46px; height: 46px; border-radius: 13px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; cursor: pointer; transition: all 0.18s; position: relative;
+}
+.tbtn:hover { background: var(--warm-1); }
+.tbtn.active { background: rgba(143,166,140,0.14); }
+.tbtn.active::after {
+  content: ''; position: absolute; right: -9px; top: 50%; transform: translateY(-50%);
+  width: 4px; height: 4px; background: var(--sage); border-radius: 50%;
+}
+.tbtn-icon { font-size: 15px; line-height: 1; }
+.tbtn-lbl { font-size: 9px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.tbtn.active .tbtn-lbl { color: var(--sage); }
+.tb-divider { width: 28px; height: 1px; background: var(--warm-1); margin: 4px 0; }
+.tbtn .tip {
+  position: absolute; left: calc(100% + 18px); top: 50%; transform: translateY(-50%);
+  background: var(--text); color: var(--bg); font-size: 11px; padding: 4px 10px;
+  border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0;
+  transition: opacity 0.15s; z-index: 300;
+}
+.tbtn:hover .tip { opacity: 1; }
+
+/* ─── SETTINGS PANEL — floating card ─── */
+.settings-panel {
+  position: absolute; left: calc(var(--toolbar-w) + 28px); top: 50%;
+  transform: translateY(-50%) translateX(-10px);
+  z-index: 199; width: var(--settings-w);
+  background: var(--surface);
+  border: 1px solid var(--warm-1);
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.11), 0 2px 8px rgba(0,0,0,0.05);
+  max-height: 82vh; overflow: hidden;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
+}
+.settings-panel.open {
+  opacity: 1; pointer-events: all;
+  transform: translateY(-50%) translateX(0);
+}
+.sp-inner { width: var(--settings-w); padding: 24px 20px; max-height: 82vh; overflow-y: auto; }
+.sp-section { display: none; }
+.sp-section.show { display: block; animation: fadeUp 0.22s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.sp-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 18px; }
+.sp-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; margin-bottom: 6px; }
+.sp-desc { font-size: 12px; color: var(--text-soft); line-height: 1.65; margin-bottom: 22px; }
+
+/* Theme */
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.theme-card { border-radius: 12px; padding: 11px; cursor: pointer; border: 2px solid transparent; transition: all 0.18s; }
+.theme-card.on { border-color: var(--text); }
+.theme-swatch { height: 50px; border-radius: 8px; margin-bottom: 7px; }
+.theme-name { font-size: 11px; color: var(--text-soft); text-align: center; }
+.pumpkin-sw { background: linear-gradient(135deg,#D4845A,#C4622A,#8B4513); }
+.ice-sw     { background: linear-gradient(135deg,#B8D4E8,#7BA7C4,#4A7FA0); }
+.bloom-sw   { background: linear-gradient(135deg,#E8A5B8,#C47A95,#8B5070); }
+.heat-sw    { background: linear-gradient(135deg,#E8B84B,#D4821A,#C45A1A); }
+
+/* Petal color */
+.petal-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.pswatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; transition: all 0.18s; display: flex; align-items: center; justify-content: center; }
+.pswatch.on { border-color: var(--text); padding: 3px; }
+.pswatch .pi { width: 100%; height: 100%; border-radius: 50%; }
+
+/* Petal shape */
+.pshape-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 22px; }
+.pshape-card { border-radius: 12px; padding: 14px 8px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.18s; background: var(--bg); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.pshape-card:hover { background: var(--warm-1); }
+.pshape-card.on { border-color: var(--sage); background: var(--warm-1); }
+.pshape-nm { font-size: 10px; color: var(--text-soft); }
+
+/* Figure */
+.fig-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 22px; }
+.fig-card { border-radius: 12px; padding: 14px 8px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.18s; background: var(--bg); }
+.fig-card:hover { background: var(--warm-1); }
+.fig-card.on { border-color: var(--sage); background: var(--warm-1); }
+.fig-em { font-size: 22px; margin-bottom: 4px; }
+.fig-nm { font-size: 10px; color: var(--text-soft); }
+
+/* Buttons */
+.btn-apply { width: 100%; padding: 11px; background: var(--sage); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: white; cursor: pointer; transition: all 0.18s; margin-top: 8px; letter-spacing: 0.04em; }
+.btn-apply:hover { background: #7d9479; }
+.btn-ghost { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--warm-2); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: var(--text-soft); cursor: pointer; transition: all 0.18s; margin-top: 6px; }
+.btn-ghost:hover { background: var(--warm-1); color: var(--text); }
+
+/* Mini cal in settings */
+.date-note { background: rgba(143,166,140,0.1); border: 1px solid rgba(143,166,140,0.3); border-radius: 10px; padding: 12px 14px; font-size: 11.5px; color: var(--text-soft); line-height: 1.65; margin-bottom: 16px; }
+.mini-cal { background: var(--bg); border-radius: 12px; padding: 14px; border: 1px solid var(--warm-1); }
+.mc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.mc-month { font-family: 'Cormorant Garamond', serif; font-size: 16px; }
+.mc-nav { width: 24px; height: 24px; border-radius: 6px; background: var(--warm-1); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: var(--text-soft); }
+.mc-dow { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+.mc-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.mc-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 7px; font-size: 12px; cursor: pointer; transition: all 0.15s; color: var(--text-soft); }
+.mc-day:hover:not(.blank) { background: var(--warm-1); color: var(--text); }
+.mc-day.sel { background: var(--text) !important; color: var(--bg) !important; }
+.mc-day.blank { opacity: 0; pointer-events: none; }
+
+/* ─── CENTER CANVAS ─── */
+.center { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.mandala-wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; transition: transform 0.28s var(--ease); }
+#view-mandala.sp-open .mandala-wrap { transform: translateX(calc((var(--toolbar-w) + 28px + var(--settings-w)) / 2)); }
+.mandala-title-disp { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic; font-weight: 300; color: var(--text-soft); letter-spacing: 0.04em; }
+.mandala-date-range { font-size: 11.5px; color: var(--text-muted); text-align: center; margin-top: -12px; margin-bottom: 4px; }
+.mandala-week-tag { font-size: 11.5px; color: var(--text-muted); text-align: center; letter-spacing: 0.04em; }
+
+/* ─── RIGHT PANEL ─── */
+.right-panel { width: var(--right-w); overflow: hidden; background: var(--surface); border-left: 1px solid var(--warm-1); flex-shrink: 0; }
+.rp-inner { width: var(--right-w); padding: 22px 18px; height: 100%; overflow-y: auto; }
+.rp-section-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 11px; margin-top: 18px; }
+.rp-section-lbl:first-child { margin-top: 0; }
+.stat-card { background: var(--bg); border-radius: 14px; padding: 15px; margin-bottom: 10px; }
+.stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 7px; }
+.stat-big { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 300; line-height: 1; margin-bottom: 4px; }
+.stat-big span { font-size: 15px; color: var(--text-soft); }
+.stat-sm { font-size: 11.5px; color: var(--text-soft); }
+.prog-bar { height: 5px; background: var(--warm-1); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.prog-fill { height: 100%; border-radius: 3px; background: var(--sage); }
+.week-dots { display: flex; gap: 5px; margin-top: 11px; }
+.wd { flex: 1; height: 5px; border-radius: 3px; background: var(--warm-1); }
+.wd.done { background: var(--sage); }
+.wd.now  { background: var(--coral); }
+.rp-today-card { background: var(--bg); border: 1.5px solid var(--warm-1); border-radius: 14px; padding: 14px 16px; cursor: pointer; margin-bottom: 4px; transition: all 0.2s; user-select: none; }
+.rp-today-card:hover { border-color: var(--warm-2); }
+.rp-today-card.done { background: rgba(143,166,140,0.07); border-color: rgba(143,166,140,0.32); }
+.rp-today-meta { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; }
+.rp-today-row { display: flex; align-items: center; gap: 12px; }
+.rp-today-circle { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--warm-2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: transparent; transition: all 0.2s; }
+.rp-today-card.done .rp-today-circle { background: var(--sage); border-color: var(--sage); color: white; }
+.rp-today-label { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 300; color: var(--text); transition: color 0.2s; }
+.rp-today-card.done .rp-today-label { color: var(--text-soft); }
+
+/* ─── GALLERY VIEW ─── */
+.gallery-view, .calendar-view { display: none; flex: 1; flex-direction: column; overflow: hidden; max-width: 1100px; margin: 0 auto; }
+.gallery-view.show, .calendar-view.show { display: flex; }
+.gallery-view { background: var(--bg); }
+
+.gallery-head { display: flex; align-items: center; justify-content: space-between; padding: 28px 40px 0; flex-shrink: 0; margin-bottom: 20px; }
+.gallery-head-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; }
+.new-btn { display: flex; align-items: center; gap: 7px; padding: 9px 20px; background: var(--text); color: rgba(255,255,255,.88); border: none; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .18s; }
+.new-btn:hover { background: #111; }
+
+.filter-tabs { display: flex; gap: 4px; padding: 0 40px; flex-shrink: 0; margin-bottom: 20px; }
+.filter-tab { padding: 6px 16px; border-radius: 100px; font-size: 13px; color: var(--text-muted); cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+.filter-tab:hover { background: var(--warm-1); color: var(--text-soft); }
+.filter-tab.active { background: var(--warm-1); color: var(--text); font-weight: 500; }
+
+.mandala-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 40px 40px; overflow-y: auto; align-content: start; flex: 1; min-height: 0; }
+
+/* Gallery cards — gallery.html style */
+.m-card { background: var(--surface); border: 1px solid var(--warm-1); border-radius: 18px; overflow: hidden; transition: all .2s; cursor: pointer; text-decoration: none; display: block; color: inherit; }
+.m-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.08); transform: translateY(-2px); }
+.m-card-visual { height: 160px; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+.m-card-body { padding: 16px 18px 18px; }
+.m-card-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; margin-bottom: 6px; }
+.m-card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+.m-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 100px; font-size: 11px; }
+.m-badge.active   { background: rgba(143,166,140,.12); color: var(--sage); }
+.m-badge.complete { background: rgba(123,155,175,.12); color: #7B9BAF; }
+.m-badge.paused   { background: var(--warm-1); color: var(--text-muted); }
+.m-card-new { background: transparent; border: 1.5px dashed var(--warm-2); border-radius: 18px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 230px; gap: 10px; transition: all .18s; color: var(--text-muted); }
+.m-card-new:hover { border-color: var(--sage); color: var(--sage); background: rgba(143,166,140,.04); }
+.m-card-new-icon  { font-size: 24px; }
+.m-card-new-label { font-size: 13px; font-weight: 500; }
+
+/* ─── CALENDAR VIEW ─── */
+.calendar-view { padding: 28px 40px 28px; }
+.calendar-view.show { flex-direction: column; }
+
+.calendar-view .filter-tabs { padding: 0; margin-bottom: 18px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
+.cal-title-lbl { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; }
+.cal-controls { display: flex; align-items: center; gap: 10px; }
+.cal-nav-ic { width: 32px; height: 32px; border-radius: 9px; background: var(--warm-1); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: var(--text-soft); transition: all 0.16s; }
+.cal-nav-ic:hover { background: var(--warm-2); }
+.cal-month-ic { font-size: 13px; color: var(--text-soft); min-width: 115px; text-align: center; }
+.cal-legend { display: flex; gap: 16px; }
+.cal-leg { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-soft); }
+.cal-leg-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+.cal-ic-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; background: var(--warm-2); border-radius: 14px; overflow: hidden; flex-shrink: 0; }
+.cal-ic-hdr { background: var(--surface); padding: 10px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); text-align: center; }
+.cal-ic-cell { background: var(--surface); min-height: 76px; padding: 9px 10px 10px; position: relative; cursor: pointer; display: flex; flex-direction: column; transition: background 0.12s, filter 0.12s; user-select: none; }
+.cal-ic-cell:hover:not(.ic-dimmed) { filter: brightness(0.97); }
+.cal-ic-cell.ic-dimmed { opacity: 0.2; pointer-events: none; }
+.cal-ic-cell.ic-t1   { background: rgba(196,90,90,0.003); }
+.cal-ic-cell.ic-t2   { background: rgba(143,166,140,0.003); }
+.cal-ic-cell.ic-t3   { background: rgba(123,155,175,0.003); }
+.cal-ic-cell.ic-tall { background: rgba(180,160,140,0.003); }
+
+.ic-dn-wrap { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; }
+.ic-dn { font-size: 12px; color: var(--text-muted); line-height: 1; }
+.cal-ic-cell.ic-has-habits .ic-dn { color: var(--text-soft); }
+.cal-ic-cell.ic-today .ic-dn-wrap { background: #C45A5A; }
+.cal-ic-cell.ic-today .ic-dn { color: white; font-size: 11px; }
+.cal-ic-cell.ic-selected:not(.ic-today) .ic-dn-wrap { background: var(--warm-2); }
+.cal-ic-cell.ic-selected:not(.ic-today) .ic-dn { color: var(--text); font-size: 11px; }
+.cal-ic-cell.ic-today.ic-selected .ic-dn-wrap { background: #C45A5A; }
+.cal-ic-cell.ic-today.ic-selected .ic-dn { color: white; }
+
+.ic-dot-row { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 6px; }
+.ic-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Detail panel — fixed spacing */
+.ic-detail-panel {
+  margin-top: 14px; background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 14px; overflow: hidden;
+  transition: max-height 0.34s cubic-bezier(0.4,0,0.2,1), opacity 0.22s ease;
+  max-height: 0; opacity: 0; flex-shrink: 0;
+}
+.ic-detail-panel.open { max-height: 400px; opacity: 1; }
+.ic-detail-inner { padding: 20px 24px; }
+.ic-detail-date { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 300; font-style: italic; margin-bottom: 14px; color: var(--text); }
+.ic-habit-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ic-habit-row { display: flex; flex-direction: column; gap: 10px; padding: 14px 15px; background: var(--bg); border-radius: 11px; transition: background 0.14s; position: relative; overflow: hidden; }
+.ic-habit-row:hover { background: var(--warm-1); }
+.ic-habit-row.has-strip { padding-right: 38px; }
+.ic-habit-identity { display: flex; align-items: center; gap: 10px; }
+.ic-habit-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+.ic-habit-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.ic-habit-meta { font-size: 10.5px; color: var(--text-muted); line-height: 1.55; }
+.ic-stat-cell { display: flex; flex-direction: column; gap: 2px; }
+.ic-stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 2px; }
+.ic-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; color: var(--text); line-height: 1; }
+.ic-stat-val span { font-size: 13px; color: var(--text-soft); }
+.ic-stat-sub { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; }
+.ic-status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: 11px; }
+.ic-status-pill.met { background: rgba(143,166,140,0.15); color: #8FA68C; }
+.ic-status-pill.not { background: rgba(212,206,199,0.5); color: var(--text-muted); }
+.ic-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+.ic-completed-strip { position: absolute; right: 0; top: 0; bottom: 0; width: 26px; display: flex; align-items: center; justify-content: center; }
+.ic-completed-strip span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: white; white-space: nowrap; }
+.ic-no-habits { font-size: 13px; color: var(--text-muted); font-style: italic; font-family: 'Cormorant Garamond', serif; padding: 4px 0; grid-column: span 2; }
+
+/* ─── RIGHT PANEL INLINE CALENDAR ─── */
+.rp-cal { background: var(--bg); border-radius: 14px; padding: 13px 12px 10px; margin-top: 12px; margin-bottom: 10px; border: 1px solid var(--warm-1); }
+.rp-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.rp-cal-month { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-soft); text-align: center; }
+.rp-cal-nav { width: 22px; height: 22px; border-radius: 6px; background: var(--warm-1); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px; color: var(--text-soft); transition: all 0.15s; user-select: none; }
+.rp-cal-nav:hover { background: var(--warm-2); }
+.rp-cal-dow { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.rp-cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.rp-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 7px; font-size: 11px; cursor: pointer; color: var(--text-soft); transition: all 0.15s; position: relative; }
+.rp-cal-day:hover:not(.blank) { background: var(--warm-1); color: var(--text); }
+.rp-cal-day.blank { opacity: 0; pointer-events: none; }
+.rp-cal-day.is-today { font-weight: 600; color: var(--text); }
+.rp-cal-day.is-today::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; border-radius: 50%; background: var(--coral); }
+.rp-cal-day.checked { background: var(--coral) !important; color: white !important; border-radius: 8px; }
+.rp-cal-day.checked:hover { background: #b54f4f !important; }
+.rp-cal-note { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 9px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+
+/* ─── AVATAR DROPDOWN ─── */
+.avatar-menu { position: relative; }
+.avatar-dropdown {
+  position: absolute; right: 0; top: calc(100% + 10px);
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 14px; padding: 6px; min-width: 200px; z-index: 400;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05);
+  opacity: 0; pointer-events: none;
+  transform: translateY(-6px) scale(0.98); transform-origin: top right;
+  transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.avatar-dropdown.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+.av-user { padding: 10px 13px 8px; border-bottom: 1px solid var(--warm-1); margin-bottom: 4px; }
+.av-user-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.av-user-email { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.av-item { padding: 9px 13px; font-size: 13px; color: var(--text-soft); border-radius: 9px; cursor: pointer; transition: background 0.13s; display: block; text-decoration: none; }
+.av-item:hover { background: var(--warm-1); color: var(--text); }
+.av-divider { height: 1px; background: var(--warm-1); margin: 4px 0; }
+.av-danger { color: var(--coral) !important; }
+.av-danger:hover { background: rgba(196,90,90,0.07) !important; color: var(--coral) !important; }
+
+/* ─── SHARE & SHOP ─── */
+.share-shop-toggle {
+  font-size: 12px; color: var(--text-muted); letter-spacing: 0.06em;
+  text-transform: uppercase; cursor: pointer; user-select: none;
+  display: flex; align-items: center; gap: 6px; transition: color 0.15s;
+}
+.share-shop-toggle:hover { color: var(--text-soft); }
+.sst-arrow { font-style: normal; transition: transform 0.2s; display: inline-block; }
+.sst-arrow.open { transform: rotate(180deg); }
+
+.share-shop-panel {
+  display: none; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+  opacity: 0; overflow: visible;
+  animation: none;
+}
+.share-shop-panel.open {
+  display: flex; opacity: 1;
+  animation: ssReveal 0.18s ease both;
+}
+@keyframes ssReveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.share-zone { display: flex; align-items: center; gap: 4px; position: relative; }
+.share-icon-btn {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--surface); border: 1px solid var(--warm-1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer; transition: background 0.15s;
+}
+.share-icon-btn:hover { background: var(--warm-1); }
+
+.shop-zone { position: relative; }
+.shop-btn {
+  padding: 6px 14px; border-radius: 100px;
+  border: 1px solid var(--warm-1); background: var(--surface);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-soft);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.shop-btn:hover { background: var(--warm-1); color: var(--text); }
+
+.share-popup {
+  position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%) translateY(6px) scale(0.98);
+  width: 228px; background: var(--surface);
+  border: 1px solid var(--warm-1); border-radius: 14px;
+  padding: 15px; z-index: 400;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05);
+  opacity: 0; pointer-events: none; transform-origin: bottom center;
+  transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.share-popup.open { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0) scale(1); }
+.share-popup-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 12px; }
+.share-check {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; font-size: 12.5px; color: var(--text-soft); cursor: pointer;
+}
+.share-check input[type="checkbox"] { accent-color: var(--sage); cursor: pointer; width: 14px; height: 14px; }
+.share-sep { height: 1px; background: var(--warm-1); margin: 12px 0; }
+.share-submit-btn {
+  width: 100%; padding: 9px;
+  background: var(--text); color: var(--bg);
+  border: none; border-radius: 9px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s;
+}
+.share-submit-btn:hover { background: #111; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ─── TOP BAR ─── -->
+<div class="topbar">
+  <div class="logo-zone"><span class="logo">𖢻</span><span class="logo-name">PetalProgress</span></div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchView('mandala',this)">Mandala</div>
+    <div class="nav-tab" onclick="switchView('gallery',this)">Gallery</div>
+    <div class="nav-tab" onclick="switchView('calendar',this)">All Calendars</div>
+  </div>
+  <div class="topbar-right">
+    <div class="avatar-menu" id="avatarMenu">
+      <div class="avatar" onclick="toggleAvatarMenu()">C</div>
+      <div class="avatar-dropdown" id="avatarDropdown">
+        <div class="av-user">
+          <div class="av-user-name">Caitlin</div>
+          <div class="av-user-email">caitlin@example.com</div>
+        </div>
+        <div class="av-item">Account settings</div>
+        <div class="av-item">Billing &amp; plan</div>
+        <a href="../index.html" target="_blank" class="av-item" style="color:var(--text-muted);font-size:12px;">petalprogress.com ↗</a>
+        <a href="#" class="av-item" style="color:var(--text-muted);font-size:12px;">Shop Extras ↗</a>
+        <div class="av-divider"></div>
+        <a href="../index.html" class="av-item av-danger">Sign out</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BODY ─── -->
+<div class="body-layout">
+
+  <!-- ═══ MANDALA VIEW ═══ -->
+  <div id="view-mandala" class="sp-open" style="display:flex;flex:1;overflow:hidden;position:relative;">
+
+    <!-- LEFT TOOLBAR -->
+    <div class="toolbar">
+      <div class="tb-divider"></div>
+      <div class="tbtn active" onclick="openSP('theme',this)">
+        <div class="tbtn-icon">◑</div><div class="tbtn-lbl">Theme</div>
+        <div class="tip">Theme Colors</div>
+      </div>
+      <div class="tbtn" onclick="openSP('petals',this)">
+        <div class="tbtn-icon">❋</div><div class="tbtn-lbl">Petals</div>
+        <div class="tip">Petal Shape</div>
+      </div>
+      <div class="tbtn" onclick="openSP('figure',this)">
+        <div class="tbtn-icon">△</div><div class="tbtn-lbl">Figure</div>
+        <div class="tip">Center Figure</div>
+      </div>
+      <div class="tb-divider"></div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="settings-panel open" id="sp">
+      <div class="sp-inner">
+
+        <!-- THEME -->
+        <div class="sp-section show" id="sp-theme">
+          <div class="sp-eyebrow">Mandala Settings</div>
+          <div class="sp-title">Theme &amp; Petal Color</div>
+          <div class="sp-desc">Sets the mood for your mandala's background rings and atmosphere.</div>
+          <div class="theme-grid">
+            <div class="theme-card" onclick="selTheme(this)"><div class="theme-swatch pumpkin-sw"></div><div class="theme-name">Pumpkin Spice</div></div>
+            <div class="theme-card on" onclick="selTheme(this)"><div class="theme-swatch ice-sw"></div><div class="theme-name">Ice Castle</div></div>
+            <div class="theme-card" onclick="selTheme(this)"><div class="theme-swatch bloom-sw"></div><div class="theme-name">Blooming Flowers</div></div>
+            <div class="theme-card" onclick="selTheme(this)"><div class="theme-swatch heat-sw"></div><div class="theme-name">Heat Wave</div></div>
+          </div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;">Petal Color</div>
+          <div class="petal-row">
+            <div class="pswatch on" onclick="selPetal(this)"><div class="pi" style="background:#C45A5A"></div></div>
+            <div class="pswatch" onclick="selPetal(this)"><div class="pi" style="background:#D4824A"></div></div>
+            <div class="pswatch" onclick="selPetal(this)"><div class="pi" style="background:#8FA68C"></div></div>
+            <div class="pswatch" onclick="selPetal(this)"><div class="pi" style="background:#7B9BAF"></div></div>
+            <div class="pswatch" onclick="selPetal(this)"><div class="pi" style="background:#6B5FA0"></div></div>
+            <div class="pswatch" onclick="selPetal(this)"><div class="pi" style="background:#C47A9A"></div></div>
+          </div>
+        </div>
+
+        <!-- PETALS -->
+        <div class="sp-section" id="sp-petals">
+          <div class="sp-eyebrow">Mandala Settings</div>
+          <div class="sp-title">Petal shape</div>
+          <div class="sp-desc">Choose the shape of each petal in your mandala rings.</div>
+          <div class="pshape-grid">
+            <div class="pshape-card on" onclick="selPetalShape(this)">
+              <svg width="48" height="48" viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="7" ry="16" fill="#C45A5A" opacity="0.8"/></svg>
+              <div class="pshape-nm">Classic</div>
+            </div>
+            <div class="pshape-card" onclick="selPetalShape(this)">
+              <svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 8 C30 14, 32 20, 24 40 C16 20, 18 14, 24 8Z" fill="#C45A5A" opacity="0.8"/></svg>
+              <div class="pshape-nm">Teardrop</div>
+            </div>
+            <div class="pshape-card" onclick="selPetalShape(this)">
+              <svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 8 C34 12, 36 22, 32 32 C28 38, 20 38, 16 32 C12 22, 14 12, 24 8Z" fill="#C45A5A" opacity="0.8"/></svg>
+              <div class="pshape-nm">Round</div>
+            </div>
+            <div class="pshape-card" onclick="selPetalShape(this)">
+              <svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 8 L30 24 L24 40 L18 24 Z" fill="#C45A5A" opacity="0.8"/></svg>
+              <div class="pshape-nm">Diamond</div>
+            </div>
+            <div class="pshape-card" onclick="selPetalShape(this)">
+              <svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 8 C29 10, 34 16, 34 24 C34 32, 29 38, 24 40 C19 38, 14 32, 14 24 C14 16, 19 10, 24 8Z M24 18 C27 20, 27 28, 24 30 C21 28, 21 20, 24 18Z" fill="#C45A5A" opacity="0.8" fill-rule="evenodd"/></svg>
+              <div class="pshape-nm">Hollow</div>
+            </div>
+            <div class="pshape-card" onclick="selPetalShape(this)">
+              <svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 8 C26 12, 30 14, 32 18 C36 24, 32 34, 24 40 C16 34, 12 24, 16 18 C18 14, 22 12, 24 8Z" fill="#C45A5A" opacity="0.8"/><path d="M24 14 C25 18, 27 20, 28 24 C27 28, 25 30, 24 34" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+              <div class="pshape-nm">Veined</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIGURE -->
+        <div class="sp-section" id="sp-figure">
+          <div class="sp-eyebrow">Mandala Settings</div>
+          <div class="sp-title">Center figure</div>
+          <div class="sp-desc">Placed at the heart of your mandala. More options coming soon.</div>
+          <div class="fig-grid">
+            <div class="fig-card on" onclick="selFig(this)"><div class="fig-em">🌸</div><div class="fig-nm">Blossom</div></div>
+            <div class="fig-card" onclick="selFig(this)"><div class="fig-em">⭐</div><div class="fig-nm">Star</div></div>
+            <div class="fig-card" onclick="selFig(this)"><div class="fig-em">🌙</div><div class="fig-nm">Moon</div></div>
+            <div class="fig-card" onclick="selFig(this)"><div class="fig-em">🦋</div><div class="fig-nm">Butterfly</div></div>
+            <div class="fig-card" onclick="selFig(this)"><div class="fig-em">✨</div><div class="fig-nm">Sparkle</div></div>
+            <div class="fig-card" onclick="selFig(this)"><div class="fig-em">🌿</div><div class="fig-nm">Leaf</div></div>
+          </div>
+        </div>
+
+        <!-- START DATE -->
+        <div class="sp-section" id="sp-date">
+          <div class="sp-eyebrow">Mandala Settings</div>
+          <div class="sp-title">Start date</div>
+          <div class="date-note">⚠ Your start date can be the first day of any month. Once your mandala begins, this date cannot be edited — take your time.</div>
+          <div class="mini-cal">
+            <div class="mc-head">
+              <div class="mc-nav">‹</div>
+              <div class="mc-month">March 2026</div>
+              <div class="mc-nav">›</div>
+            </div>
+            <div class="mc-dow"><div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div></div>
+            <div class="mc-days" id="miniCal"></div>
+          </div>
+          <button class="btn-apply" style="margin-top:14px;">Set Start Date</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CENTER MANDALA -->
+    <div class="center">
+      <div class="mandala-wrap">
+        <div class="mandala-title-disp">Morning Walk</div>
+        <div class="mandala-date-range">Mar 1, 2026 – Dec 31, 2026</div>
+        <svg id="mainMandala" width="390" height="390" viewBox="0 0 390 390" fill="none" style="filter:drop-shadow(0 20px 64px rgba(0,0,0,0.07))">
+          <circle cx="195" cy="195" r="186" fill="#FDFCFA" stroke="#EDE9E3" stroke-width="1"/>
+          <circle cx="195" cy="195" r="172" stroke="#D4CEC7" stroke-width="0.75" stroke-dasharray="4 5" opacity="0.5"/>
+          <circle cx="195" cy="195" r="165" fill="none" stroke="#7B9BAF" stroke-width="2" stroke-dasharray="707 1038" stroke-linecap="round" transform="rotate(-90 195 195)" opacity="0.35"/>
+          <g id="weekTicks"></g>
+          <g id="ring4" opacity="0.14"></g>
+          <g id="ring3"></g>
+          <g id="ring2"></g>
+          <g id="ring1"></g>
+          <circle cx="195" cy="195" r="32" fill="none" stroke="#EDE9E3" stroke-width="1.5"/>
+          <circle cx="195" cy="195" r="23" fill="#F8F6F3" stroke="#D4CEC7" stroke-width="1"/>
+          <text x="195" y="203" text-anchor="middle" font-size="24">🌸</text>
+        </svg>
+
+        <!-- SHARE / SHOP -->
+        <div class="share-shop-toggle" onclick="toggleShareShop()">
+          Share · Shop <span class="sst-arrow" id="sstArrow">↓</span>
+        </div>
+        <div class="share-shop-panel" id="shareShopPanel">
+          <div class="share-zone" id="shareZone">
+            <button class="share-icon-btn" onclick="openSharePopup('Instagram',event)" title="Share to Instagram">📷</button>
+            <button class="share-icon-btn" onclick="openSharePopup('TikTok',event)" title="Share to TikTok">🎵</button>
+            <button class="share-icon-btn" onclick="openSharePopup('Twitter / X',event)" title="Share to Twitter/X">✕</button>
+            <button class="share-icon-btn" onclick="openSharePopup('Pinterest',event)" title="Share to Pinterest">📌</button>
+            <div class="share-popup" id="sharePopup">
+              <div class="share-popup-title" id="sharePopupTitle">Share to Instagram</div>
+              <label class="share-check"><input type="checkbox" checked> Include habit name</label>
+              <label class="share-check"><input type="checkbox" checked> Include start &amp; end dates</label>
+              <label class="share-check"><input type="checkbox"> Include my name</label>
+              <div class="share-sep"></div>
+              <button class="share-submit-btn" onclick="doShare()">Share ↑</button>
+            </div>
+          </div>
+          <div class="shop-zone" id="shopZone">
+            <button class="shop-btn" onclick="openShopPopup(event)">Shop Extras ↗</button>
+            <div class="share-popup" id="shopPopup">
+              <div class="share-popup-title">Customise your item</div>
+              <label class="share-check"><input type="checkbox" checked> Include habit name</label>
+              <label class="share-check"><input type="checkbox" checked> Include start &amp; end dates</label>
+              <label class="share-check"><input type="checkbox"> Include my name</label>
+              <div class="share-sep"></div>
+              <button class="share-submit-btn" onclick="doShop()">Continue to shop →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="rp-inner">
+        <div class="rp-today-card" id="todayCard" onclick="checkInToday()">
+          <div class="rp-today-meta" id="todayMeta">Today</div>
+          <div class="rp-today-row">
+            <div class="rp-today-circle" id="todayCircle"></div>
+            <div class="rp-today-label" id="todayLabel">Check in today</div>
+          </div>
+        </div>
+        <div class="rp-cal">
+          <div class="rp-cal-head">
+            <div class="rp-cal-nav" onclick="rpPrevMonth()">‹</div>
+            <div class="rp-cal-month" id="rpCalMonth">February 2026</div>
+            <div class="rp-cal-nav" onclick="rpNextMonth()">›</div>
+          </div>
+          <div class="rp-cal-dow">
+            <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+          </div>
+          <div class="rp-cal-days" id="rpCalDays"></div>
+          <div class="rp-cal-note">Tap any day to mark it complete</div>
+        </div>
+        <div class="rp-section-lbl">This Week</div>
+        <div class="stat-card">
+          <div class="stat-lbl">Goal: 5 days</div>
+          <div class="stat-big">4<span> / 5</span></div>
+          <div class="stat-sm">1 day remaining to hit goal</div>
+          <div class="week-dots">
+            <div class="wd done"></div><div class="wd done"></div>
+            <div class="wd done"></div><div class="wd done"></div>
+            <div class="wd now"></div><div class="wd"></div><div class="wd"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end mandala view -->
+
+  <!-- ═══ GALLERY VIEW ═══ -->
+  <div class="gallery-view" id="view-gallery">
+    <div class="gallery-head">
+      <h1 class="gallery-head-title">Gallery</h1>
+      <button class="new-btn">+ New mandala</button>
+    </div>
+    <div class="filter-tabs" id="galleryFilters">
+      <button class="filter-tab active" onclick="setGalleryFilter('all',this)">All</button>
+      <button class="filter-tab" onclick="setGalleryFilter('active',this)">Active</button>
+      <button class="filter-tab" onclick="setGalleryFilter('complete',this)">Completed</button>
+    </div>
+    <div class="mandala-grid" id="galleryGrid"></div>
+  </div>
+
+  <!-- ═══ CALENDAR VIEW ═══ -->
+  <div class="calendar-view" id="view-calendar">
+    <div class="cal-head">
+      <div class="cal-title-lbl">All Calendars</div>
+      <div style="display:flex;align-items:center;gap:22px;">
+        <div class="cal-legend">
+          <div class="cal-leg" data-key="r"><div class="cal-leg-dot" style="background:#C45A5A"></div>Meditation</div>
+          <div class="cal-leg" data-key="g"><div class="cal-leg-dot" style="background:#8FA68C"></div>Evening Walk</div>
+          <div class="cal-leg" data-key="b"><div class="cal-leg-dot" style="background:#7B9BAF"></div>Reading</div>
+        </div>
+        <div class="cal-controls">
+          <div class="cal-nav-ic">‹</div>
+          <div class="cal-month-ic">February 2026</div>
+          <div class="cal-nav-ic">›</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-tabs" id="calFilters">
+      <button class="filter-tab active" onclick="setCalFilter('all',this)">All</button>
+      <button class="filter-tab" onclick="setCalFilter('active',this)">Active</button>
+      <button class="filter-tab" onclick="setCalFilter('complete',this)">Completed</button>
+    </div>
+    <div class="cal-ic-grid" id="calGrid"></div>
+    <div class="ic-detail-panel" id="icDetailPanel">
+      <div class="ic-detail-inner">
+        <div class="ic-detail-date" id="icDetailDate"></div>
+        <div class="ic-habit-rows" id="icHabitRows"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end body-layout -->
+
+
+<script>
+// ─── MANDALA SVG ─────────────────────────────────────────────
+function buildRing(id, n, r, rx, ry, fill, op, filled, cx, cy) {
+  const g = document.getElementById(id);
+  if (!g) return;
+  let h = '';
+  for (let i = 0; i < n; i++) {
+    const a = (i * (360/n)) * Math.PI / 180;
+    const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+    const f = filled === undefined ? fill : (i < filled ? fill : '#EDE9E3');
+    const o = filled !== undefined && i >= filled ? 0.5 : 1;
+    h += `<ellipse cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" rx="${rx}" ry="${ry}" fill="${f}" opacity="${o}" transform="rotate(${(i*(360/n)).toFixed(1)}, ${x.toFixed(2)}, ${y.toFixed(2)})"/>`;
+  }
+  g.innerHTML = h;
+}
+function buildTicks(n, r1, r2, cx, cy) {
+  const g = document.getElementById('weekTicks');
+  let h = '';
+  for (let i = 0; i < n; i++) {
+    const a = (i * (360/n)) * Math.PI / 180;
+    const maj = i % 4 === 0, or = maj ? r2+2 : r2;
+    h += `<line x1="${(cx+r1*Math.cos(a)).toFixed(2)}" y1="${(cy+r1*Math.sin(a)).toFixed(2)}" x2="${(cx+or*Math.cos(a)).toFixed(2)}" y2="${(cy+or*Math.sin(a)).toFixed(2)}" stroke="#C4BDB5" stroke-width="${maj?1.5:0.75}" opacity="0.55"/>`;
+  }
+  g.innerHTML = h;
+}
+buildTicks(52, 168, 174, 195, 195);
+buildRing('ring4', 24, 145, 7,   17, '#7B9BAF', 0.14, undefined, 195, 195);
+buildRing('ring3', 16, 112, 6.5, 15, '#7B9BAF', 0.7,  11,        195, 195);
+buildRing('ring2', 12, 78,  6.5, 14, '#C45A5A', 1,    10,        195, 195);
+buildRing('ring1', 8,  48,  5.5, 13, '#C45A5A', 1,    undefined, 195, 195);
+buildRing('rpRing2', 12, 35, 3,   7, '#C45A5A', 1,    10,        57, 57);
+buildRing('rpRing1', 8,  22, 2.5, 6, '#C45A5A', 1,    undefined, 57, 57);
+
+// ─── SETTINGS PANEL ──────────────────────────────────────────
+let curSP = 'theme';
+function openSP(name, btn) {
+  const panel = document.getElementById('sp');
+  const view  = document.getElementById('view-mandala');
+  const btns = document.querySelectorAll('.tbtn');
+  const sections = document.querySelectorAll('.sp-section');
+  if (curSP === name && panel.classList.contains('open')) {
+    panel.classList.remove('open');
+    view.classList.remove('sp-open');
+    btns.forEach(b => b.classList.remove('active'));
+    curSP = null; return;
+  }
+  btns.forEach(b => b.classList.remove('active'));
+  sections.forEach(s => s.classList.remove('show'));
+  btn.classList.add('active');
+  panel.classList.add('open');
+  view.classList.add('sp-open');
+  document.getElementById('sp-' + name).classList.add('show');
+  curSP = name;
+}
+function selTheme(el)     { document.querySelectorAll('.theme-card').forEach(e  => e.classList.remove('on')); el.classList.add('on'); }
+function selPetal(el)     { document.querySelectorAll('.pswatch').forEach(e     => e.classList.remove('on')); el.classList.add('on'); }
+function selFig(el)       { document.querySelectorAll('.fig-card').forEach(e    => e.classList.remove('on')); el.classList.add('on'); }
+function selPetalShape(el){ document.querySelectorAll('.pshape-card').forEach(e => e.classList.remove('on')); el.classList.add('on'); }
+
+// ─── MINI CAL IN SETTINGS ────────────────────────────────────
+(function() {
+  let h = '';
+  for (let d = 1; d <= 31; d++) h += `<div class="mc-day${d===1?' sel':''}" onclick="selCalDay(this)">${d}</div>`;
+  document.getElementById('miniCal').innerHTML = h;
+})();
+function selCalDay(el) { document.querySelectorAll('.mc-day').forEach(d => d.classList.remove('sel')); el.classList.add('sel'); }
+
+// ─── GALLERY ─────────────────────────────────────────────────
+const galleryMandalas = [
+  { name: 'Morning Meditation', petals: 23, total: 30, color: '#8FA68C', status: 'active'   },
+  { name: 'Evening Run',        petals: 18, total: 30, color: '#7B9BAF', status: 'active'   },
+  { name: 'Reading',            petals: 30, total: 30, color: '#C4887A', status: 'complete' },
+  { name: 'Journaling',         petals: 30, total: 30, color: '#C45A5A', status: 'complete' },
+  { name: 'Cold Shower',        petals: 7,  total: 30, color: '#9B8FA6', status: 'active'   },
+];
+
+function drawMini(svgEl, total, filled, color) {
+  const cx = 60, cy = 60, r = 44;
+  let h = '';
+  for (let i = 0; i < total; i++) {
+    const deg = (i * 360 / total) - 90;
+    const rad = deg * Math.PI / 180;
+    const x = (cx + r * Math.cos(rad)).toFixed(1);
+    const y = (cy + r * Math.sin(rad)).toFixed(1);
+    const f = i < filled;
+    h += `<ellipse cx="${x}" cy="${y}" rx="2.5" ry="8" fill="${f ? color : 'rgba(44,40,37,0.07)'}" opacity="${f ? 0.82 : 1}" transform="rotate(${deg.toFixed(1)} ${x} ${y})"/>`;
+  }
+  h += `<circle cx="60" cy="60" r="10" fill="rgba(248,246,243,0.97)"/>`;
+  svgEl.innerHTML = h;
+}
+
+function renderGallery(filter) {
+  const grid = document.getElementById('galleryGrid');
+  const shown = filter === 'all' ? galleryMandalas : galleryMandalas.filter(m => m.status === filter);
+  grid.innerHTML = '';
+  shown.forEach((m, i) => {
+    const card = document.createElement('a');
+    card.href = '#'; card.className = 'm-card';
+    card.innerHTML = `
+      <div class="m-card-visual"><svg id="ms${i}" width="120" height="120" viewBox="0 0 120 120"></svg></div>
+      <div class="m-card-body">
+        <div class="m-card-name">${m.name}</div>
+        <div class="m-card-meta">
+          <span class="m-badge ${m.status}">${m.status === 'active' ? '● Active' : '✓ Completed'}</span>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+    drawMini(document.getElementById(`ms${i}`), m.total, m.petals, m.color);
+  });
+  const newCard = document.createElement('div');
+  newCard.className = 'm-card-new';
+  newCard.innerHTML = `<div class="m-card-new-icon">+</div><div class="m-card-new-label">New mandala</div>`;
+  grid.appendChild(newCard);
+}
+
+function setGalleryFilter(f, el) {
+  document.querySelectorAll('#galleryFilters .filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderGallery(f);
+}
+
+function setCalFilter(f, el) {
+  document.querySelectorAll('#calFilters .filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  icFilter = f;
+  buildIcCal();
+  icRenderDetail(icSelectedDay);
+  document.querySelectorAll('.cal-leg[data-key]').forEach(leg => {
+    const key = leg.dataset.key;
+    leg.style.display = (f === 'all' || IC_H[key].status === f) ? 'flex' : 'none';
+  });
+}
+renderGallery('all');
+
+// ─── INTERACTIVE CALENDAR ─────────────────────────────────────
+const IC_H = {
+  r: { color:'#C45A5A', name:'Meditation',   mandalaName:'Morning Walk',    start:'Mar 1, 2026',  end:'Dec 31, 2026', weekTarget:5, status:'active' },
+  g: { color:'#8FA68C', name:'Evening Walk', mandalaName:'Move Every Day',     start:'Jan 1, 2026',  end:'Dec 31, 2026', weekTarget:4, status:'active' },
+  b: { color:'#7B9BAF', name:'Reading',      mandalaName:"Mind Expansion '26", start:'Feb 1, 2026',  end:'Dec 31, 2026', weekTarget:3, status:'complete' },
+};
+let icFilter = 'all';
+const calData = {
+  1:[],2:['r'],3:['r','g'],4:[],5:['r'],6:['g'],7:['r','g','b'],8:['r'],
+  9:['r','b'],10:['g'],11:['r','g'],12:[],13:['r'],14:['r','g','b'],15:['r'],
+  16:['g','b'],17:['r','g'],18:['r','g','b'],19:[],20:['r'],
+  21:['g'],22:['r','b'],23:['r','g'],24:[],25:['r','g','b'],26:['r'],27:['g'],28:['r','g']
+};
+const IC_DAY_NAMES  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const IC_WEEK_DAYS  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const IC_TODAY = 18;
+let icSelectedDay = IC_TODAY;
+
+function icWeekRange(day) {
+  const dow = (day-1) % 7, start = Math.max(1, day-dow);
+  return { start, end: Math.min(28, start+6) };
+}
+function icWeekCompleted(key, day) {
+  const {start, end} = icWeekRange(day);
+  let n = 0;
+  for (let d = start; d <= end; d++) if ((calData[d]||[]).includes(key)) n++;
+  return n;
+}
+function icMiniMandala(color, sz) {
+  sz = sz || 36;
+  const cx = sz/2, cy = sz/2;
+  let p = '';
+  const r1 = sz*0.30, r2 = sz*0.17;
+  for (let i = 0; i < 8; i++) {
+    const a=(i*45)*Math.PI/180, x=cx+r1*Math.cos(a), y=cy+r1*Math.sin(a);
+    p += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2" ry="4.5" fill="${color}" opacity="0.85" transform="rotate(${i*45} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+  }
+  for (let i = 0; i < 6; i++) {
+    const a=(i*60)*Math.PI/180, x=cx+r2*Math.cos(a), y=cy+r2*Math.sin(a);
+    p += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="1.5" ry="3.5" fill="${color}" opacity="0.55" transform="rotate(${i*60} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+  }
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="flex-shrink:0"><circle cx="${cx}" cy="${cy}" r="${sz/2-0.5}" fill="rgba(248,246,243,0.7)" stroke="#EDE9E3" stroke-width="0.75"/>${p}<circle cx="${cx}" cy="${cy}" r="${sz*0.11}" fill="#FDFCFA"/></svg>`;
+}
+
+function icVisibleKeys() {
+  return Object.keys(IC_H).filter(k => icFilter === 'all' || IC_H[k].status === icFilter);
+}
+
+function buildIcCal() {
+  const grid = document.getElementById('calGrid');
+  if (!grid) return;
+  const visible = icVisibleKeys();
+  let html = IC_WEEK_DAYS.map(d => `<div class="cal-ic-hdr">${d}</div>`).join('');
+  for (let i = 0; i < 28; i++) {
+    const day = i+1, valid = day <= 28;
+    const isToday = day === IC_TODAY, isSel = day === icSelectedDay;
+    const habits = valid ? (calData[day]||[]).filter(k => visible.includes(k)) : [], n = habits.length;
+    let tCls = '';
+    if (valid && n > 0) tCls = n >= 3 ? 'ic-tall' : habits[0]==='r' ? 'ic-t1' : habits[0]==='g' ? 'ic-t2' : 'ic-t3';
+    const dots = habits.map(k => `<div class="ic-dot" style="background:${IC_H[k].color};opacity:0.75"></div>`).join('');
+    html += `<div class="cal-ic-cell ${tCls}${!valid?' ic-dimmed':''}${valid&&n>0?' ic-has-habits':''}${isToday?' ic-today':''}${isSel?' ic-selected':''}" ${valid?`onclick="icSelectDay(${day})"`:''}><div class="ic-dn-wrap"><div class="ic-dn">${valid?day:''}</div></div>${valid&&n>0?`<div class="ic-dot-row">${dots}</div>`:''}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function icSelectDay(day) { icSelectedDay = day; buildIcCal(); icRenderDetail(day); }
+
+function icRenderDetail(day) {
+  const panel  = document.getElementById('icDetailPanel');
+  const dateEl = document.getElementById('icDetailDate');
+  const rowsEl = document.getElementById('icHabitRows');
+  if (!panel) return;
+  const visible = icVisibleKeys();
+  const habits = (calData[day] || []).filter(k => visible.includes(k));
+  dateEl.textContent = `${IC_DAY_NAMES[(day-1)%7]}, February ${day}, 2026`;
+  if (habits.length === 0) {
+    rowsEl.innerHTML = `<div class="ic-no-habits">No habits logged on this day.</div>`;
+  } else {
+    rowsEl.innerHTML = habits.map(key => {
+      const h = IC_H[key];
+      const wkDone = icWeekCompleted(key, day);
+      const {start, end} = icWeekRange(day);
+      const met = wkDone >= h.weekTarget;
+      const isComplete = h.status === 'complete';
+      const strip = isComplete ? `<div class="ic-completed-strip" style="background:${h.color}"><span>Completed</span></div>` : '';
+      return `<div class="ic-habit-row${isComplete?' has-strip':''}">
+        <div class="ic-habit-identity">${icMiniMandala(h.color,38)}<div><div class="ic-habit-name">${h.name}</div><div class="ic-habit-meta">${h.mandalaName}<br>${h.start} – ${h.end}</div></div></div>
+        <div class="ic-habit-foot">
+          <div class="ic-stat-cell"><div class="ic-stat-lbl">Week of Feb ${start}–${end}</div><div class="ic-stat-val">${wkDone}<span> / ${h.weekTarget}</span></div></div>
+          <div class="ic-status-pill ${met?'met':'not'}"><div class="ic-status-dot" style="background:${met?'#8FA68C':'var(--warm-2)'}"></div>${met?'Goal met ✓':`${h.weekTarget-wkDone} to go`}</div>
+        </div>
+        ${strip}
+      </div>`;
+    }).join('');
+  }
+  panel.classList.add('open');
+}
+
+buildIcCal();
+icRenderDetail(IC_TODAY);
+
+// ─── VIEW SWITCHING ───────────────────────────────────────────
+function switchView(view, tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('view-mandala').style.display = view === 'mandala' ? 'flex' : 'none';
+  const gv = document.getElementById('view-gallery');
+  gv.classList.toggle('show', view === 'gallery');
+  gv.style.display = view === 'gallery' ? 'flex' : 'none';
+  const cv = document.getElementById('view-calendar');
+  cv.classList.toggle('show', view === 'calendar');
+  cv.style.display = view === 'calendar' ? 'flex' : 'none';
+}
+
+// ─── CHECK-IN MODAL ───────────────────────────────────────────
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const checkedDays = new Set(['2026-2-18','2026-2-17','2026-2-16','2026-2-14','2026-2-13','2026-2-11','2026-2-10']);
+let rpCalYear = 2026, rpCalMonth = 1;
+
+function rpPrevMonth() { if (--rpCalMonth < 0) { rpCalMonth = 11; rpCalYear--; } renderRpCal(); }
+function rpNextMonth() { if (++rpCalMonth > 11) { rpCalMonth = 0; rpCalYear++; } renderRpCal(); }
+
+function renderRpCal() {
+  document.getElementById('rpCalMonth').textContent = `${MONTH_NAMES[rpCalMonth]} ${rpCalYear}`;
+  const firstDay = new Date(rpCalYear, rpCalMonth, 1).getDay();
+  const daysInMonth = new Date(rpCalYear, rpCalMonth+1, 0).getDate();
+  const today = new Date();
+  const isCur = today.getFullYear() === rpCalYear && today.getMonth() === rpCalMonth;
+  let html = '';
+  for (let i = 0; i < firstDay; i++) html += `<div class="rp-cal-day blank"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${rpCalYear}-${rpCalMonth+1}-${d}`;
+    const isToday = isCur && today.getDate() === d;
+    html += `<div class="rp-cal-day${isToday?' is-today':''}${checkedDays.has(key)?' checked':''}" onclick="toggleRpDay('${key}',this)">${d}</div>`;
+  }
+  document.getElementById('rpCalDays').innerHTML = html;
+}
+
+function toggleRpDay(key, el) {
+  if (checkedDays.has(key)) { checkedDays.delete(key); el.classList.remove('checked'); }
+  else { checkedDays.add(key); el.classList.add('checked'); }
+}
+
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_NAMES_SHORT = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function checkInToday() {
+  const t = new Date();
+  const key = `${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`;
+  const card = document.getElementById('todayCard');
+  const label = document.getElementById('todayLabel');
+  const circle = document.getElementById('todayCircle');
+  if (checkedDays.has(key)) {
+    checkedDays.delete(key);
+    card.classList.remove('done');
+    label.textContent = 'Check in today';
+    circle.textContent = '';
+  } else {
+    checkedDays.add(key);
+    card.classList.add('done');
+    label.textContent = 'Checked in';
+    circle.textContent = '✓';
+  }
+  if (rpCalYear === t.getFullYear() && rpCalMonth === t.getMonth()) renderRpCal();
+}
+
+// Init today card
+(function() {
+  const t = new Date();
+  document.getElementById('todayMeta').textContent = `${DAY_NAMES_SHORT[t.getDay()]} · ${MONTH_SHORT[t.getMonth()]} ${t.getDate()}`;
+  const key = `${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`;
+  if (checkedDays.has(key)) {
+    document.getElementById('todayCard').classList.add('done');
+    document.getElementById('todayLabel').textContent = 'Checked in';
+    document.getElementById('todayCircle').textContent = '✓';
+  }
+})();
+
+renderRpCal();
+
+// ─── SHARE / SHOP EXPANDABLE ──────────────────────────────────
+function toggleShareShop() {
+  const panel = document.getElementById('shareShopPanel');
+  const arrow = document.getElementById('sstArrow');
+  const isOpen = panel.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+  if (!isOpen) document.getElementById('sharePopup').classList.remove('open');
+}
+
+function openSharePopup(platform, e) {
+  e.stopPropagation();
+  document.getElementById('sharePopupTitle').textContent = 'Share to ' + platform;
+  document.getElementById('sharePopup').classList.toggle('open');
+}
+function doShare() {
+  document.getElementById('sharePopup').classList.remove('open');
+}
+
+function openShopPopup(e) {
+  e.stopPropagation();
+  document.getElementById('shopPopup').classList.toggle('open');
+}
+function doShop() {
+  document.getElementById('shopPopup').classList.remove('open');
+}
+
+// ─── AVATAR DROPDOWN ─────────────────────────────────────────
+function toggleAvatarMenu() {
+  document.getElementById('avatarDropdown').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('avatarMenu').contains(e.target)) {
+    document.getElementById('avatarDropdown').classList.remove('open');
+  }
+  if (!document.getElementById('shareZone').contains(e.target)) {
+    document.getElementById('sharePopup').classList.remove('open');
+  }
+  if (!document.getElementById('shopZone').contains(e.target)) {
+    document.getElementById('shopPopup').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

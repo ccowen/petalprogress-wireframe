@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress — What brings you here?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6; overflow-x: hidden;
+}
+
+.intent-page {
+  padding: 72px 24px 80px;
+  display: flex; justify-content: center;
+}
+
+.intent-card {
+  width: 100%; max-width: 480px;
+}
+
+.intent-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; color: var(--text);
+  text-align: center; margin-bottom: 24px;
+  display: block; text-decoration: none;
+}
+.intent-logo:hover { opacity: .8; }
+
+/* Step indicator */
+.intent-steps {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin-bottom: 32px;
+}
+
+.intent-step {
+  width: 28px; height: 4px; border-radius: 2px;
+}
+.intent-step.done   { background: var(--sage); }
+.intent-step.active { background: var(--text); }
+.intent-step.future { background: var(--warm-2); }
+
+.intent-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 400;
+  text-align: center; margin-bottom: 8px;
+}
+
+.intent-sub {
+  font-size: 13px; color: var(--text-soft);
+  text-align: center; margin-bottom: 32px; line-height: 1.7;
+}
+
+/* Option cards */
+.intent-options {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 24px;
+}
+
+.intent-option {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px;
+  background: var(--surface); border: 1.5px solid var(--warm-1);
+  border-radius: 14px; cursor: pointer;
+  transition: all .18s; text-decoration: none; color: inherit;
+}
+.intent-option:hover {
+  border-color: var(--warm-2);
+  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+  transform: translateY(-1px);
+}
+.intent-option.primary:hover { border-color: var(--sage); }
+.intent-option.secondary:hover { border-color: var(--amber); }
+
+.option-icon {
+  font-size: 22px; flex-shrink: 0; width: 40px; text-align: center;
+}
+
+.option-body { flex: 1; }
+
+.option-label {
+  font-size: 14px; font-weight: 500; color: var(--text);
+  margin-bottom: 2px;
+}
+
+.option-desc {
+  font-size: 12.5px; color: var(--text-muted); line-height: 1.5;
+}
+
+.option-arrow {
+  font-size: 14px; color: var(--warm-2); flex-shrink: 0;
+  transition: transform .15s;
+}
+.intent-option:hover .option-arrow { transform: translateX(3px); color: var(--text-soft); }
+
+/* Confirm arrow button — appears when a card is selected */
+.confirm-arrow-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: var(--sage); color: white;
+  border: none; border-radius: 50%; font-size: 17px;
+  cursor: pointer; transition: background .16s;
+  margin-left: 4px;
+}
+.confirm-arrow-btn:hover { background: #7d9479; }
+
+/* Referral code input — revealed when referred card is selected */
+.referral-expand { margin-top: 10px; }
+.referral-code-input {
+  width: 100%; padding: 9px 12px;
+  background: var(--bg); border: 1.5px solid var(--warm-2);
+  border-radius: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: var(--text); outline: none;
+  transition: border-color .16s;
+}
+.referral-code-input:focus { border-color: var(--sage); }
+.referral-code-input::placeholder { color: var(--text-muted); }
+
+/* Selected card state */
+.intent-option.selected {
+  border-color: var(--sage);
+  box-shadow: 0 4px 16px rgba(143,166,140,.18);
+  transform: translateY(-1px);
+}
+
+/* Admin note */
+.admin-note {
+  font-size: 12px; color: var(--text-muted);
+  text-align: center; line-height: 1.65;
+  border-top: 1px solid var(--warm-1);
+  padding-top: 16px;
+}
+
+.admin-link {
+  color: var(--text-soft); font-weight: 500;
+  text-decoration: none; border-bottom: 1px solid var(--warm-2);
+  cursor: pointer; transition: color .15s;
+}
+.admin-link:hover { color: var(--text); }
+
+/* Confirmation view */
+#confirmView { display: none; }
+
+.confirm-block { text-align: center; padding: 8px 0 28px; }
+.confirm-icon { font-size: 36px; margin-bottom: 18px; }
+.confirm-details {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 14px; padding: 16px 20px; margin: 0 0 24px;
+  text-align: left;
+}
+.confirm-detail-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--text-soft); padding: 5px 0;
+}
+.confirm-detail-row + .confirm-detail-row {
+  border-top: 1px solid var(--warm-1); margin-top: 4px; padding-top: 9px;
+}
+.confirm-detail-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--sage); flex-shrink: 0;
+}
+.confirm-detail-dot.amber { background: var(--amber); }
+
+.btn-confirm {
+  display: inline-block;
+  padding: 13px 32px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border-radius: 12px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; text-decoration: none;
+  transition: background .18s;
+}
+.btn-confirm:hover { background: #111; }
+.btn-confirm.amber {
+  background: var(--amber);
+  box-shadow: 0 4px 16px rgba(196,136,122,.3);
+}
+.btn-confirm.amber:hover { background: #b87060; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<script src="./nav.js"></script>
+
+<div class="intent-page">
+  <div class="intent-card">
+
+    <a href="./index.html" class="intent-logo">𖢻 PetalProgress</a>
+
+    <div class="intent-steps" id="stepDots">
+      <div class="intent-step done"></div>
+      <div class="intent-step active"></div>
+      <div class="intent-step future"></div>
+    </div>
+
+    <!-- View 1: Selection -->
+    <div id="selectionView">
+      <h1 class="intent-title">What brings you here?</h1>
+      <p class="intent-sub">We'll personalise your setup based on how you plan to use PetalProgress.</p>
+
+      <div class="intent-options">
+
+        <a href="#" class="intent-option primary" id="optIndividual" onclick="selectIndividual(); return false;">
+          <div class="option-icon">🌸</div>
+          <div class="option-body">
+            <div class="option-label">I'm tracking a habit for myself</div>
+            <div class="option-desc" id="descIndividual">Build a personal mandala and track your daily practice.</div>
+          </div>
+          <div class="option-arrow" id="arrowIndividual">→</div>
+          <button class="confirm-arrow-btn" id="confirmIndividualBtn"
+            onclick="event.stopPropagation(); chooseIntent('individual');">→</button>
+        </a>
+
+        <a href="#" class="intent-option primary" id="optReferred" onclick="selectReferred(); return false;">
+          <div class="option-icon">◑</div>
+          <div class="option-body">
+            <div class="option-label">I was referred by a gym or coach</div>
+            <div class="option-desc" id="descReferred">Your coach will assign your habits — you just check in daily.</div>
+            <div class="referral-expand" id="referralExpand" style="display:none;">
+              <input class="referral-code-input" type="text" placeholder="Referral code (optional)">
+            </div>
+          </div>
+          <div class="option-arrow" id="arrowReferred">→</div>
+          <button class="confirm-arrow-btn" id="confirmReferredBtn"
+            onclick="event.stopPropagation(); chooseIntent('referred');">→</button>
+        </a>
+
+      </div>
+
+      <a href="#" class="intent-option" id="optAdmin" onclick="selectAdmin(); return false;">
+        <div class="option-icon">◈</div>
+        <div class="option-body">
+          <div class="option-label">I'm setting up a gym or studio</div>
+          <div class="option-desc" id="descAdmin">Invite members, assign habits, and track your whole team from one dashboard.</div>
+        </div>
+        <div class="option-arrow" id="arrowAdmin">→</div>
+        <button class="confirm-arrow-btn" id="confirmAdminBtn"
+          onclick="event.stopPropagation(); chooseIntent('admin');">→</button>
+      </a>
+    </div>
+
+    <!-- View 2: Confirmation -->
+    <div id="confirmView">
+
+      <!-- Individual -->
+      <div class="confirm-block" id="confirmIndividual" style="display:none;">
+        <div class="confirm-icon">🌸</div>
+        <h1 class="intent-title">You're set to start tracking</h1>
+        <p class="intent-sub">You'll set up your first habit inside the app — it only takes a minute.</p>
+        <div class="confirm-details">
+          <div class="confirm-detail-row">
+            <div class="confirm-detail-dot"></div>
+            Your mandala starts empty and fills as you check in each day
+          </div>
+          <div class="confirm-detail-row">
+            <div class="confirm-detail-dot"></div>
+            You can create multiple habits and track them together
+          </div>
+        </div>
+        <a href="./app/onboarding.html" class="btn-confirm">Go to my mandala →</a>
+      </div>
+
+      <!-- Referred -->
+      <div class="confirm-block" id="confirmReferred" style="display:none;">
+        <div class="confirm-icon">◑</div>
+        <h1 class="intent-title">Welcome — your mandala is waiting</h1>
+        <p class="intent-sub">Your coach will assign habits to you. All you need to do is check in each day.</p>
+        <div class="confirm-details">
+          <div class="confirm-detail-row">
+            <div class="confirm-detail-dot"></div>
+            Habits assigned by your coach will appear automatically
+          </div>
+          <div class="confirm-detail-row">
+            <div class="confirm-detail-dot"></div>
+            You can also add your own personal habits alongside them
+          </div>
+        </div>
+        <a href="./app/onboarding-referral.html" class="btn-confirm">Go to my mandala →</a>
+      </div>
+
+      <!-- Admin -->
+      <div class="confirm-block" id="confirmAdmin" style="display:none;">
+        <div class="confirm-icon">◈</div>
+        <h1 class="intent-title">Setting up your team workspace</h1>
+        <p class="intent-sub">We'll walk you through the first steps once you're in the dashboard.</p>
+        <div class="confirm-details">
+          <div class="confirm-detail-row">
+            <div class="confirm-detail-dot amber"></div>
+            Free 7-day trial — up to 10 members, no card required
+          </div>
+          <div class="confirm-detail-row">
+            <div class="confirm-detail-dot amber"></div>
+            Create habits, invite members, and track progress from one place
+          </div>
+        </div>
+        <a href="./app/admin/members.html" class="btn-confirm amber">Go to teams dashboard →</a>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function selectIndividual() {
+  // Reset referred card to default
+  document.getElementById('optReferred').classList.remove('selected');
+  document.getElementById('descReferred').style.display = '';
+  document.getElementById('referralExpand').style.display = 'none';
+  document.getElementById('arrowReferred').style.display = '';
+  document.getElementById('confirmReferredBtn').style.display = 'none';
+
+  // Reset admin card
+  document.getElementById('optAdmin').classList.remove('selected');
+  document.getElementById('descAdmin').style.display = '';
+  document.getElementById('arrowAdmin').style.display = '';
+  document.getElementById('confirmAdminBtn').style.display = 'none';
+
+  // Activate individual card
+  document.getElementById('optIndividual').classList.add('selected');
+  document.getElementById('descIndividual').style.display = 'none';
+  document.getElementById('arrowIndividual').style.display = 'none';
+  document.getElementById('confirmIndividualBtn').style.display = 'flex';
+}
+
+function selectReferred() {
+  // Reset individual card to default
+  document.getElementById('optIndividual').classList.remove('selected');
+  document.getElementById('descIndividual').style.display = '';
+  document.getElementById('arrowIndividual').style.display = '';
+  document.getElementById('confirmIndividualBtn').style.display = 'none';
+
+  // Reset admin card
+  document.getElementById('optAdmin').classList.remove('selected');
+  document.getElementById('descAdmin').style.display = '';
+  document.getElementById('arrowAdmin').style.display = '';
+  document.getElementById('confirmAdminBtn').style.display = 'none';
+
+  // Activate referred card
+  document.getElementById('optReferred').classList.add('selected');
+  document.getElementById('descReferred').style.display = 'none';
+  document.getElementById('referralExpand').style.display = 'block';
+  document.getElementById('arrowReferred').style.display = 'none';
+  document.getElementById('confirmReferredBtn').style.display = 'flex';
+}
+
+function selectAdmin() {
+  // Reset other cards
+  document.getElementById('optIndividual').classList.remove('selected');
+  document.getElementById('descIndividual').style.display = '';
+  document.getElementById('arrowIndividual').style.display = '';
+  document.getElementById('confirmIndividualBtn').style.display = 'none';
+
+  document.getElementById('optReferred').classList.remove('selected');
+  document.getElementById('descReferred').style.display = '';
+  document.getElementById('referralExpand').style.display = 'none';
+  document.getElementById('arrowReferred').style.display = '';
+  document.getElementById('confirmReferredBtn').style.display = 'none';
+
+  // Activate admin card
+  document.getElementById('optAdmin').classList.add('selected');
+  document.getElementById('descAdmin').style.display = 'none';
+  document.getElementById('arrowAdmin').style.display = 'none';
+  document.getElementById('confirmAdminBtn').style.display = 'flex';
+}
+
+function chooseIntent(type) {
+  document.getElementById('selectionView').style.display = 'none';
+  document.getElementById('confirmView').style.display = 'block';
+
+  document.getElementById('confirmIndividual').style.display = type === 'individual' ? 'block' : 'none';
+  document.getElementById('confirmReferred').style.display   = type === 'referred'   ? 'block' : 'none';
+  document.getElementById('confirmAdmin').style.display      = type === 'admin'      ? 'block' : 'none';
+
+  // Advance step indicator to step 3
+  const dots = document.querySelectorAll('#stepDots .intent-step');
+  dots[0].className = 'intent-step done';
+  dots[1].className = 'intent-step done';
+  dots[2].className = 'intent-step active';
+}
+</script>
+
+<script src="./footer.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress Teams — Habits</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6; overflow-x: hidden;
+}
+
+.admin-page {
+  max-width: 860px; margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400;
+}
+
+.action-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 20px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border: none; border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .18s;
+}
+.action-btn:hover { background: #111; }
+
+/* Habit cards */
+.habit-list { display: flex; flex-direction: column; gap: 12px; }
+
+.habit-card {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 16px; padding: 22px 24px;
+  display: flex; align-items: flex-start; gap: 20px;
+  transition: box-shadow .18s;
+}
+.habit-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.06); }
+
+.habit-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+
+.habit-body { flex: 1; }
+
+.habit-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 400; margin-bottom: 4px;
+}
+
+.habit-meta {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;
+}
+
+.habit-meta-dot { color: var(--warm-2); }
+
+.habit-assigned {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+
+.member-pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 100px;
+  background: var(--warm-1); font-size: 12px; color: var(--text-soft);
+}
+
+.member-pill-av {
+  width: 16px; height: 16px; border-radius: 50%;
+  font-size: 8px; font-weight: 600; color: white;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.more-pill {
+  padding: 3px 10px; border-radius: 100px;
+  background: var(--warm-1); font-size: 12px; color: var(--text-muted);
+}
+
+.habit-actions {
+  display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
+}
+
+.habit-action-btn {
+  padding: 6px 14px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; cursor: pointer; border: none;
+  transition: all .15s; white-space: nowrap;
+}
+.habit-action-btn.edit { background: var(--warm-1); color: var(--text-soft); }
+.habit-action-btn.edit:hover { background: var(--warm-2); color: var(--text); }
+.habit-action-btn.assign { background: rgba(143,166,140,.12); color: var(--sage); }
+.habit-action-btn.assign:hover { background: rgba(143,166,140,.22); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<script src="./nav.js"></script>
+
+<div class="admin-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Habits</h1>
+    <button class="action-btn">+ Create habit</button>
+  </div>
+
+  <div class="habit-list">
+
+    <div class="habit-card">
+      <div class="habit-icon" style="background:rgba(143,166,140,.15)">🌅</div>
+      <div class="habit-body">
+        <div class="habit-name">Morning Stretch</div>
+        <div class="habit-meta">
+          <span>Daily</span><span class="habit-meta-dot">·</span>
+          <span>Assigned to 18 members</span>
+        </div>
+        <div class="habit-assigned">
+          <div class="member-pill"><div class="member-pill-av" style="background:#8FA68C">SK</div>Sarah K.</div>
+          <div class="member-pill"><div class="member-pill-av" style="background:#7B9BAF">AR</div>Alex R.</div>
+          <div class="member-pill"><div class="member-pill-av" style="background:#C4887A">MP</div>Maya P.</div>
+          <div class="more-pill">+15 more</div>
+        </div>
+      </div>
+      <div class="habit-actions">
+        <button class="habit-action-btn edit">Edit</button>
+        <button class="habit-action-btn assign">Assign</button>
+      </div>
+    </div>
+
+    <div class="habit-card">
+      <div class="habit-icon" style="background:rgba(123,155,175,.12)">🌙</div>
+      <div class="habit-body">
+        <div class="habit-name">Evening Cooldown</div>
+        <div class="habit-meta">
+          <span>Daily</span><span class="habit-meta-dot">·</span>
+          <span>Assigned to 6 members</span>
+        </div>
+        <div class="habit-assigned">
+          <div class="member-pill"><div class="member-pill-av" style="background:#C4887A">MP</div>Maya P.</div>
+          <div class="member-pill"><div class="member-pill-av" style="background:#8FA68C">RN</div>Riley N.</div>
+          <div class="member-pill"><div class="member-pill-av" style="background:#7B9BAF">EW</div>Emma W.</div>
+          <div class="more-pill">+3 more</div>
+        </div>
+      </div>
+      <div class="habit-actions">
+        <button class="habit-action-btn edit">Edit</button>
+        <button class="habit-action-btn assign">Assign</button>
+      </div>
+    </div>
+
+    <div class="habit-card">
+      <div class="habit-icon" style="background:rgba(196,136,122,.1)">💧</div>
+      <div class="habit-body">
+        <div class="habit-name">Hydration Check-in</div>
+        <div class="habit-meta">
+          <span>3× / week</span><span class="habit-meta-dot">·</span>
+          <span>Assigned to all members</span>
+        </div>
+        <div class="habit-assigned">
+          <div class="more-pill">All 24 members</div>
+        </div>
+      </div>
+      <div class="habit-actions">
+        <button class="habit-action-btn edit">Edit</button>
+        <button class="habit-action-btn assign">Assign</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

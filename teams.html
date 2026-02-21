@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress for Teams — Coaches, Gyms & Wellness Programs</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:         #F8F6F3;
+  --surface:    #FDFCFA;
+  --warm-1:     #EDE9E3;
+  --warm-2:     #D4CEC7;
+  --warm-3:     #9C958D;
+  --text:       #2C2825;
+  --text-soft:  #6B6460;
+  --text-muted: #A09890;
+  --sage:       #8FA68C;
+  --blue:       #7B9BAF;
+  --coral:      #C45A5A;
+  --amber:      #C4887A;
+  --dark:       #1E1A17;
+  --dark-2:     #2A2420;
+  --dark-3:     #342E29;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6;
+  overflow-x: hidden;
+}
+
+
+/* ── HERO ── */
+.hero {
+  background: var(--dark);
+  padding: 100px 52px 0;
+  position: relative; overflow: hidden;
+  min-height: 580px;
+  display: flex; align-items: flex-end;
+}
+
+/* Warm texture */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 40%, rgba(196,136,122,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 80%, rgba(143,166,140,0.07) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: flex-end;
+  position: relative; z-index: 1;
+}
+
+.hero-text { padding-bottom: 72px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 14px; border-radius: 100px;
+  background: rgba(196,136,122,0.15); border: 1px solid rgba(196,136,122,0.3);
+  font-size: 11px; color: var(--amber); letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 22px;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(38px, 4.5vw, 58px);
+  font-weight: 400; line-height: 1.15;
+  color: rgba(255,255,255,0.92);
+  margin-bottom: 20px; letter-spacing: -.01em;
+}
+.hero-title em { font-style: italic; color: rgba(196,136,122,0.85); }
+
+.hero-sub {
+  font-size: 15px; color: rgba(255,255,255,0.45);
+  line-height: 1.85; margin-bottom: 36px;
+  max-width: 460px; font-weight: 300;
+}
+
+.hero-ctas { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.btn-hero-primary {
+  padding: 13px 28px; background: var(--amber); color: white;
+  border-radius: 100px; font-size: 13.5px; text-decoration: none;
+  transition: all .22s; letter-spacing: .03em; font-weight: 500;
+  box-shadow: 0 6px 28px rgba(196,136,122,0.35);
+}
+.btn-hero-primary:hover { background: #b87a6c; transform: translateY(-2px); box-shadow: 0 10px 36px rgba(196,136,122,0.45); }
+.btn-hero-ghost {
+  padding: 13px 22px; color: rgba(255,255,255,0.45);
+  font-size: 13.5px; text-decoration: none; transition: color .2s;
+}
+.btn-hero-ghost:hover { color: rgba(255,255,255,0.8); }
+
+/* Audience chips */
+.audience-chips {
+  display: flex; gap: 8px; margin-top: 32px; flex-wrap: wrap;
+}
+.chip {
+  padding: 5px 14px; border-radius: 100px; font-size: 11.5px;
+  border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.45);
+  transition: all .18s; cursor: pointer;
+}
+.chip.active-chip, .chip:hover {
+  border-color: rgba(196,136,122,0.5); color: rgba(196,136,122,0.9);
+  background: rgba(196,136,122,0.08);
+}
+
+/* Hero visual — admin panel rising from bottom */
+.hero-visual {
+  display: flex; justify-content: center; align-items: flex-end;
+  position: relative;
+}
+.admin-panel-preview {
+  background: var(--dark-2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 20px 20px 0;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 -12px 48px rgba(0,0,0,0.3);
+  animation: riseUp 0.9s 0.2s ease both;
+}
+@keyframes riseUp {
+  from { opacity:0; transform: translateY(30px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.ap-topbar {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.ap-dot { width: 8px; height: 8px; border-radius: 50%; }
+.ap-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 13px;
+  color: rgba(255,255,255,0.5); margin-left: 6px;
+}
+.ap-badge {
+  margin-left: auto; padding: 2px 8px; border-radius: 100px;
+  font-size: 9.5px; background: rgba(196,136,122,0.2); color: var(--amber);
+  letter-spacing: .07em; text-transform: uppercase;
+}
+.ap-stats {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px;
+}
+.ap-stat {
+  background: rgba(255,255,255,0.04); border-radius: 9px; padding: 10px 11px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.ap-stat-n {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  font-weight: 300; color: rgba(255,255,255,0.8); line-height: 1;
+}
+.ap-stat-l { font-size: 9.5px; color: rgba(255,255,255,0.28); margin-top: 2px; text-transform: uppercase; letter-spacing: .07em; }
+
+.ap-member {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 8px;
+  background: rgba(255,255,255,0.03); margin-bottom: 5px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.ap-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px; color: white; flex-shrink: 0;
+}
+.ap-mname { font-size: 11.5px; color: rgba(255,255,255,0.6); flex: 1; }
+.ap-prog-wrap { display: flex; flex-direction: column; gap: 3px; }
+.ap-prog-bar { width: 56px; height: 2.5px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+.ap-prog-fill { height: 100%; border-radius: 2px; }
+.ap-prog-pct { font-size: 9.5px; color: rgba(255,255,255,0.28); }
+
+/* Gradient fade at bottom of panel */
+.ap-fade {
+  height: 32px;
+  background: linear-gradient(to bottom, transparent, var(--dark-2));
+  margin: 0 -20px; position: relative; bottom: 0;
+}
+
+/* ── SECTIONS ── */
+section { padding: 96px 52px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: .14em;
+  color: var(--text-muted); margin-bottom: 11px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px,3.8vw,46px); font-weight: 400;
+  line-height: 1.2; margin-bottom: 14px;
+}
+.section-title em { font-style: italic; color: var(--text-soft); }
+.section-desc {
+  font-size: 15px; color: var(--text-soft); line-height: 1.8;
+  max-width: 580px; font-weight: 300;
+}
+
+/* ── AUDIENCE SECTION ── */
+.audience-section { background: var(--surface); }
+
+.audience-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--warm-1);
+  margin-bottom: 48px; margin-top: 40px;
+}
+.atab {
+  padding: 13px 24px; font-size: 13px; color: var(--text-muted);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all .18s; margin-bottom: -1px; white-space: nowrap;
+}
+.atab:hover { color: var(--text-soft); }
+.atab.on { color: var(--text); border-bottom-color: var(--amber); }
+
+.audience-panel { display: none; animation: fadeUp .25s ease; }
+.audience-panel.show { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.aud-left {}
+.aud-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 26px;
+  font-weight: 400; margin-bottom: 12px; line-height: 1.25;
+}
+.aud-desc {
+  font-size: 14px; color: var(--text-soft); line-height: 1.85;
+  margin-bottom: 24px;
+}
+.aud-points { display: flex; flex-direction: column; gap: 14px; }
+.aud-point {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; background: var(--bg);
+  border-radius: 12px; border: 1px solid var(--warm-1);
+}
+.aud-point-icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.aud-point-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+.aud-point-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+
+/* Scenario card */
+.scenario-card {
+  background: var(--dark); border-radius: 18px; padding: 28px;
+  color: white;
+}
+.sc-eyebrow {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .12em;
+  color: rgba(255,255,255,0.3); margin-bottom: 12px;
+}
+.sc-scenario {
+  font-family: 'Cormorant Garamond', serif; font-size: 17px;
+  font-style: italic; color: rgba(255,255,255,0.65);
+  line-height: 1.7; margin-bottom: 20px;
+  border-left: 2px solid rgba(196,136,122,0.4);
+  padding-left: 14px;
+}
+.sc-steps { display: flex; flex-direction: column; gap: 10px; }
+.sc-step {
+  display: flex; align-items: flex-start; gap: 11px;
+}
+.sc-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: rgba(255,255,255,0.4); flex-shrink: 0; margin-top: 1px;
+}
+.sc-text { font-size: 12.5px; color: rgba(255,255,255,0.5); line-height: 1.65; }
+.sc-text strong { color: rgba(255,255,255,0.8); }
+
+/* ── HOW ADMIN WORKS ── */
+.how-admin { background: var(--bg); }
+
+.permission-showcase {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 52px;
+}
+.perm-card {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 16px; padding: 26px; transition: all .2s;
+}
+.perm-card:hover { border-color: var(--warm-2); box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+.perm-card-icon { font-size: 22px; margin-bottom: 12px; }
+.perm-card-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 21px;
+  font-weight: 400; margin-bottom: 7px;
+}
+.perm-card-desc { font-size: 13px; color: var(--text-soft); line-height: 1.75; margin-bottom: 16px; }
+.perm-toggles { display: flex; flex-direction: column; gap: 8px; }
+.perm-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px; background: var(--bg); border-radius: 9px;
+  border: 1px solid var(--warm-1);
+}
+.perm-toggle-row.always {
+  background: transparent; border-color: transparent;
+  padding: 6px 4px;
+}
+.perm-toggle-lbl { font-size: 12px; color: var(--text-soft); }
+.perm-toggle-row.always .perm-toggle-lbl { color: var(--text-muted); font-size: 11.5px; }
+.perm-check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(143,166,140,0.12); border: 1.5px solid rgba(143,166,140,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--sage);
+}
+.tog {
+  width: 32px; height: 18px; border-radius: 100px;
+  position: relative; flex-shrink: 0; cursor: pointer;
+  transition: background .2s;
+}
+.tog.on { background: var(--sage); }
+.tog.off { background: var(--warm-2); }
+.tog::after {
+  content: ''; position: absolute;
+  width: 13px; height: 13px; border-radius: 50%; background: white;
+  top: 2.5px; transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.tog.on::after { transform: translateX(16px); left: 1.5px; }
+.tog.off::after { transform: translateX(0); left: 2.5px; }
+
+/* Full-width feature strip */
+.feature-strip {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 2px; background: var(--warm-1); border-radius: 18px;
+  overflow: hidden; margin-top: 52px;
+}
+.fs-card {
+  background: var(--surface); padding: 28px 24px;
+  transition: background .2s;
+}
+.fs-card:hover { background: var(--bg); }
+.fs-icon { font-size: 22px; margin-bottom: 12px; }
+.fs-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 19px;
+  font-weight: 400; margin-bottom: 7px;
+}
+.fs-desc { font-size: 12.5px; color: var(--text-soft); line-height: 1.7; }
+
+/* ── PRINT SECTION ── */
+.print-section {
+  background: var(--dark); padding: 96px 52px; position: relative; overflow: hidden;
+}
+.print-section::before {
+  content: '';
+  position: absolute; top:-20%; right:-8%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(196,136,122,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.print-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 72px; align-items: center;
+}
+
+.print-text {}
+.print-eyebrow {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(255,255,255,0.3); margin-bottom: 12px;
+}
+.print-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px,3.8vw,46px); font-weight: 400;
+  color: rgba(255,255,255,0.9); line-height: 1.2; margin-bottom: 16px;
+}
+.print-title em { font-style: italic; color: rgba(196,136,122,0.8); }
+.print-desc { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.85; margin-bottom: 28px; }
+.print-points { display: flex; flex-direction: column; gap: 12px; }
+.print-point {
+  display: flex; gap: 11px; align-items: flex-start;
+  font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.65;
+}
+.print-point-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--amber);
+  flex-shrink: 0; margin-top: 6px;
+}
+
+/* Print visual */
+.print-visual {
+  display: flex; justify-content: center; align-items: center;
+  position: relative;
+}
+.print-stack {
+  position: relative; width: 280px; height: 280px;
+}
+.print-paper {
+  position: absolute;
+  background: rgba(253,252,250,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pp-1 { width: 240px; height: 240px; top: 20px; left: 20px; transform: rotate(5deg); }
+.pp-2 { width: 240px; height: 240px; top: 10px; left: 10px; transform: rotate(2deg); background: rgba(253,252,250,0.07); }
+.pp-3 { width: 240px; height: 240px; top: 0; left: 0; transform: rotate(0deg); background: rgba(253,252,250,0.09); }
+
+/* ── PRICING ── */
+.teams-pricing { background: var(--warm-1); padding: 96px 52px; }
+.pricing-inner { max-width: 1000px; margin: 0 auto; }
+
+.teams-plans {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 48px;
+}
+.tp-card {
+  background: var(--surface); border: 1.5px solid var(--warm-1);
+  border-radius: 20px; padding: 30px; transition: all .2s;
+}
+.tp-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.08); }
+.tp-card.featured {
+  background: var(--dark); border-color: var(--dark);
+}
+.tp-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+.tp-card.featured .tp-label { color: rgba(255,255,255,.3); }
+.tp-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 26px;
+  font-weight: 400; margin-bottom: 4px;
+}
+.tp-card.featured .tp-name { color: rgba(255,255,255,.88); }
+.tp-price {
+  font-family: 'Cormorant Garamond', serif; font-size: 44px;
+  font-weight: 300; line-height: 1; color: var(--text);
+}
+.tp-card.featured .tp-price { color: rgba(255,255,255,.85); }
+.tp-price-note { font-size: 12.5px; color: var(--text-muted); margin-bottom: 20px; margin-top: 4px; }
+.tp-card.featured .tp-price-note { color: rgba(255,255,255,.3); }
+.tp-divider { height: 1px; background: var(--warm-1); margin-bottom: 18px; }
+.tp-card.featured .tp-divider { background: rgba(255,255,255,.08); }
+.tp-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+.tp-feat {
+  display: flex; align-items: flex-start; gap: 9px; font-size: 13px;
+}
+.tp-check {
+  width: 17px; height: 17px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; margin-top: 1px;
+  background: rgba(196,136,122,.12); color: var(--amber);
+}
+.tp-feat-text { color: var(--text-soft); line-height: 1.5; }
+.tp-feat-text strong { color: var(--text); font-weight: 500; }
+.tp-card.featured .tp-feat-text { color: rgba(255,255,255,.5); }
+.tp-card.featured .tp-feat-text strong { color: rgba(255,255,255,.82); }
+.tp-cta {
+  display: block; width: 100%; padding: 12px;
+  border-radius: 11px; font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; font-weight: 500; text-align: center;
+  text-decoration: none; cursor: pointer; border: none;
+  transition: all .2s; letter-spacing: .03em;
+}
+.tp-cta.ghost { background: transparent; border: 1.5px solid var(--warm-2); color: var(--text-soft); }
+.tp-cta.ghost:hover { background: var(--warm-1); color: var(--text); }
+.tp-cta.primary { background: var(--amber); color: white; box-shadow: 0 4px 16px rgba(196,136,122,.3); }
+.tp-cta.primary:hover { background: #b87a6c; transform: translateY(-1px); }
+
+.tp-note {
+  text-align: center; margin-top: 22px;
+  font-size: 13px; color: var(--text-muted); font-style: italic;
+}
+
+/* ── MEMBER EXPERIENCE ── */
+.member-exp { background: var(--bg); }
+.me-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center; margin-top: 52px;
+}
+.me-text {}
+.me-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 26px;
+  font-weight: 400; margin-bottom: 12px; line-height: 1.3;
+}
+.me-desc { font-size: 14px; color: var(--text-soft); line-height: 1.85; margin-bottom: 22px; }
+.me-points { display: flex; flex-direction: column; gap: 10px; }
+.me-point {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: var(--text-soft); line-height: 1.65;
+}
+.me-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); flex-shrink:0; margin-top:6px; }
+
+/* Member journey visual */
+.me-journey {
+  display: flex; flex-direction: column; gap: 0;
+}
+.mj-step {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 14px; margin-bottom: 10px;
+  transition: all .2s; position: relative;
+}
+.mj-step:hover { border-color: var(--warm-2); }
+.mj-connector {
+  width: 1.5px; height: 14px; background: var(--warm-2);
+  margin-left: 26px;
+}
+.mj-icon-wrap {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.mj-body {}
+.mj-title { font-size: 13.5px; font-weight: 500; margin-bottom: 3px; }
+.mj-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.mj-badge {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  padding: 3px 9px; border-radius: 100px; font-size: 10px;
+}
+.mj-badge.admin-assigned { background: rgba(196,136,122,.1); color: var(--amber); }
+.mj-badge.personal { background: rgba(143,166,140,.1); color: var(--sage); }
+.mj-badge.owned { background: var(--warm-1); color: var(--text-muted); }
+
+/* ── FINAL CTA ── */
+.final-cta {
+  background: var(--dark); padding: 96px 52px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.final-cta::before {
+  content: '';
+  position: absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(196,136,122,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+.fc-inner { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+.fc-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px,4vw,50px); font-weight: 400;
+  color: rgba(255,255,255,.9); line-height: 1.2; margin-bottom: 14px;
+}
+.fc-title em { font-style: italic; color: rgba(196,136,122,.8); }
+.fc-desc { font-size: 15px; color: rgba(255,255,255,.38); line-height: 1.8; margin-bottom: 36px; font-weight: 300; }
+.fc-ctas { display: flex; gap: 12px; justify-content: center; }
+.fc-btn-primary {
+  padding: 14px 32px; background: var(--amber); color: white;
+  border-radius: 100px; font-size: 14px; text-decoration: none;
+  transition: all .22s; letter-spacing: .04em; font-weight: 500;
+  box-shadow: 0 6px 28px rgba(196,136,122,.35);
+}
+.fc-btn-primary:hover { background: #b87a6c; transform: translateY(-2px); }
+.fc-btn-ghost {
+  padding: 14px 26px; border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.5); border-radius: 100px;
+  font-size: 14px; text-decoration: none; transition: all .2s;
+}
+.fc-btn-ghost:hover { border-color: rgba(255,255,255,.3); color: rgba(255,255,255,.8); }
+
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<script src="./nav.js"></script>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">◈ For organizations</div>
+      <h1 class="hero-title">Your clients build <em>habits.</em> You see them bloom.</h1>
+      <p class="hero-sub">PetalProgress gives coaches, gyms, and wellness programs a quiet way to assign habits, monitor progress, and celebrate the people doing the work.</p>
+      <div class="hero-ctas">
+        <a href="./signup.html" class="btn-hero-primary">Set up your team</a>
+        <a href="#how-it-works" class="btn-hero-ghost">See how it works →</a>
+      </div>
+    </div>
+
+    <!-- Admin panel preview -->
+    <div class="hero-visual">
+      <div class="admin-panel-preview">
+        <div class="ap-topbar">
+          <div class="ap-dot" style="background:#C45A5A;opacity:.7"></div>
+          <div class="ap-dot" style="background:#C4887A;opacity:.5"></div>
+          <div class="ap-dot" style="background:#8FA68C;opacity:.5"></div>
+          <div class="ap-title">Bloom Wellness Studio</div>
+          <div class="ap-badge">Teams</div>
+        </div>
+        <div class="ap-stats">
+          <div class="ap-stat">
+            <div class="ap-stat-n">12</div>
+            <div class="ap-stat-l">Members</div>
+          </div>
+          <div class="ap-stat">
+            <div class="ap-stat-n">71<span style="font-size:12px;color:rgba(255,255,255,.35)">%</span></div>
+            <div class="ap-stat-l">Avg completion</div>
+          </div>
+          <div class="ap-stat">
+            <div class="ap-stat-n" style="color:#C45A5A">3</div>
+            <div class="ap-stat-l">At risk</div>
+          </div>
+        </div>
+        <div class="ap-member">
+          <div class="ap-av" style="background:#C45A5A">SK</div>
+          <div class="ap-mname">Sarah K.</div>
+          <div class="ap-prog-wrap">
+            <div class="ap-prog-bar"><div class="ap-prog-fill" style="width:80%;background:#8FA68C"></div></div>
+            <div class="ap-prog-pct">80% · 🔥 12 days</div>
+          </div>
+        </div>
+        <div class="ap-member">
+          <div class="ap-av" style="background:#8FA68C">MR</div>
+          <div class="ap-mname">Maya R.</div>
+          <div class="ap-prog-wrap">
+            <div class="ap-prog-bar"><div class="ap-prog-fill" style="width:95%;background:#8FA68C"></div></div>
+            <div class="ap-prog-pct">95% · 🔥 21 days</div>
+          </div>
+        </div>
+        <div class="ap-member" style="opacity:.6">
+          <div class="ap-av" style="background:#C45A5A">AP</div>
+          <div class="ap-mname" style="color:rgba(255,255,255,.35)">Alex P.</div>
+          <div class="ap-prog-wrap">
+            <div class="ap-prog-bar"><div class="ap-prog-fill" style="width:0%"></div></div>
+            <div class="ap-prog-pct" style="color:#C45A5A">7 days · no check-in</div>
+          </div>
+        </div>
+        <div class="ap-fade"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIENCE SECTION -->
+<section class="audience-section">
+  <div class="section-inner">
+    <div class="section-eyebrow">Who it's for</div>
+    <h2 class="section-title">Built for the people <em>guiding</em> others.</h2>
+    <p class="section-desc">Whether you work with 5 clients or 500 members, the team tools scale to fit your relationship with the people you serve.</p>
+
+    <div class="audience-tabs">
+      <div class="atab on" onclick="switchAudience('trainer',this)">Personal Trainers</div>
+      <div class="atab" onclick="switchAudience('gym',this)">Gyms & Studios</div>
+      <div class="atab" onclick="switchAudience('wellness',this)">Wellness Coaches</div>
+    </div>
+
+    <!-- TRAINER -->
+    <div class="audience-panel show" id="aud-trainer">
+      <div class="aud-left">
+        <div class="aud-title">Deep accountability for every client</div>
+        <div class="aud-desc">You know your clients individually. PetalProgress gives you a window into their daily practice — not just what they do in session, but how they show up between them.</div>
+        <div class="aud-points">
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(196,136,122,.1)">📋</div>
+            <div>
+              <div class="aud-point-title">Assign habits per client</div>
+              <div class="aud-point-desc">Each client gets a habit tailored to their program. You control whether they can adjust it or not.</div>
+            </div>
+          </div>
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(143,166,140,.1)">◑</div>
+            <div>
+              <div class="aud-point-title">Check in before sessions</div>
+              <div class="aud-point-desc">Pull up a client's mandala before their appointment. You can see their week at a glance — no asking required.</div>
+            </div>
+          </div>
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(123,155,175,.1)">✦</div>
+            <div>
+              <div class="aud-point-title">Celebrate with a print</div>
+              <div class="aud-point-desc">At the end of a program, generate a printed mandala. A tangible record of what they built.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-eyebrow">How it works · Personal Trainer</div>
+        <div class="sc-scenario">"I have 8 clients. I want each of them tracking their recovery walks between sessions — but I want to see who's actually doing it."</div>
+        <div class="sc-steps">
+          <div class="sc-step">
+            <div class="sc-num">1</div>
+            <div class="sc-text">You create a <strong>"Daily Recovery Walk"</strong> habit in your teams dashboard and assign it to all 8 clients</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">2</div>
+            <div class="sc-text">Each client gets the habit added to their PetalProgress automatically. Their mandala starts blooming every day they walk</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">3</div>
+            <div class="sc-text">You see their completion rates in your dashboard. <strong>Alex hasn't checked in for 5 days</strong> — you know to follow up</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">4</div>
+            <div class="sc-text">At the end of the 12-week program, you generate a <strong>printed mandala</strong> for each client — their year in one image</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GYM -->
+    <div class="audience-panel" id="aud-gym">
+      <div class="aud-left">
+        <div class="aud-title">A membership perk that actually motivates</div>
+        <div class="aud-desc">Gyms don't struggle to get people in the door. They struggle to keep them coming back. PetalProgress gives members a visual reason to maintain their habit — and a beautiful artifact when they do.</div>
+        <div class="aud-points">
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(123,155,175,.1)">◎</div>
+            <div>
+              <div class="aud-point-title">Gifted access model</div>
+              <div class="aud-point-desc">Include Petal+ as a membership benefit. Members set their own habits — you give them the tool.</div>
+            </div>
+          </div>
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(196,136,122,.1)">△</div>
+            <div>
+              <div class="aud-point-title">Spot drop-off before it happens</div>
+              <div class="aud-point-desc">The "at risk" view flags members who haven't checked in. A timely message can save a cancellation.</div>
+            </div>
+          </div>
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(143,166,140,.1)">❋</div>
+            <div>
+              <div class="aud-point-title">Year-end mandala prints</div>
+              <div class="aud-point-desc">Members who frame their mandala become your best marketing. People share beautiful things.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-eyebrow">How it works · Gym</div>
+        <div class="sc-scenario">"We want to give our members something that keeps them engaged between classes — and shows them their progress over the year."</div>
+        <div class="sc-steps">
+          <div class="sc-step">
+            <div class="sc-num">1</div>
+            <div class="sc-text">You enable <strong>gifted Petal+ access</strong> for all active members as part of their membership</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">2</div>
+            <div class="sc-text">Members set their own habits — attendance, class goals, personal challenges — and their mandala grows all year</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">3</div>
+            <div class="sc-text">Your dashboard shows <strong>aggregate engagement</strong> — who's active, who's at risk of churning, milestones to celebrate</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">4</div>
+            <div class="sc-text">In December, you run a <strong>year-end print event</strong>. Members collect their mandala. Some frame it. They post it. You get referrals.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WELLNESS -->
+    <div class="audience-panel" id="aud-wellness">
+      <div class="aud-left">
+        <div class="aud-title">Gentle accountability for behavior change</div>
+        <div class="aud-desc">Wellness coaching is about meeting people where they are. PetalProgress lets you assign habits with the right amount of flexibility — locked down for accountability, or open for autonomy.</div>
+        <div class="aud-points">
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(143,166,140,.1)">◇</div>
+            <div>
+              <div class="aud-point-title">Control per client</div>
+              <div class="aud-point-desc">Some clients need structure. Others need ownership. Set permissions individually — who can edit their habit, their goal, their mandala.</div>
+            </div>
+          </div>
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(196,90,90,.1)">◑</div>
+            <div>
+              <div class="aud-point-title">Progress without pressure</div>
+              <div class="aud-point-desc">The mandala is inherently positive — it shows what was done, not what was missed. A better frame for habit change conversations.</div>
+            </div>
+          </div>
+          <div class="aud-point">
+            <div class="aud-point-icon" style="background:rgba(196,136,122,.1)">🌀</div>
+            <div>
+              <div class="aud-point-title">Personal habits alongside assigned ones</div>
+              <div class="aud-point-desc">Clients can add their own habits to the same mandala. The habit you assigned is a thread in their larger practice.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-eyebrow">How it works · Wellness Coach</div>
+        <div class="sc-scenario">"My clients all have different needs. I want to assign habits but give some of them the freedom to adapt the goal themselves."</div>
+        <div class="sc-steps">
+          <div class="sc-step">
+            <div class="sc-num">1</div>
+            <div class="sc-text">You assign a <strong>"Morning Meditation"</strong> habit to a client. You set it to 5× per week, but allow them to adjust the target</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">2</div>
+            <div class="sc-text">The client adjusts to 3× per week — right for where they are. Their mandala reflects their actual commitment, not an impossible goal</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">3</div>
+            <div class="sc-text">They add a personal <strong>"Journaling"</strong> habit alongside yours. You have the option to see it — or leave it private to them</div>
+          </div>
+          <div class="sc-step">
+            <div class="sc-num">4</div>
+            <div class="sc-text">In your next session, you open their mandala together. <strong>The visual does more than a spreadsheet ever could.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW ADMIN WORKS -->
+<section class="how-admin" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-eyebrow">How teams works</div>
+    <h2 class="section-title">You're in control. <em>Your members aren't locked in.</em></h2>
+    <p class="section-desc">Every habit has its own permission settings. You decide how much control members have over their own practice.</p>
+
+    <div class="permission-showcase">
+      <div class="perm-card">
+        <div class="perm-card-icon">🔒</div>
+        <div class="perm-card-title">Assigned & locked</div>
+        <div class="perm-card-desc">You set the habit, the name, and the weekly target. Members check in — that's it. Best for structured programs where consistency is the point.</div>
+        <div class="perm-toggles">
+          <div class="perm-toggle-row always">
+            <div class="perm-toggle-lbl">✦ You can edit habit — name, description, weekly target</div>
+            <div class="perm-check">✓</div>
+          </div>
+          <div class="perm-toggle-row always">
+            <div class="perm-toggle-lbl">✦ User can edit design — colors and theme</div>
+            <div class="perm-check">✓</div>
+          </div>
+          <div class="perm-toggle-row">
+            <div class="perm-toggle-lbl">User can edit habit
+              <span style="display:block;font-size:11px;color:var(--text-muted);margin-top:1px;">Name, description, and weekly target</span>
+            </div>
+            <div class="tog off"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:11px 13px;background:var(--warm-1);border-radius:9px;font-size:11.5px;color:var(--text-muted);line-height:1.65;">
+          Members always keep their own account and can create up to 3 personal mandalas independently. Assigned mandalas never count against that limit.
+        </div>
+      </div>
+
+      <div class="perm-card">
+        <div class="perm-card-icon">🌿</div>
+        <div class="perm-card-title">Assigned & flexible</div>
+        <div class="perm-card-desc">You assign the habit but let members make it their own — they can adapt the name, description, and weekly target to fit where they are.</div>
+        <div class="perm-toggles">
+          <div class="perm-toggle-row always">
+            <div class="perm-toggle-lbl">✦ You can edit habit — name, description, weekly target</div>
+            <div class="perm-check">✓</div>
+          </div>
+          <div class="perm-toggle-row always">
+            <div class="perm-toggle-lbl">✦ User can edit design — colors and theme</div>
+            <div class="perm-check">✓</div>
+          </div>
+          <div class="perm-toggle-row">
+            <div class="perm-toggle-lbl">User can edit habit
+              <span style="display:block;font-size:11px;color:var(--text-muted);margin-top:1px;">Name, description, and weekly target</span>
+            </div>
+            <div class="tog on"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:11px 13px;background:rgba(143,166,140,0.08);border:1px solid rgba(143,166,140,0.2);border-radius:9px;font-size:11.5px;color:var(--text-soft);line-height:1.65;">
+          "Morning Meditation" might become "Breathing practice before coffee" — still the habit you assigned, just made personal to them.
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-strip">
+      <div class="fs-card">
+        <div class="fs-icon">◎</div>
+        <div class="fs-title">Member roster</div>
+        <div class="fs-desc">See all your members at a glance — completion rates and at-risk alerts. Click any member for a detailed view.</div>
+      </div>
+      <div class="fs-card">
+        <div class="fs-icon">△</div>
+        <div class="fs-title">At-risk alerts</div>
+        <div class="fs-desc">Members who haven't checked in for 7+ days are flagged automatically. Reach out before the habit breaks.</div>
+      </div>
+      <div class="fs-card">
+        <div class="fs-icon">✦</div>
+        <div class="fs-title">Milestone moments</div>
+        <div class="fs-desc">First mandala completed, 6-month anniversaries, petal milestones — surfaced so you can celebrate them.</div>
+      </div>
+      <div class="fs-card">
+        <div class="fs-icon">◈</div>
+        <div class="fs-title">Member data stays theirs</div>
+        <div class="fs-desc">If a member leaves your program, they keep their account and mandalas. No data held hostage.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINT SECTION -->
+<section class="print-section">
+  <div class="print-inner">
+    <div class="print-text">
+      <div class="print-eyebrow">The mandala shop</div>
+      <h2 class="print-title">End the year with something <em>tangible.</em></h2>
+      <p class="print-desc">At the end of a program or year, generate a printed mandala for each member. A real object that captures a year of showing up.</p>
+      <div class="print-points">
+        <div class="print-point">
+          <div class="print-point-dot"></div>
+          High-quality archival paper prints, mailed directly
+        </div>
+        <div class="print-point">
+          <div class="print-point-dot"></div>
+          Batch generation — order for your whole roster at once
+        </div>
+        <div class="print-point">
+          <div class="print-point-dot"></div>
+          Members who frame it share it. Organic referrals, no ad spend
+        </div>
+        <div class="print-point">
+          <div class="print-point-dot"></div>
+          Buttons and magnets available as smaller celebration items
+        </div>
+      </div>
+    </div>
+
+    <div class="print-visual">
+      <div class="print-stack">
+        <div class="print-paper pp-1">
+          <svg width="160" height="160" viewBox="0 0 160 160" id="printMandala1"></svg>
+        </div>
+        <div class="print-paper pp-2">
+          <svg width="160" height="160" viewBox="0 0 160 160" id="printMandala2"></svg>
+        </div>
+        <div class="print-paper pp-3">
+          <svg width="160" height="160" viewBox="0 0 160 160" id="printMandala3"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBER EXPERIENCE -->
+<section class="member-exp">
+  <div class="section-inner">
+    <div class="me-grid">
+      <div class="me-text">
+        <div class="section-eyebrow">Member experience</div>
+        <h2 class="section-title" style="font-size:clamp(26px,3vw,38px);">From your client's <em>perspective.</em></h2>
+        <p class="me-desc">Your members don't experience PetalProgress as a management tool. They experience it as their own beautiful habit tracker that happens to include a habit you gave them.</p>
+        <div class="me-points">
+          <div class="me-point"><div class="me-dot"></div>They see their own mandala growing — not a dashboard you control</div>
+          <div class="me-point"><div class="me-dot"></div>Assigned habits blend naturally alongside personal ones</div>
+          <div class="me-point"><div class="me-dot"></div>Their account and data are theirs forever, regardless of your program</div>
+          <div class="me-point"><div class="me-dot"></div>The app doesn't feel like accountability software — it feels like theirs</div>
+        </div>
+      </div>
+
+      <div class="me-journey">
+        <div class="mj-step">
+          <div class="mj-icon-wrap" style="background:rgba(196,136,122,.1)">📧</div>
+          <div class="mj-body">
+            <div class="mj-title">Receive an invite from their coach</div>
+            <div class="mj-desc">A simple email invite. They create their own account — independent of you.</div>
+          </div>
+          <div class="mj-badge admin-assigned">From you</div>
+        </div>
+        <div class="mj-connector"></div>
+        <div class="mj-step">
+          <div class="mj-icon-wrap" style="background:rgba(143,166,140,.1)">🌸</div>
+          <div class="mj-body">
+            <div class="mj-title">See their assigned habit in their gallery</div>
+            <div class="mj-desc">The habit you created appears in their mandala. They customize the theme and colors.</div>
+          </div>
+          <div class="mj-badge admin-assigned">Assigned habit</div>
+        </div>
+        <div class="mj-connector"></div>
+        <div class="mj-step">
+          <div class="mj-icon-wrap" style="background:rgba(143,166,140,.1)">➕</div>
+          <div class="mj-body">
+            <div class="mj-title">Add their own habit alongside</div>
+            <div class="mj-desc">Reading, journaling, something personal. Their mandala, their practice.</div>
+          </div>
+          <div class="mj-badge personal">Personal habit</div>
+        </div>
+        <div class="mj-connector"></div>
+        <div class="mj-step">
+          <div class="mj-icon-wrap" style="background:rgba(123,155,175,.1)">✦</div>
+          <div class="mj-body">
+            <div class="mj-title">Keep their mandala after the program ends</div>
+            <div class="mj-desc">Their account stays active. Their mandalas are permanently theirs.</div>
+          </div>
+          <div class="mj-badge owned">Always theirs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="teams-pricing">
+  <div class="pricing-inner">
+    <div class="section-eyebrow">Teams pricing</div>
+    <h2 class="section-title">Simple and <em>scalable.</em></h2>
+    <p class="section-desc">Start with a small group and grow. No seat minimums, no annual lock-in required.</p>
+
+    <div class="teams-plans">
+      <div class="tp-card">
+        <div class="tp-label">For small groups</div>
+        <div class="tp-name">Starter</div>
+        <div class="tp-price">$19<span style="font-size:20px;color:var(--text-muted)">/mo</span></div>
+        <div class="tp-price-note">Up to 10 members · billed monthly</div>
+        <div class="tp-divider"></div>
+        <div class="tp-features">
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text"><strong>Up to 10 members</strong></div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text"><strong>Assign habits</strong> with permission controls</div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text"><strong>Teams dashboard</strong> — roster, at-risk alerts</div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text">Members get <strong>Petal+ included</strong></div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text">Print mandala generation</div>
+          </div>
+        </div>
+        <a href="./signup.html" class="tp-cta ghost">Start free trial</a>
+      </div>
+
+      <div class="tp-card featured">
+        <div class="tp-label">For larger programs</div>
+        <div class="tp-name">Studio</div>
+        <div class="tp-price">$49<span style="font-size:20px;color:rgba(255,255,255,.35)">/mo</span></div>
+        <div class="tp-price-note">Up to 50 members · save 15% annually</div>
+        <div class="tp-divider"></div>
+        <div class="tp-features">
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text"><strong>Up to 50 members</strong></div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text">Everything in Starter</div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text"><strong>Bulk print ordering</strong> — one order for all members</div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text"><strong>Milestone alerts</strong> + engagement reporting</div>
+          </div>
+          <div class="tp-feat">
+            <div class="tp-check">✓</div>
+            <div class="tp-feat-text">Priority support</div>
+          </div>
+        </div>
+        <a href="./signup.html" class="tp-cta primary">Start free trial</a>
+      </div>
+    </div>
+    <div class="tp-note">Need more than 50 members? <a href="/contact" style="color:var(--amber);text-decoration:none;">Get in touch →</a></div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final-cta">
+  <div class="fc-inner">
+    <h2 class="fc-title">Ready to give your clients something <em>beautiful?</em></h2>
+    <p class="fc-desc">Set up your team in minutes. Your first 14 days are free — no credit card required.</p>
+    <div class="fc-ctas">
+      <a href="./signup.html" class="fc-btn-primary">Set up your team</a>
+      <a href="/contact" class="fc-btn-ghost">Request a demo</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<script src="./footer.js"></script>
+
+<script>
+// ── AUDIENCE TABS ─────────────────────────────────────
+function switchAudience(id, el) {
+  // Hide all panels
+  document.querySelectorAll('.audience-panel').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.atab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active-chip'));
+
+  // Show selected
+  const panel = document.getElementById('aud-' + id);
+  if (panel) panel.classList.add('show');
+
+  // Activate tab
+  if (el) {
+    el.classList.add('on');
+    el.classList.add('active-chip');
+  }
+
+  // Sync tabs and chips
+  document.querySelectorAll('.atab').forEach(t => {
+    if (t.getAttribute('onclick').includes(id)) t.classList.add('on');
+  });
+  document.querySelectorAll('.chip').forEach(c => {
+    if (c.getAttribute('onclick').includes(id)) c.classList.add('active-chip');
+  });
+}
+
+// ── PRINT MANDALAS ────────────────────────────────────
+function drawMandala(svgId, color, sz) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const cx = sz/2, cy = sz/2;
+  let h = '';
+  const rings = [
+    { n:8,  r:sz*0.38, rx:sz*0.04, ry:sz*0.13, filled:undefined },
+    { n:12, r:sz*0.27, rx:sz*0.035,ry:sz*0.10, filled:9 },
+    { n:6,  r:sz*0.17, rx:sz*0.03, ry:sz*0.07, filled:undefined },
+  ];
+  rings.forEach(ring => {
+    for (let i=0; i<ring.n; i++) {
+      const a = (i*(360/ring.n))*Math.PI/180;
+      const x = cx + ring.r*Math.cos(a), y = cy + ring.r*Math.sin(a);
+      const filled = ring.filled === undefined ? true : i < ring.filled;
+      h += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${ring.rx.toFixed(2)}" ry="${ring.ry.toFixed(2)}" fill="${filled ? color : 'rgba(255,255,255,0.08)'}" opacity="${filled ? 0.8 : 0.3}" transform="rotate(${(i*(360/ring.n)).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+    }
+  });
+  h += `<circle cx="${cx}" cy="${cy}" r="${sz*0.09}" fill="rgba(253,252,250,0.15)"/>`;
+  svg.innerHTML = h;
+}
+
+drawMandala('printMandala1', 'rgba(196,90,90,0.6)',   160);
+drawMandala('printMandala2', 'rgba(143,166,140,0.6)', 160);
+drawMandala('printMandala3', 'rgba(196,136,122,0.7)', 160);
+</script>
+</body>
+</html>

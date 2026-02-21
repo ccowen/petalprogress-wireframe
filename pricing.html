@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress — Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --blue:      #7B9BAF;
+  --coral:     #C45A5A;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+  --dark-2:    #2A2420;
+  --petal-plus:#8FA68C;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top:0; z-index:100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 52px;
+  background: rgba(248,246,243,0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(212,206,199,0.5);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px; font-weight: 500; color: var(--text);
+  text-decoration: none; display: flex; align-items: center; gap: 9px;
+}
+.nav-links { display: flex; align-items: center; gap: 26px; }
+.nav-link { font-size: 13px; color: var(--text-soft); text-decoration: none; transition: color .18s; }
+.nav-link:hover { color: var(--text); }
+.nav-cta {
+  padding: 8px 20px; background: var(--text); color: var(--bg);
+  border-radius: 100px; font-size: 12.5px; text-decoration: none;
+  transition: all .2s; letter-spacing: .03em;
+}
+.nav-cta:hover { background: var(--dark); }
+
+/* ── HERO ── */
+.pricing-hero {
+  text-align: center; padding: 80px 52px 60px;
+  background: var(--bg);
+}
+.pricing-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 14px; border-radius: 100px;
+  background: rgba(143,166,140,0.1); border: 1px solid rgba(143,166,140,0.25);
+  font-size: 11px; color: var(--sage); letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 18px;
+}
+.pricing-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px,5vw,56px); font-weight: 400; line-height: 1.15;
+  margin-bottom: 14px; letter-spacing: -.01em;
+}
+.pricing-title em { font-style: italic; color: var(--text-soft); }
+.pricing-sub {
+  font-size: 15px; color: var(--text-soft); max-width: 520px;
+  margin: 0 auto 32px; line-height: 1.8; font-weight: 300;
+}
+
+/* Billing toggle */
+.billing-toggle {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--warm-1); border-radius: 100px;
+  padding: 5px 6px; margin-bottom: 6px;
+}
+.btog-opt {
+  padding: 7px 20px; border-radius: 100px; font-size: 12.5px;
+  cursor: pointer; transition: all .2s; color: var(--text-muted);
+  user-select: none;
+}
+.btog-opt.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.billing-note { font-size: 11.5px; color: var(--sage); height: 18px; }
+
+/* ── PRICING CARDS ── */
+.cards-wrap {
+  max-width: 900px; margin: 0 auto; padding: 0 52px 80px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+
+.plan-card {
+  background: var(--surface); border: 1.5px solid var(--warm-1);
+  border-radius: 22px; padding: 32px; position: relative;
+  transition: all .2s;
+}
+.plan-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.06); }
+.plan-card.featured {
+  background: var(--dark); border-color: var(--dark);
+  box-shadow: 0 16px 48px rgba(30,26,23,.18);
+}
+
+.plan-pill {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  padding: 4px 16px; border-radius: 100px; font-size: 10.5px;
+  font-weight: 500; letter-spacing: .07em; white-space: nowrap;
+  background: var(--sage); color: white;
+}
+
+.plan-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400; margin-bottom: 4px;
+}
+.plan-card.featured .plan-name { color: rgba(255,255,255,.9); }
+
+.plan-price-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+.plan-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px; font-weight: 300; line-height: 1;
+  color: var(--text);
+}
+.plan-card.featured .plan-price { color: rgba(255,255,255,.9); }
+.plan-price-per { font-size: 13px; color: var(--text-muted); }
+.plan-card.featured .plan-price-per { color: rgba(255,255,255,.35); }
+.plan-price-annual {
+  font-size: 11.5px; color: var(--sage); margin-bottom: 18px;
+  min-height: 18px;
+}
+
+.plan-desc {
+  font-size: 13px; color: var(--text-soft); line-height: 1.7;
+  margin-bottom: 24px; min-height: 56px;
+}
+.plan-card.featured .plan-desc { color: rgba(255,255,255,.45); }
+
+.plan-divider { height: 1px; background: var(--warm-1); margin-bottom: 20px; }
+.plan-card.featured .plan-divider { background: rgba(255,255,255,.08); }
+
+/* Feature list */
+.feature-list { display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; }
+.feat {
+  display: flex; align-items: flex-start; gap: 10px; font-size: 13px;
+}
+.feat-check {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; margin-top: 1px;
+}
+.feat-check.yes { background: rgba(143,166,140,.15); color: var(--sage); }
+.feat-check.yes-bright { background: rgba(143,166,140,.2); color: #6a9068; }
+.feat-check.no  { background: var(--warm-1); color: var(--warm-3); }
+.plan-card.featured .feat-check.yes  { background: rgba(143,166,140,.2); color: var(--sage); }
+.plan-card.featured .feat-check.no  { background: rgba(255,255,255,.07); color: rgba(255,255,255,.2); }
+
+.feat-text { color: var(--text-soft); line-height: 1.5; }
+.feat-text strong { color: var(--text); font-weight: 500; }
+.plan-card.featured .feat-text { color: rgba(255,255,255,.55); }
+.plan-card.featured .feat-text strong { color: rgba(255,255,255,.85); }
+.feat-text .dim { color: var(--text-muted); font-size: 12px; }
+.plan-card.featured .feat-text .dim { color: rgba(255,255,255,.28); }
+
+/* Discount tag */
+.feat-tag {
+  display: inline-flex; align-items: center;
+  padding: 1px 7px; border-radius: 100px; font-size: 10.5px;
+  background: rgba(143,166,140,.15); color: var(--sage); margin-left: 5px;
+}
+
+/* CTAs */
+.plan-cta {
+  display: block; width: 100%; padding: 13px;
+  border-radius: 12px; font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; font-weight: 500; text-align: center;
+  text-decoration: none; cursor: pointer; border: none;
+  transition: all .22s; letter-spacing: .03em;
+}
+.plan-cta.free-cta {
+  background: transparent; border: 1.5px solid var(--warm-2); color: var(--text-soft);
+}
+.plan-cta.free-cta:hover { background: var(--warm-1); color: var(--text); }
+.plan-cta.paid-cta {
+  background: var(--sage); color: white;
+  box-shadow: 0 4px 16px rgba(143,166,140,.35);
+}
+.plan-cta.paid-cta:hover { background: #7d9479; box-shadow: 0 6px 22px rgba(143,166,140,.45); transform: translateY(-1px); }
+
+/* ── COMPARISON TABLE ── */
+.compare-wrap {
+  max-width: 860px; margin: 0 auto 100px; padding: 0 52px;
+}
+.compare-toggle {
+  text-align: center; margin-bottom: 28px;
+}
+.compare-toggle-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13px; color: var(--text-muted); cursor: pointer;
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
+  transition: color .16s;
+}
+.compare-toggle-btn:hover { color: var(--text-soft); }
+.caret { transition: transform .2s; font-size: 10px; }
+.caret.open { transform: rotate(180deg); }
+
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  display: none;
+}
+.compare-table.show { display: table; animation: fadeUp .2s ease; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.ct-head { background: var(--surface); }
+.ct-head th {
+  padding: 14px 20px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--text-muted); font-weight: 400;
+  text-align: left; border-bottom: 1px solid var(--warm-1);
+}
+.ct-head th:not(:first-child) { text-align: center; }
+.ct-head .th-petal { color: var(--sage); }
+
+.ct-section td {
+  padding: 10px 20px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--text-muted); font-weight: 500;
+  background: var(--warm-1); border-top: 1px solid var(--warm-2);
+}
+
+.ct-row td {
+  padding: 13px 20px; font-size: 13px; color: var(--text-soft);
+  border-bottom: 1px solid var(--warm-1); background: var(--surface);
+}
+.ct-row:last-child td { border-bottom: none; }
+.ct-row td:not(:first-child) { text-align: center; }
+.ct-check-y { color: var(--sage); font-size: 15px; }
+.ct-check-n { color: var(--warm-3); font-size: 15px; }
+.ct-val { font-size: 13px; color: var(--text-soft); }
+.ct-petal { color: var(--sage); }
+
+/* ── SHOP SECTION ── */
+.shop-section {
+  background: var(--dark); padding: 100px 52px;
+  position: relative; overflow: hidden;
+}
+.shop-section::before {
+  content: '';
+  position: absolute; top: -30%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(143,166,140,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.shop-inner { max-width: 1200px; margin: 0 auto; }
+.shop-header { margin-bottom: 52px; }
+.shop-eyebrow {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(255,255,255,.3); margin-bottom: 10px;
+}
+.shop-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px,4vw,46px); font-weight: 400;
+  color: rgba(255,255,255,.88); line-height: 1.2; margin-bottom: 12px;
+}
+.shop-title em { font-style: italic; color: rgba(143,166,140,.8); }
+.shop-sub { font-size: 14px; color: rgba(255,255,255,.38); line-height: 1.8; max-width: 520px; }
+
+/* Petal+ banner */
+.petal-plus-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(143,166,140,.1); border: 1px solid rgba(143,166,140,.25);
+  border-radius: 14px; padding: 14px 20px; margin-bottom: 44px;
+  max-width: 560px;
+}
+.ppb-icon { font-size: 20px; }
+.ppb-text { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.65; }
+.ppb-text strong { color: var(--sage); }
+
+/* Shop grid */
+.shop-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
+}
+.shop-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px; overflow: hidden;
+  transition: all .22s; cursor: pointer;
+}
+.shop-card:hover {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.14);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,.25);
+}
+
+/* Product visual */
+.shop-card-visual {
+  height: 180px; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.shop-card-visual svg { position: relative; z-index: 1; }
+
+/* Download card */
+.visual-download { background: linear-gradient(135deg, rgba(123,155,175,.15), rgba(143,166,140,.12)); }
+/* Print card */
+.visual-print { background: linear-gradient(135deg, rgba(196,90,90,.1), rgba(196,136,122,.1)); }
+/* Button card */
+.visual-button { background: linear-gradient(135deg, rgba(143,166,140,.12), rgba(196,136,122,.1)); }
+/* Magnet card */
+.visual-magnet { background: linear-gradient(135deg, rgba(123,155,175,.12), rgba(156,143,141,.1)); }
+
+.shop-card-body { padding: 18px 18px 20px; }
+.shop-card-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 19px;
+  font-weight: 400; color: rgba(255,255,255,.82); margin-bottom: 5px;
+}
+.shop-card-desc { font-size: 12px; color: rgba(255,255,255,.35); line-height: 1.65; margin-bottom: 14px; }
+
+.shop-price-row { display: flex; align-items: center; justify-content: space-between; }
+.price-block { display: flex; flex-direction: column; }
+.price-main { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; color: rgba(255,255,255,.75); }
+.price-sub { font-size: 10.5px; color: rgba(255,255,255,.25); }
+.price-petal {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 100px; font-size: 10.5px;
+  background: rgba(143,166,140,.15); color: var(--sage);
+  border: 1px solid rgba(143,166,140,.25);
+}
+.price-petal-amt { font-weight: 500; }
+
+/* ── FAQ / GUARANTEE ── */
+.faq-section { padding: 80px 52px; max-width: 760px; margin: 0 auto; }
+.faq-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 32px;
+  font-weight: 400; margin-bottom: 36px; text-align: center;
+}
+.faq-item {
+  border-bottom: 1px solid var(--warm-1); padding: 18px 0; cursor: pointer;
+}
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 14px; font-weight: 500; color: var(--text);
+}
+.faq-caret { font-size: 11px; color: var(--text-muted); transition: transform .2s; }
+.faq-item.open .faq-caret { transform: rotate(180deg); }
+.faq-a {
+  font-size: 13.5px; color: var(--text-soft); line-height: 1.8;
+  max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .2s;
+}
+.faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+/* Guarantee badge */
+.guarantee {
+  text-align: center; padding: 52px 52px 0; max-width: 560px;
+  margin: 0 auto;
+}
+.guarantee-icon { font-size: 32px; margin-bottom: 12px; }
+.guarantee-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  font-weight: 400; margin-bottom: 8px;
+}
+.guarantee-text { font-size: 13px; color: var(--text-muted); line-height: 1.75; }
+
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<script src="./nav.js"></script>
+
+
+<!-- HERO -->
+<div class="pricing-hero">
+  <div class="pricing-eyebrow">✦ Simple pricing</div>
+  <h1 class="pricing-title">Start free.<br><em>Bloom further</em> for $2.99.</h1>
+  <p class="pricing-sub">You don't need to subscribe to use PetalProgress. The free plan lets you track 3 habits for a full year — no trial, no expiry, no credit card. Petal+ is for people who want to go deeper.</p>
+
+  <!-- Billing toggle -->
+  <div class="billing-toggle">
+    <div class="btog-opt active" onclick="setBilling('monthly',this)">Monthly</div>
+    <div class="btog-opt" onclick="setBilling('annual',this)">Annual</div>
+  </div>
+  <div class="billing-note" id="billingNote"></div>
+</div>
+
+<!-- PRICING CARDS -->
+<div class="cards-wrap">
+
+  <!-- Free -->
+  <div class="plan-card">
+    <div class="plan-name">Free</div>
+    <div class="plan-price-row">
+      <div class="plan-price">$0</div>
+    </div>
+    <div class="plan-price-annual">&nbsp;</div>
+    <div class="plan-desc">Everything you need to genuinely track a habit. Not a trial — 3 habits, each for a full year, free forever.</div>
+    <div class="plan-divider"></div>
+    <div class="feature-list">
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>3 active mandalas</strong><br><span class="dim">Full check-in, gallery</span></div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>All 4 themes + 6 petal colors</strong></div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Calendar view</strong> + weekly progress</div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Mandala shop</strong> — full price</div>
+      </div>
+      <div class="feat">
+        <div class="feat-check no">–</div>
+        <div class="feat-text" style="color:var(--text-muted)">Email reminders</div>
+      </div>
+      <div class="feat">
+        <div class="feat-check no">–</div>
+        <div class="feat-text" style="color:var(--text-muted)">Year-end export</div>
+      </div>
+    </div>
+    <a href="#" class="plan-cta free-cta">Start tracking free</a>
+    <div style="text-align:center;margin-top:12px;font-size:11.5px;color:var(--text-muted);">No credit card · No trial · Free forever</div>
+  </div>
+
+  <!-- Petal+ -->
+  <div class="plan-card featured">
+    <div class="plan-pill">Most popular</div>
+    <div class="plan-name">Petal+</div>
+    <div class="plan-price-row">
+      <div class="plan-price" id="petalPrice">$2.99</div>
+      <div class="plan-price-per">/mo</div>
+    </div>
+    <div class="plan-price-annual" id="petalAnnualNote">&nbsp;</div>
+    <div class="plan-desc">For the committed practitioner. Reminders, unlimited mandalas, and a discount every time you order from the shop.</div>
+    <div class="plan-divider"></div>
+    <div class="feature-list">
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Unlimited mandalas</strong></div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>All 4 themes + 6 petal colors</strong></div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Calendar view</strong> + weekly progress</div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text">
+          <strong>20% off everything in the shop</strong>
+          <span class="feat-tag">Petal+ discount</span>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Email reminders</strong><br><span class="dim">Daily, weekly, or custom schedule</span></div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Year-end export</strong><br><span class="dim">High-res PNG + SVG, free</span></div>
+      </div>
+    </div>
+    <a href="#" class="plan-cta paid-cta">Start Petal+ free for 7 days</a>
+  </div>
+
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="compare-wrap">
+  <div class="compare-toggle">
+    <button class="compare-toggle-btn" onclick="toggleCompare(this)">
+      See full comparison <span class="caret" id="compareCaret">▼</span>
+    </button>
+  </div>
+
+  <table class="compare-table" id="compareTable">
+    <thead class="ct-head">
+      <tr>
+        <th style="width:50%">Feature</th>
+        <th>Free</th>
+        <th class="th-petal">Petal+</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="ct-section"><td colspan="3">Mandalas</td></tr>
+      <tr class="ct-row"><td>Active mandalas</td><td class="ct-val">3</td><td class="ct-val ct-petal">Unlimited</td></tr>
+      <tr class="ct-row"><td>Completed mandalas saved</td><td class="ct-check-y">✓</td><td class="ct-check-y ct-petal">✓</td></tr>
+      <tr class="ct-row"><td>All themes & petal colors</td><td class="ct-check-y">✓</td><td class="ct-check-y ct-petal">✓</td></tr>
+      <tr class="ct-row"><td>Year-end high-res export</td><td class="ct-check-n">–</td><td class="ct-check-y ct-petal">✓ free</td></tr>
+
+      <tr class="ct-section"><td colspan="3">Tracking</td></tr>
+      <tr class="ct-row"><td>Daily check-in</td><td class="ct-check-y">✓</td><td class="ct-check-y ct-petal">✓</td></tr>
+      <tr class="ct-row"><td>Calendar view</td><td class="ct-check-y">✓</td><td class="ct-check-y ct-petal">✓</td></tr>
+      <tr class="ct-row"><td>Email reminders</td><td class="ct-check-n">–</td><td class="ct-check-y ct-petal">✓</td></tr>
+
+      <tr class="ct-section"><td colspan="3">Shop</td></tr>
+      <tr class="ct-row"><td>Access to mandala shop</td><td class="ct-check-y">✓ full price</td><td class="ct-check-y ct-petal">✓ 20% off</td></tr>
+      <tr class="ct-row"><td>High-res downloads</td><td class="ct-val">$2.99 each</td><td class="ct-val ct-petal">$2.39 each</td></tr>
+      <tr class="ct-row"><td>Physical prints</td><td class="ct-val">Full price</td><td class="ct-val ct-petal">20% off</td></tr>
+      <tr class="ct-row"><td>Buttons & magnets</td><td class="ct-val">Full price</td><td class="ct-val ct-petal">20% off</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SHOP SECTION -->
+<section class="shop-section" id="shop">
+  <div class="shop-inner">
+    <div class="shop-header">
+      <div class="shop-eyebrow">The Mandala Shop</div>
+      <h2 class="shop-title">Your practice, <em>made physical.</em></h2>
+      <p class="shop-sub">Every mandala you grow is yours to hold. Order prints, buttons, and magnets — or download high-res files to print yourself.</p>
+    </div>
+
+    <div class="petal-plus-banner">
+      <div class="ppb-icon">✦</div>
+      <div class="ppb-text">
+        <strong>Petal+ members get 20% off everything in the shop.</strong>
+        At $2.99/mo, one print order pays for itself.
+      </div>
+    </div>
+
+    <div class="shop-grid">
+
+      <!-- High-res download -->
+      <div class="shop-card">
+        <div class="shop-card-visual visual-download">
+          <svg width="80" height="80" viewBox="0 0 80 80" id="shopSvg1"></svg>
+        </div>
+        <div class="shop-card-body">
+          <div class="shop-card-name">Digital Download</div>
+          <div class="shop-card-desc">High-res PNG + SVG of your mandala. Print it yourself, frame it, use it anywhere.</div>
+          <div class="shop-price-row">
+            <div class="price-block">
+              <div class="price-main">$2.99</div>
+              <div class="price-sub">per mandala</div>
+            </div>
+            <div class="price-petal">
+              <span class="price-petal-amt">$2.39</span>
+              <span style="opacity:.6">Petal+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Print -->
+      <div class="shop-card">
+        <div class="shop-card-visual visual-print">
+          <svg width="72" height="90" viewBox="0 0 72 90" id="shopSvg2">
+            <!-- paper -->
+            <rect x="8" y="4" width="56" height="82" rx="3" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="8" y="4" width="56" height="82" rx="3" fill="rgba(255,255,255,0.04)"/>
+          </svg>
+        </div>
+        <div class="shop-card-body">
+          <div class="shop-card-name">Art Print</div>
+          <div class="shop-card-desc">Gallery-quality print on archival paper, mailed to you. Available in 5×5 and 8×8.</div>
+          <div class="shop-price-row">
+            <div class="price-block">
+              <div class="price-main">$14.99</div>
+              <div class="price-sub">from / free shipping over $35</div>
+            </div>
+            <div class="price-petal">
+              <span class="price-petal-amt">$11.99</span>
+              <span style="opacity:.6">Petal+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button / Pin -->
+      <div class="shop-card">
+        <div class="shop-card-visual visual-button">
+          <svg width="80" height="80" viewBox="0 0 80 80" id="shopSvg3">
+            <circle cx="40" cy="40" r="34" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <circle cx="40" cy="40" r="30" fill="rgba(255,255,255,0.04)"/>
+          </svg>
+        </div>
+        <div class="shop-card-body">
+          <div class="shop-card-name">Button Pin</div>
+          <div class="shop-card-desc">1.75" or 2.25" pinback button. Your mandala on a badge you can wear or gift.</div>
+          <div class="shop-price-row">
+            <div class="price-block">
+              <div class="price-main">$4.99</div>
+              <div class="price-sub">per button</div>
+            </div>
+            <div class="price-petal">
+              <span class="price-petal-amt">$3.99</span>
+              <span style="opacity:.6">Petal+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Magnet -->
+      <div class="shop-card">
+        <div class="shop-card-visual visual-magnet">
+          <svg width="88" height="70" viewBox="0 0 88 70" id="shopSvg4">
+            <rect x="4" y="10" width="80" height="50" rx="8" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="shop-card-body">
+          <div class="shop-card-name">Magnet</div>
+          <div class="shop-card-desc">3" × 2.5" high-gloss fridge magnet. Same beautiful image, different backing.</div>
+          <div class="shop-price-row">
+            <div class="price-block">
+              <div class="price-main">$4.99</div>
+              <div class="price-sub">per magnet</div>
+            </div>
+            <div class="price-petal">
+              <span class="price-petal-amt">$3.99</span>
+              <span style="opacity:.6">Petal+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<div class="guarantee">
+  <div class="guarantee-icon">🌿</div>
+  <div class="guarantee-title">Try Petal+ free for 7 days</div>
+  <div class="guarantee-text">No charge until your trial ends. Cancel any time — your mandalas and progress are always yours, even if you go back to free.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-title">Questions</div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">What happens to my mandalas if I cancel Petal+? <span class="faq-caret">▼</span></div>
+    <div class="faq-a">Your mandalas and all your progress are always yours. If you cancel, you'll keep up to 3 active mandalas and all completed ones. Nothing is deleted.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Can I order from the shop without a subscription? <span class="faq-caret">▼</span></div>
+    <div class="faq-a">Yes — the shop is open to everyone. Petal+ members get 20% off automatically applied at checkout. One print order at Petal+ prices covers more than a month of subscription.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">How do email reminders work? <span class="faq-caret">▼</span></div>
+    <div class="faq-a">You set the schedule — daily at a specific time, or weekly on certain days. You can customize or turn them off any time from your settings.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Is Petal+ available for teams and organizations? <span class="faq-caret">▼</span></div>
+    <div class="faq-a">The Teams plan is separate and includes everything in Petal+ plus team tools — habit assignment, member monitoring, and bulk print generation. See the Teams page for details and pricing.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">What does the year-end export include? <span class="faq-caret">▼</span></div>
+    <div class="faq-a">Petal+ members get a free high-res PNG and SVG of each mandala at the end of the year (or whenever you close a mandala). The same files are available as paid downloads in the shop for free users.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<script src="./footer.js"></script>
+
+<script>
+// ── BILLING TOGGLE ────────────────────────────────────
+function setBilling(type, el) {
+  document.querySelectorAll('.btog-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  const note = document.getElementById('billingNote');
+  const price = document.getElementById('petalPrice');
+  const annualNote = document.getElementById('petalAnnualNote');
+  if (type === 'annual') {
+    price.textContent = '$2.49';
+    annualNote.textContent = 'Billed $29.99/year — save $5.90';
+    note.textContent = '2 months free with annual billing';
+    note.style.opacity = '1';
+  } else {
+    price.textContent = '$2.99';
+    annualNote.innerHTML = '&nbsp;';
+    note.textContent = '';
+  }
+}
+
+// ── COMPARISON TABLE ──────────────────────────────────
+function toggleCompare(btn) {
+  const table = document.getElementById('compareTable');
+  const caret = document.getElementById('compareCaret');
+  const open = table.classList.toggle('show');
+  caret.classList.toggle('open', open);
+  btn.querySelector('.compare-toggle-btn') && (btn.textContent = '');
+}
+
+// ── FAQ ───────────────────────────────────────────────
+function toggleFaq(item) {
+  item.classList.toggle('open');
+}
+
+// ── SHOP MANDALAS ─────────────────────────────────────
+function miniMandala(svgId, color, sz, shapes) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const cx=sz/2, cy=sz/2;
+  let h='';
+  shapes.forEach(({n,r,rx,ry,filled})=>{
+    for(let i=0;i<n;i++){
+      const a=(i*(360/n))*Math.PI/180;
+      const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+      const f=filled===undefined?true:i<filled;
+      h+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" fill="${f?color:'rgba(255,255,255,0.06)'}" opacity="${f?0.85:0.3}" transform="rotate(${(i*(360/n)).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+    }
+  });
+  h+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.1}" fill="rgba(30,26,23,0.8)"/>`;
+  svg.innerHTML += h;
+}
+
+miniMandala('shopSvg1','#C45A5A',80,[
+  {n:8,r:28,rx:3.5,ry:9,filled:undefined},
+  {n:12,r:18,rx:2.5,ry:6,filled:9},
+]);
+
+// Print svg — draw mandala inside paper
+const svg2 = document.getElementById('shopSvg2');
+let m2='';
+const c2='#C4887A', n2=8, r2b=24, cx2=36, cy2=48;
+for(let i=0;i<n2;i++){
+  const a=(i*(360/n2))*Math.PI/180;
+  const x=cx2+r2b*Math.cos(a), y=cy2+r2b*Math.sin(a);
+  m2+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="3" ry="8" fill="${c2}" opacity="0.7" transform="rotate(${(i*45).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+}
+m2+=`<circle cx="${cx2}" cy="${cy2}" r="7" fill="rgba(253,252,250,0.15)"/>`;
+svg2.innerHTML += m2;
+
+// Button mandala
+miniMandala('shopSvg3','#8FA68C',80,[
+  {n:8,r:22,rx:3,ry:8,filled:undefined},
+  {n:6,r:13,rx:2,ry:5,filled:undefined},
+]);
+
+// Magnet mandala — centered in rect
+const svg4 = document.getElementById('shopSvg4');
+let m4='';
+const c4='#7B9BAF', cx4=44, cy4=35;
+for(let i=0;i<10;i++){
+  const a=(i*36)*Math.PI/180;
+  const x=cx4+18*Math.cos(a), y=cy4+18*Math.sin(a);
+  m4+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.5" ry="7" fill="${c4}" opacity="${i%3===0?0.3:0.7}" transform="rotate(${(i*36).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+}
+m4+=`<circle cx="${cx4}" cy="${cy4}" r="5" fill="rgba(30,26,23,0.6)"/>`;
+svg4.innerHTML += m4;
+</script>
+</body>
+</html>

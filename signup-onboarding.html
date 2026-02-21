@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress — Set up your practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --dark:      #1E1A17;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6; overflow-x: hidden;
+}
+
+.onboard-page {
+  padding: 72px 24px 80px;
+  display: flex; justify-content: center;
+}
+
+.onboard-card {
+  width: 100%; max-width: 480px;
+}
+
+.onboard-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; color: var(--text);
+  text-align: center; margin-bottom: 24px;
+  display: block; text-decoration: none;
+}
+.onboard-logo:hover { opacity: .8; }
+
+/* Step indicator */
+.intent-steps {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin-bottom: 32px;
+}
+.intent-step { width: 28px; height: 4px; border-radius: 2px; }
+.intent-step.done   { background: var(--sage); }
+.intent-step.active { background: var(--text); }
+.intent-step.future { background: var(--warm-2); }
+
+/* Sub-step dots */
+.substep-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin-bottom: 32px;
+}
+.substep-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  transition: all .2s;
+}
+.substep-dot.active { background: var(--text); width: 22px; border-radius: 4px; }
+.substep-dot.done   { background: var(--sage); }
+.substep-dot.future { background: var(--warm-2); }
+
+.onboard-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 400;
+  text-align: center; margin-bottom: 6px;
+}
+.onboard-title em { font-style: italic; color: var(--text-soft); }
+
+.onboard-sub {
+  font-size: 13px; color: var(--text-soft);
+  text-align: center; margin-bottom: 28px; line-height: 1.7;
+}
+
+/* Step content */
+.step-content { display: none; }
+.step-content.visible { display: block; }
+
+/* Step: habit name */
+.field-group { margin-bottom: 16px; }
+.field-label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--text-soft); margin-bottom: 7px; letter-spacing: .02em;
+}
+.field-input {
+  width: 100%; padding: 11px 14px;
+  background: var(--bg); border: 1.5px solid var(--warm-2);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--text); outline: none;
+  transition: border-color .16s;
+}
+.field-input:focus { border-color: var(--sage); }
+.field-input::placeholder { color: var(--text-muted); }
+.field-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+
+/* Framing cards */
+.framing-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 8px;
+}
+.framing-card {
+  padding: 16px 14px;
+  background: var(--surface); border: 1.5px solid var(--warm-1);
+  border-radius: 12px; cursor: pointer; transition: all .18s;
+}
+.framing-card:hover { border-color: var(--warm-2); box-shadow: 0 3px 12px rgba(0,0,0,.05); }
+.framing-card.selected { border-color: var(--sage); background: rgba(143,166,140,.05); }
+.framing-card-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.framing-card-desc  { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+
+/* Frequency options */
+.freq-opts {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin-bottom: 8px;
+}
+.freq-opt {
+  padding: 10px 8px; text-align: center;
+  background: var(--surface); border: 1.5px solid var(--warm-1);
+  border-radius: 10px; cursor: pointer; font-size: 13px;
+  color: var(--text-soft); transition: all .18s;
+}
+.freq-opt:hover { border-color: var(--warm-2); }
+.freq-opt.selected { border-color: var(--sage); background: rgba(143,166,140,.06); color: var(--text); font-weight: 500; }
+.freq-opt-main { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+
+/* Color swatches */
+.swatch-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.swatch {
+  width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+  border: 3px solid transparent; transition: all .15s;
+}
+.swatch:hover, .swatch.selected { border-color: var(--text); transform: scale(1.1); }
+
+/* Mandala preview */
+.mandala-reveal {
+  text-align: center; padding: 24px 0;
+}
+.mandala-reveal-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--text-muted); margin-bottom: 20px;
+}
+.reveal-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; margin-top: 20px;
+  margin-bottom: 4px;
+}
+.reveal-sub { font-size: 13px; color: var(--text-muted); }
+
+/* Nav buttons */
+.step-nav {
+  display: flex; gap: 10px; margin-top: 24px;
+}
+.btn-back {
+  flex: 0 0 auto; padding: 12px 20px;
+  background: none; border: 1.5px solid var(--warm-2);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; color: var(--text-soft); cursor: pointer;
+  transition: all .18s;
+}
+.btn-back:hover { background: var(--warm-1); color: var(--text); }
+.btn-next {
+  flex: 1; padding: 12px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; font-weight: 500; cursor: pointer;
+  transition: background .18s;
+}
+.btn-next:hover { background: #111; }
+.btn-next.sage { background: var(--sage); box-shadow: 0 4px 16px rgba(143,166,140,.3); }
+.btn-next.sage:hover { background: #7d9479; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<script src="./nav.js"></script>
+
+<div class="onboard-page">
+  <div class="onboard-card">
+
+    <a href="./index.html" class="onboard-logo">𖢻 PetalProgress</a>
+
+    <div class="intent-steps">
+      <div class="intent-step done"></div>
+      <div class="intent-step done"></div>
+      <div class="intent-step active"></div>
+    </div>
+
+    <div class="substep-row" id="substeps"></div>
+
+    <h1 class="onboard-title" id="stepTitle"></h1>
+    <p class="onboard-sub" id="stepSub"></p>
+
+    <!-- Step 1: Systems vs Goals -->
+    <div class="step-content" id="step1">
+      <div class="framing-cards">
+        <div class="framing-card selected" onclick="selectFraming(this)">
+          <div class="framing-card-title">Systems</div>
+          <div class="framing-card-desc">I show up every day. The results take care of themselves.</div>
+        </div>
+        <div class="framing-card" onclick="selectFraming(this)">
+          <div class="framing-card-title">Goals</div>
+          <div class="framing-card-desc">I'm working toward a specific outcome by a specific date.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Habit name -->
+    <div class="step-content" id="step2">
+      <div class="field-group">
+        <label class="field-label">What habit are you building?</label>
+        <input class="field-input" type="text" id="habitName" placeholder="e.g. Morning meditation">
+        <div class="field-hint">Keep it short — this becomes your mandala's name.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Habit stack — what triggers it? <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <input class="field-input" type="text" placeholder="e.g. After my morning coffee">
+      </div>
+    </div>
+
+    <!-- Step 3: Frequency -->
+    <div class="step-content" id="step3">
+      <div class="freq-opts">
+        <div class="freq-opt" onclick="selectFreq(this)"><div class="freq-opt-main">Daily</div>every day</div>
+        <div class="freq-opt selected" onclick="selectFreq(this)"><div class="freq-opt-main">5×</div>per week</div>
+        <div class="freq-opt" onclick="selectFreq(this)"><div class="freq-opt-main">3×</div>per week</div>
+      </div>
+      <div class="field-hint" style="text-align:center;margin-top:4px;">
+        Start easy — you can always increase frequency later.
+      </div>
+    </div>
+
+    <!-- Step 4: Theme + color -->
+    <div class="step-content" id="step4">
+      <div class="field-group">
+        <label class="field-label">Petal color</label>
+        <div class="swatch-row">
+          <div class="swatch selected" style="background:#8FA68C" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#7B9BAF" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#C4887A" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#C45A5A" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#9B8FA6" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#2C2825" onclick="selectSwatch(this)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: First mandala reveal -->
+    <div class="step-content" id="step5">
+      <div class="mandala-reveal">
+        <div class="mandala-reveal-label">Your mandala is ready</div>
+        <svg id="revealSvg" width="200" height="200" viewBox="0 0 200 200"></svg>
+        <div class="reveal-name" id="revealName">Morning Meditation</div>
+        <div class="reveal-sub">30 petals to grow · check in tomorrow</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" id="backBtn" onclick="prevStep()">← Back</button>
+      <button class="btn-next" id="nextBtn" onclick="nextStep()">Continue →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const steps = [
+  { title: 'How do you think about habits?',       sub: 'This shapes how we frame your progress — no wrong answer.' },
+  { title: 'Name your habit',                       sub: 'What are you committing to? Be specific enough to act on.' },
+  { title: 'How often will you show up?',           sub: 'Make it easy. A smaller goal you keep beats an ambitious one you don\'t.' },
+  { title: 'Choose your petal color',               sub: 'Each check-in grows one petal. Pick a color that feels like your practice.' },
+  { title: 'Your first mandala is ready',           sub: 'Check in every day and watch it grow.' },
+];
+
+let current = 0;
+let petalColor = '#8FA68C';
+
+function renderSubsteps() {
+  const row = document.getElementById('substeps');
+  row.innerHTML = steps.map((_, i) => {
+    const cls = i < current ? 'done' : i === current ? 'active' : 'future';
+    return `<div class="substep-dot ${cls}"></div>`;
+  }).join('');
+}
+
+function renderStep() {
+  document.getElementById('stepTitle').textContent = steps[current].title;
+  document.getElementById('stepSub').textContent   = steps[current].sub;
+  steps.forEach((_, i) => {
+    document.getElementById(`step${i+1}`).classList.toggle('visible', i === current);
+  });
+  document.getElementById('backBtn').style.display = current === 0 ? 'none' : '';
+  const nextBtn = document.getElementById('nextBtn');
+  if (current === steps.length - 1) {
+    nextBtn.textContent = 'Start my practice →';
+    nextBtn.classList.add('sage');
+  } else {
+    nextBtn.textContent = 'Continue →';
+    nextBtn.classList.remove('sage');
+  }
+  renderSubsteps();
+  if (current === 4) drawReveal();
+}
+
+function nextStep() {
+  if (current < steps.length - 1) {
+    current++;
+    renderStep();
+  } else {
+    window.location.href = './app/mandala.html';
+  }
+}
+
+function prevStep() {
+  if (current > 0) { current--; renderStep(); }
+}
+
+function selectFraming(el) {
+  document.querySelectorAll('.framing-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectFreq(el) {
+  document.querySelectorAll('.freq-opt').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectSwatch(el) {
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  petalColor = el.style.background;
+  if (document.getElementById('revealSvg').innerHTML) drawReveal();
+}
+
+function drawReveal() {
+  const svg = document.getElementById('revealSvg');
+  const cx = 100, cy = 100, r = 76;
+  let h = '';
+  for (let i = 0; i < 30; i++) {
+    const deg = (i * 12) - 90;
+    const rad = deg * Math.PI / 180;
+    const x = (cx + r * Math.cos(rad)).toFixed(1);
+    const y = (cy + r * Math.sin(rad)).toFixed(1);
+    const filled = i === 0;
+    h += `<ellipse cx="${x}" cy="${y}" rx="3" ry="10"
+      fill="${filled ? petalColor : 'rgba(44,40,37,0.07)'}"
+      opacity="${filled ? 0.85 : 1}"
+      transform="rotate(${deg.toFixed(1)} ${x} ${y})"/>`;
+  }
+  h += `<circle cx="100" cy="100" r="14" fill="rgba(248,246,243,0.97)"/>`;
+  svg.innerHTML = h;
+  const name = document.getElementById('habitName');
+  if (name && name.value) document.getElementById('revealName').textContent = name.value;
+}
+
+renderStep();
+</script>
+
+<script src="./footer.js"></script>
+</body>
+</html>

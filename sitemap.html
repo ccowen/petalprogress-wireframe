@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PetalProgress — Site Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --blue:      #7B9BAF;
+  --coral:     #C45A5A;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+
+  /* Node type colors */
+  --c-nav:     #2C2825;
+  --c-public:  #7B9BAF;
+  --c-onboard: #8FA68C;
+  --c-admin:   #C4887A;
+  --c-auth:    #9B8FA6;
+  --c-shop:    #C45A5A;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 13px; padding: 40px 48px 80px;
+  min-width: 1200px;
+}
+
+/* ── HEADER ── */
+.doc-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.doc-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400; color: var(--text);
+}
+.doc-meta { font-size: 11.5px; color: var(--text-muted); }
+
+.doc-desc {
+  font-size: 13px; color: var(--text-soft); margin-bottom: 32px;
+  max-width: 600px; line-height: 1.7;
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex; gap: 16px; margin-bottom: 40px; flex-wrap: wrap;
+  padding: 14px 18px; background: var(--surface);
+  border: 1px solid var(--warm-1); border-radius: 12px;
+  width: fit-content;
+}
+.leg-item { display: flex; align-items: center; gap: 7px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.leg-label { font-size: 11.5px; color: var(--text-soft); }
+
+/* ── CANVAS ── */
+.canvas { position: relative; }
+
+/* ── SECTION LABEL ── */
+.section-lbl {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .13em;
+  color: var(--text-muted); margin-bottom: 14px; padding-left: 4px;
+}
+
+/* ── ROWS ── */
+.row {
+  display: flex; align-items: flex-start; gap: 0;
+  margin-bottom: 0; position: relative;
+}
+
+/* ── NODE ── */
+.node {
+  display: flex; flex-direction: column;
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  flex-shrink: 0; position: relative;
+  transition: box-shadow .18s;
+}
+.node:hover { box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+
+.node-head {
+  padding: 10px 14px 9px;
+  display: flex; align-items: center; gap: 8px;
+}
+.node-icon { font-size: 13px; opacity: .85; }
+.node-name {
+  font-size: 12.5px; font-weight: 500; color: white;
+  line-height: 1.2;
+}
+.node-path {
+  font-size: 10px; opacity: .55; font-family: monospace;
+  margin-top: 1px; display: block;
+}
+
+.node-body {
+  background: var(--surface); padding: 10px 13px 12px;
+  border: 1px solid var(--warm-1); border-top: none;
+  border-radius: 0 0 12px 12px; flex: 1;
+}
+
+.node-sections {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;
+}
+.node-section {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px; background: var(--warm-1);
+  border-radius: 6px; font-size: 11px; color: var(--text-soft);
+}
+.ns-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink:0; }
+.ns-anchor { font-size: 9.5px; color: var(--text-muted); margin-left: auto; font-family: monospace; }
+
+.node-links { display: flex; flex-direction: column; gap: 3px; }
+.node-link {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text-muted); padding: 2px 0;
+}
+.nl-arrow { font-size: 9px; }
+.nl-text { }
+.nl-type {
+  margin-left: auto; font-size: 9.5px; padding: 1px 6px;
+  border-radius: 100px; background: var(--warm-1);
+}
+.nl-type.anchor { background: rgba(123,155,175,.12); color: var(--blue); }
+.nl-type.internal { background: rgba(143,166,140,.12); color: var(--sage); }
+.nl-type.flow { background: rgba(196,136,122,.12); color: var(--amber); }
+.nl-type.external { background: rgba(156,143,141,.12); color: var(--warm-3); }
+
+/* ── CONNECTOR ── */
+.connector {
+  display: flex; align-items: center; flex-shrink: 0;
+  padding: 0 6px; align-self: stretch;
+}
+.conn-line {
+  display: flex; flex-direction: column; align-items: center;
+  width: 40px; height: 2px; background: var(--warm-2);
+  position: relative; align-self: center;
+}
+.conn-line::after {
+  content: '▶'; position: absolute; right: -7px;
+  font-size: 8px; color: var(--warm-2); top: 50%; transform: translateY(-50%);
+}
+.conn-label {
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+  font-size: 9.5px; color: var(--text-muted); white-space: nowrap;
+  background: var(--bg); padding: 0 4px;
+}
+.conn-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: 0 10px; align-self: center;
+}
+.conn-arrow { font-size: 10px; color: var(--warm-3); }
+.conn-lbl { font-size: 9.5px; color: var(--text-muted); white-space: nowrap; }
+
+/* ── FORK ── */
+.fork-wrap { display: flex; flex-direction: column; gap: 12px; align-self: flex-start; margin-top: 10px; }
+.fork-branch { display: flex; align-items: flex-start; gap: 0; }
+.fork-label-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 8px; align-self: center;
+}
+.fork-lbl {
+  font-size: 9.5px; color: var(--text-muted); white-space: nowrap;
+  background: var(--bg); padding: 2px 6px; border-radius: 100px;
+  border: 1px solid var(--warm-2);
+}
+
+/* ── DOWN CONNECTOR ── */
+.down-row {
+  display: flex; align-items: flex-start; gap: 24px;
+  margin-top: 16px; position: relative;
+}
+.down-row::before {
+  content: ''; position: absolute;
+  top: -16px; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 16px; background: var(--warm-2);
+}
+
+/* ── VERTICAL FLOW ── */
+.vflow { display: flex; flex-direction: column; gap: 0; align-items: flex-start; }
+.vflow-step { display: flex; align-items: center; gap: 0; }
+.vflow-down {
+  width: 2px; height: 20px; background: var(--warm-2);
+  margin-left: 80px; position: relative;
+}
+.vflow-down::after {
+  content: '▼'; position: absolute; bottom: -8px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px; color: var(--warm-2);
+}
+
+/* ── FULL LAYOUT ── */
+.sitemap {
+  display: flex; flex-direction: column; gap: 0;
+}
+
+/* ── DIVIDER ── */
+.flow-divider {
+  height: 1px; background: var(--warm-1);
+  margin: 36px 0 32px; position: relative;
+}
+.flow-divider-lbl {
+  position: absolute; top: -9px; left: 0;
+  font-size: 10px; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--text-muted); background: var(--bg); padding-right: 12px;
+}
+
+/* Node color themes */
+.n-nav    .node-head { background: var(--c-nav); }
+.n-public .node-head { background: var(--c-public); }
+.n-onboard .node-head { background: var(--c-onboard); }
+.n-admin  .node-head { background: var(--c-admin); }
+.n-auth   .node-head { background: var(--c-auth); }
+.n-shop   .node-head { background: var(--c-shop); }
+
+/* ── WIDE CANVAS ── */
+.map-area {
+  overflow-x: auto; padding-bottom: 20px;
+}
+
+/* ── FLOW DIAGRAM ROW ── */
+.flow-diagram {
+  display: flex; align-items: flex-start; gap: 0;
+  padding: 20px 0; min-width: fit-content;
+}
+.flow-col { display: flex; flex-direction: column; align-items: center; }
+.flow-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+
+/* Horizontal connector with label */
+.hconn {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 0 4px; align-self: center; min-width: 52px;
+}
+.hconn-line {
+  width: 100%; height: 1.5px; background: var(--warm-2);
+  position: relative;
+}
+.hconn-line::after {
+  content: '▶'; position: absolute; right: -6px; top: 50%;
+  transform: translateY(-50%); font-size: 7px; color: var(--warm-2);
+}
+.hconn-lbl {
+  font-size: 9px; color: var(--text-muted); white-space: nowrap;
+  margin-top: 4px; text-align: center;
+}
+
+/* Vertical connector */
+.vconn {
+  width: 1.5px; height: 20px; background: var(--warm-2);
+  position: relative; margin: 0 auto;
+}
+.vconn::after {
+  content: '▼'; position: absolute; bottom: -7px; left: 50%;
+  transform: translateX(-50%); font-size: 7px; color: var(--warm-2);
+}
+.vconn-lbl {
+  font-size: 9px; color: var(--text-muted); white-space: nowrap;
+  text-align: center; margin-top: 4px; writing-mode: horizontal-tb;
+}
+
+/* Fork down from one node to two */
+.fork-down {
+  display: flex; flex-direction: column; align-items: center;
+}
+.fork-down-stem { width: 1.5px; height: 16px; background: var(--warm-2); margin: 0 auto; }
+.fork-down-bar { height: 1.5px; background: var(--warm-2); margin-bottom: 0; }
+.fork-down-branches { display: flex; gap: 20px; }
+.fork-down-branch { display: flex; flex-direction: column; align-items: center; }
+.fork-down-drop { width: 1.5px; height: 16px; background: var(--warm-2); position: relative; }
+.fork-down-drop::after {
+  content: '▼'; position: absolute; bottom: -7px; left: 50%;
+  transform: translateX(-50%); font-size: 7px; color: var(--warm-2);
+}
+
+/* ── SMALL NODE variant ── */
+.node-sm { min-width: 160px; max-width: 190px; }
+.node-md { min-width: 195px; max-width: 220px; }
+.node-lg { min-width: 220px; max-width: 250px; }
+
+/* Notes */
+.map-note {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 11px 14px; background: rgba(123,155,175,.08);
+  border: 1px solid rgba(123,155,175,.2); border-radius: 10px;
+  font-size: 12px; color: var(--text-soft); line-height: 1.65;
+  max-width: 560px; margin-bottom: 14px;
+}
+.map-note-icon { flex-shrink: 0; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="doc-title">𖢻 PetalProgress — Site Map & Navigation Flow</div>
+  <div class="doc-meta">Information Architecture · v2 · Feb 2026</div>
+</div>
+<p class="doc-desc">Maps every page, its anchor sections, outbound links, how the sign-up flow forks between individual users and admin/team accounts, and the full app.petalprogress.com structure for both individual and admin views.</p>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:var(--c-nav)"></div><div class="leg-label">Navigation / Global</div></div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--c-public)"></div><div class="leg-label">Public pages</div></div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--c-onboard)"></div><div class="leg-label">Individual onboarding</div></div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--c-admin)"></div><div class="leg-label">Admin / Teams flow</div></div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--c-auth)"></div><div class="leg-label">Auth screens</div></div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--c-shop)"></div><div class="leg-label">Shop modal (in-app)</div></div>
+  <div class="leg-item">
+    <svg width="32" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="24" y2="5" stroke="#D4CEC7" stroke-width="1.5"/><polygon points="24,2 30,5 24,8" fill="#D4CEC7"/></svg>
+    <div class="leg-label">Internal link</div>
+  </div>
+  <div class="leg-item">
+    <svg width="32" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="24" y2="5" stroke="#8FA68C" stroke-width="1.5" stroke-dasharray="3 2"/><polygon points="24,2 30,5 24,8" fill="#8FA68C"/></svg>
+    <div class="leg-label">Anchor / scroll</div>
+  </div>
+</div>
+
+<div class="map-area">
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1: PUBLIC SITE MAP
+════════════════════════════════════════════ -->
+<div class="section-lbl">Public pages — site map</div>
+
+<div class="flow-diagram" style="align-items:flex-start; gap:0;">
+
+  <!-- HOMEPAGE -->
+  <div class="n-public node node-lg">
+    <div class="node-head">
+      <span class="node-icon">🏠</span>
+      <div>
+        <div class="node-name">Homepage</div>
+        <span class="node-path">/</span>
+      </div>
+    </div>
+    <div class="node-body">
+      <div class="node-sections">
+        <div class="node-section"><div class="ns-dot" style="background:var(--c-public)"></div>Content — in progress<span class="ns-anchor" style="font-style:italic;">anchors TBD</span></div>
+      </div>
+      <div class="node-links">
+        <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Sign up free</span><span class="nl-type flow">→ signup</span></div>
+        <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">For Teams (nav)</span><span class="nl-type internal">/teams</span></div>
+        <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Pricing (nav)</span><span class="nl-type internal">/pricing</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONNECTOR -->
+  <div class="hconn" style="min-width:40px; align-self:center; margin-top:-60px;">
+    <div class="hconn-line"></div>
+  </div>
+
+  <!-- SECOND COLUMN: stacked pages -->
+  <div style="display:flex;flex-direction:column;gap:14px;">
+
+    <!-- PRICING -->
+    <div class="n-public node node-md">
+      <div class="node-head">
+        <span class="node-icon">✦</span>
+        <div>
+          <div class="node-name">Pricing</div>
+          <span class="node-path">/pricing</span>
+        </div>
+      </div>
+      <div class="node-body">
+        <div class="node-sections">
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-public)"></div>Free vs Petal+ cards</div>
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-public)"></div>Comparison table</div>
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-public)"></div>FAQ</div>
+        </div>
+        <div class="node-links">
+          <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Start free / Start Petal+</span><span class="nl-type flow">→ signup</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAMS -->
+    <div class="n-admin node node-md">
+      <div class="node-head">
+        <span class="node-icon">◈</span>
+        <div>
+          <div class="node-name">Teams</div>
+          <span class="node-path">/teams</span>
+        </div>
+      </div>
+      <div class="node-body">
+        <div class="node-sections">
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>For trainers / gyms / coaches</div>
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Admin feature detail</div>
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Print mandala feature</div>
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Teams pricing</div>
+        </div>
+        <div class="node-links">
+          <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Set up a team</span><span class="nl-type flow">→ admin signup</span></div>
+          <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Contact / demo request</span><span class="nl-type internal">/contact</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONNECTOR 2 -->
+  <div class="hconn" style="min-width:40px; align-self:center; margin-top:-60px;">
+    <div class="hconn-line"></div>
+  </div>
+
+  <!-- THIRD COLUMN -->
+  <div style="display:flex;flex-direction:column;gap:14px;">
+
+    <!-- CONTACT -->
+    <div class="n-public node node-md">
+      <div class="node-head">
+        <span class="node-icon">✉</span>
+        <div>
+          <div class="node-name">Contact</div>
+          <span class="node-path">/contact</span>
+        </div>
+      </div>
+      <div class="node-body">
+        <div class="node-sections">
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-public)"></div>Contact form</div>
+          <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Demo request for teams</div>
+        </div>
+        <div class="node-links">
+          <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">From Teams page</span><span class="nl-type internal">/teams</span></div>
+          <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">From footer</span><span class="nl-type internal">all pages</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2: SIGN-UP FLOW FORK
+════════════════════════════════════════════ -->
+<div class="flow-divider"><div class="flow-divider-lbl">Sign-up flow — individual vs. admin fork</div></div>
+
+<div class="map-note">
+  <div class="map-note-icon">💡</div>
+  <div>All sign-up CTAs lead to the same <strong>account creation screen</strong>. After email/password, the user is asked what brings them here — which forks the onboarding path. Admins are a secondary, quieter option — the default experience is individual.</div>
+</div>
+
+<div class="flow-diagram" style="align-items:flex-start; gap:0;">
+
+  <!-- ENTRY POINTS -->
+  <div style="display:flex;flex-direction:column;gap:10px;align-self:center;margin-top:-10px;">
+    <div class="n-public node node-sm">
+      <div class="node-head" style="padding:8px 12px;">
+        <span class="node-icon">🏠</span>
+        <div><div class="node-name" style="font-size:11.5px;">Homepage CTA</div></div>
+      </div>
+      <div class="node-body" style="padding:7px 11px;">
+        <div style="font-size:11px;color:var(--text-muted)">"Sign up free" — nav + hero</div>
+      </div>
+    </div>
+    <div class="n-public node node-sm">
+      <div class="node-head" style="padding:8px 12px;">
+        <span class="node-icon">✦</span>
+        <div><div class="node-name" style="font-size:11.5px;">Pricing CTA</div></div>
+      </div>
+      <div class="node-body" style="padding:7px 11px;">
+        <div style="font-size:11px;color:var(--text-muted)">"Start free" or "Start Petal+"</div>
+      </div>
+    </div>
+    <div class="n-admin node node-sm">
+      <div class="node-head" style="padding:8px 12px;">
+        <span class="node-icon">◈</span>
+        <div><div class="node-name" style="font-size:11.5px;">Teams CTA</div></div>
+      </div>
+      <div class="node-body" style="padding:7px 11px;">
+        <div style="font-size:11px;color:var(--text-muted)">"Set up a team"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="hconn" style="min-width:44px;align-self:center;">
+    <div class="hconn-line"></div>
+  </div>
+
+  <!-- AUTH SCREEN -->
+  <div class="n-auth node node-md" style="align-self:center;">
+    <div class="node-head">
+      <span class="node-icon">🔐</span>
+      <div>
+        <div class="node-name">Create Account</div>
+        <span class="node-path">/signup</span>
+      </div>
+    </div>
+    <div class="node-body">
+      <div class="node-sections">
+        <div class="node-section"><div class="ns-dot" style="background:var(--c-auth)"></div>Email + password</div>
+        <div class="node-section"><div class="ns-dot" style="background:var(--c-auth)"></div>Or: Google / Apple SSO</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:7px;">Same screen for all entry points</div>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="hconn" style="min-width:44px;align-self:center;">
+    <div class="hconn-line"></div>
+  </div>
+
+  <!-- INTENT SCREEN -->
+  <div class="n-auth node node-md" style="align-self:center;">
+    <div class="node-head">
+      <span class="node-icon">◎</span>
+      <div>
+        <div class="node-name">What brings you here?</div>
+        <span class="node-path">/signup/intent</span>
+      </div>
+    </div>
+    <div class="node-body">
+      <div class="node-sections">
+        <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Tracking a habit for myself <em style="font-size:10px;color:var(--sage);margin-left:4px;">default</em></div>
+        <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Referred by a gym / coach</div>
+        <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Setting up for my clients / team</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:7px;font-style:italic;">"Setting up for a team?" is quieter — secondary option, not the lead</div>
+    </div>
+  </div>
+
+  <!-- FORK arrows -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:0;align-self:center;padding:0 4px;">
+    <!-- Top arrow (individual) -->
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:32px;">
+      <svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="#8FA68C" stroke-width="1.5"/><polygon points="36,2 44,5 36,8" fill="#8FA68C"/></svg>
+      <span style="font-size:9px;color:var(--sage);white-space:nowrap;"></span>
+    </div>
+    <!-- Bottom arrow (admin) -->
+    <div style="display:flex;align-items:center;gap:4px;margin-top:32px;">
+      <svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="#C4887A" stroke-width="1.5"/><polygon points="36,2 44,5 36,8" fill="#C4887A"/></svg>
+    </div>
+  </div>
+
+  <!-- TWO DESTINATION COLUMNS -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+
+    <!-- INDIVIDUAL PATH -->
+    <div style="display:flex;align-items:center;gap:0;">
+      <div class="n-onboard node node-lg">
+        <div class="node-head">
+          <span class="node-icon">🌸</span>
+          <div>
+            <div class="node-name">Individual Onboarding</div>
+            <span class="node-path">/signup/onboarding</span>
+          </div>
+        </div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>① Systems vs Goals framing</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>② Name your habit + habit stack</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>③ Weekly goal (Make it Easy)</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>④ Theme + petal color</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>⑤ First mandala reveal</div>
+          </div>
+          <div class="node-links">
+            <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Opens app dashboard</span><span class="nl-type internal">/app</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="hconn" style="min-width:36px;">
+        <div class="hconn-line"></div>
+      </div>
+      <div class="n-onboard node node-sm">
+        <div class="node-head" style="padding:9px 12px;">
+          <span class="node-icon">◑</span>
+          <div><div class="node-name" style="font-size:11.5px;">App — Dashboard</div><span class="node-path">/app</span></div>
+        </div>
+        <div class="node-body" style="padding:8px 11px;">
+          <div class="node-sections">
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-onboard)"></div><span style="font-size:10.5px;">Mandala view</span></div>
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-onboard)"></div><span style="font-size:10.5px;">Gallery</span></div>
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-onboard)"></div><span style="font-size:10.5px;">Calendar</span></div>
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-onboard)"></div><span style="font-size:10.5px;">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN PATH -->
+    <div style="display:flex;align-items:center;gap:0;">
+      <div class="n-admin node node-lg">
+        <div class="node-head">
+          <span class="node-icon">◈</span>
+          <div>
+            <div class="node-name">Admin Onboarding</div>
+            <span class="node-path">/signup/admin</span>
+          </div>
+        </div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>① Organization name + type</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>② Estimated member count</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>③ Create first assigned habit</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>④ Invite members (email / link)</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>⑤ Admin dashboard intro</div>
+          </div>
+          <div class="node-links">
+            <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Opens admin dashboard</span><span class="nl-type internal">/admin</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="hconn" style="min-width:36px;">
+        <div class="hconn-line"></div>
+      </div>
+      <div class="n-admin node node-sm">
+        <div class="node-head" style="padding:9px 12px;">
+          <span class="node-icon">◎</span>
+          <div><div class="node-name" style="font-size:11.5px;">Admin Dashboard</div><span class="node-path">/admin</span></div>
+        </div>
+        <div class="node-body" style="padding:8px 11px;">
+          <div class="node-sections">
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-admin)"></div><span style="font-size:10.5px;">Member roster</span></div>
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-admin)"></div><span style="font-size:10.5px;">Habits</span></div>
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-admin)"></div><span style="font-size:10.5px;">At risk / completion</span></div>
+            <div class="node-section" style="padding:3px 7px;"><div class="ns-dot" style="background:var(--c-admin)"></div><span style="font-size:10.5px;">Print mandalas</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3: GLOBAL NAV SUMMARY
+════════════════════════════════════════════ -->
+<div class="flow-divider"><div class="flow-divider-lbl">Global navigation — what lives where</div></div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
+  <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:14px;padding:20px 22px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:14px;">Primary nav (always visible)</div>
+    <div style="display:flex;flex-direction:column;gap:9px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-soft)">𖢻 Logo</span>
+        <span style="font-size:11px;padding:2px 8px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">→ /</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-soft)">Home</span>
+        <span style="font-size:11px;padding:2px 8px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">→ /</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-soft)">For Teams</span>
+        <span style="font-size:11px;padding:2px 8px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">→ /teams</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-soft)">Pricing</span>
+        <span style="font-size:11px;padding:2px 8px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">→ /pricing</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-soft)">Sign up free</span>
+        <span style="font-size:11px;padding:2px 8px;background:rgba(143,166,140,.15);border-radius:100px;color:var(--sage)">→ /signup</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-soft)">Sign in</span>
+        <span style="font-size:11px;padding:2px 8px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">→ /login</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:14px;padding:20px 22px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:14px;">Footer nav</div>
+    <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">Flat link row at base of every page:</div>
+    <div style="display:flex;gap:20px;font-size:12.5px;color:var(--text-soft);">
+      <span>/privacy</span>
+      <span>/terms</span>
+      <span>/contact</span>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:10px;font-style:italic;">Privacy and Terms are placeholder pages.</div>
+  </div>
+</div>
+
+<div style="margin-top:16px;" class="map-note" style="max-width:900px;">
+  <div class="map-note-icon">⚠️</div>
+  <div><strong>Dead end check:</strong> every page should answer "what do I do next." Privacy and Terms pages have no content yet — placeholder routes only. Contact page needs a form or email destination.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ANCHOR NAV CLARIFICATION
+════════════════════════════════════════════ -->
+<div class="flow-divider"><div class="flow-divider-lbl">Marketing nav — active state and link behavior</div></div>
+
+<div class="map-note" style="max-width:860px;">
+  <div class="map-note-icon">⚓</div>
+  <div>The marketing nav has three items: <strong>Home, For Teams,</strong> and <strong>Pricing</strong>, plus <strong>Sign in</strong> and <strong>Sign up free</strong>. All links navigate directly to their respective pages — no scroll or anchor behavior. Active state is set automatically from the URL: Home on /, For Teams on /teams, Pricing on /pricing.</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;margin-top:4px;">
+  <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:14px;padding:18px 20px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:12px;">Nav on homepage /</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:500;color:var(--text)">Home ●</span><span style="font-size:10.5px;padding:1px 7px;background:rgba(44,40,37,.1);border-radius:100px;color:var(--text-soft)">active — already here</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--text-soft)">For Teams</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">navigates → /teams</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--text-soft)">Pricing</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">navigates → /pricing</span></div>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:14px;padding:18px 20px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:12px;">Same nav on /teams — "For Teams" is active</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--text-soft)">Home</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">navigates → /</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:500;color:var(--text)">For Teams ●</span><span style="font-size:10.5px;padding:1px 7px;background:rgba(44,40,37,.1);border-radius:100px;color:var(--text-soft)">active — already here</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--text-soft)">Pricing</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">navigates → /pricing</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4: APP.PETALPROGRESS.COM
+════════════════════════════════════════════ -->
+<div class="flow-divider" style="margin-top:44px;"><div class="flow-divider-lbl">app.petalprogress.com — logged-in product (separate domain)</div></div>
+
+<div class="map-note" style="max-width:860px;">
+  <div class="map-note-icon">💡</div>
+  <div>The app lives on a completely separate domain from the marketing site. The logged-in nav replaces the marketing nav entirely — <strong>Mandala · Gallery · Calendar</strong> on the left, avatar menu on the right. Marketing pages (Pricing, Teams, Developers) are accessible via footer or avatar dropdown. Two distinct nav contexts exist: <strong>Individual</strong> and <strong>Admin</strong>.</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1020px;">
+
+  <!-- INDIVIDUAL -->
+  <div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--sage);margin-bottom:14px;padding-left:2px;">Individual — app.petalprogress.com</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:10px;">App nav</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">𖢻 Logo</span><span style="font-size:10.5px;padding:1px 7px;background:rgba(143,166,140,.1);border-radius:100px;color:var(--sage)">→ /mandala</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Mandala</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">active mandala view</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Gallery</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">all mandalas + new</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Calendar</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">check-in history</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Avatar →</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">dropdown below</span></div>
+        </div>
+      </div>
+
+      <div class="n-onboard node" style="min-width:unset;">
+        <div class="node-head"><span class="node-icon">◑</span><div><div class="node-name">Mandala</div><span class="node-path">/mandala</span></div></div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Today's check-in button</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Active mandala SVG</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Petal count + progress</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Habit name + frequency</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-shop)"></div>Milestone prompt → shop modal</div>
+          </div>
+          <div class="node-links">
+            <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Switch mandala</span><span class="nl-type internal">Gallery</span></div>
+            <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Milestone reached</span><span class="nl-type flow">→ shop modal</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="n-onboard node" style="min-width:unset;">
+        <div class="node-head"><span class="node-icon">⊞</span><div><div class="node-name">Gallery</div><span class="node-path">/gallery</span></div></div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>All mandalas as cards</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Active vs completed</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>+ New → onboarding modal</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Print / export</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-shop)"></div>Order prints / merch → shop modal</div>
+          </div>
+          <div class="node-links">
+            <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">New mandala</span><span class="nl-type flow">→ onboarding</span></div>
+            <div class="node-link"><span class="nl-arrow">→</span><span class="nl-text">Print or order</span><span class="nl-type flow">→ shop modal</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="n-onboard node" style="min-width:unset;">
+        <div class="node-head"><span class="node-icon">◻</span><div><div class="node-name">Calendar</div><span class="node-path">/calendar</span></div></div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Check-in history grid</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Filter by mandala</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-onboard)"></div>Check-in history</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:10px;">Avatar dropdown</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-soft);">
+          <span>Account settings</span>
+          <span>Billing / upgrade → /pricing</span>
+          <span>petalprogress.com ↗</span>
+          <span style="color:var(--coral)">Sign out</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--amber);margin-bottom:14px;padding-left:2px;">Admin — app.petalprogress.com/admin</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:10px;">Admin nav</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">𖢻 Logo</span><span style="font-size:10.5px;padding:1px 7px;background:rgba(196,136,122,.1);border-radius:100px;color:var(--amber)">→ /admin</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Members</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">roster + status</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Habits</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">assigned habits</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Insights</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">completion, at-risk</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-soft)">Avatar →</span><span style="font-size:10.5px;padding:1px 7px;background:var(--warm-1);border-radius:100px;color:var(--text-muted)">dropdown below</span></div>
+        </div>
+      </div>
+
+      <div class="n-admin node" style="min-width:unset;">
+        <div class="node-head"><span class="node-icon">◎</span><div><div class="node-name">Members</div><span class="node-path">/admin/members</span></div></div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Roster with check-in status</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Invite via email / link</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Individual mandala preview</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="n-admin node" style="min-width:unset;">
+        <div class="node-head"><span class="node-icon">⊛</span><div><div class="node-name">Habits</div><span class="node-path">/admin/habits</span></div></div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Create / edit assigned habits</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Assign to members or groups</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Frequency per habit</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="n-admin node" style="min-width:unset;">
+        <div class="node-head"><span class="node-icon">◈</span><div><div class="node-name">Insights</div><span class="node-path">/admin/insights</span></div></div>
+        <div class="node-body">
+          <div class="node-sections">
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>At-risk members (missed 3+)</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Top completion rates</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Group completion rate</div>
+            <div class="node-section"><div class="ns-dot" style="background:var(--c-admin)"></div>Print / export mandalas</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--warm-1);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:10px;">Avatar dropdown</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-soft);">
+          <span>Organization settings</span>
+          <span>Billing / plan</span>
+          <span>Switch to my personal view ↔</span>
+          <span>petalprogress.com ↗</span>
+          <span style="color:var(--coral)">Sign out</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:16px;" class="map-note">
+  <div class="map-note-icon">🔀</div>
+  <div><strong>Admin who is also a user:</strong> an admin may want to track their own habits too. "Switch to my personal view" in the avatar dropdown toggles between admin and individual contexts — same domain, different nav.</div>
+</div>
+
+</div><!-- end map-area -->
+
+</body>
+</html>

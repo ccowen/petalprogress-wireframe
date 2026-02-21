@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress — Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --coral:     #C45A5A;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 14px; line-height: 1.6; overflow-x: hidden;
+}
+
+.gallery-page {
+  max-width: 960px; margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+
+/* Header */
+.gallery-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.gallery-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400;
+}
+
+.new-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 20px;
+  background: var(--dark); color: rgba(255,255,255,.88);
+  border: none; border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .18s; text-decoration: none;
+}
+.new-btn:hover { background: #111; }
+
+/* Filter tabs */
+.filter-tabs {
+  display: flex; gap: 4px; margin-bottom: 28px;
+}
+
+.filter-tab {
+  padding: 6px 16px; border-radius: 100px;
+  font-size: 13px; color: var(--text-muted);
+  cursor: pointer; border: none; background: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.filter-tab:hover { background: var(--warm-1); color: var(--text-soft); }
+.filter-tab.active { background: var(--warm-1); color: var(--text); font-weight: 500; }
+
+/* Grid */
+.mandala-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+
+/* Card */
+.m-card {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 18px; overflow: hidden;
+  transition: all .2s; cursor: pointer;
+  text-decoration: none; display: block; color: inherit;
+}
+.m-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.08); transform: translateY(-2px); }
+
+.m-card-visual {
+  height: 160px; display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+}
+
+.m-card-body { padding: 16px 18px 18px; }
+
+.m-card-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 400; margin-bottom: 6px;
+}
+
+.m-card-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px;
+}
+
+.m-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 9px; border-radius: 100px; font-size: 11px;
+}
+.m-badge.active   { background: rgba(143,166,140,.12); color: var(--sage); }
+.m-badge.complete { background: rgba(123,155,175,.12); color: #7B9BAF; }
+.m-badge.paused   { background: var(--warm-1); color: var(--text-muted); }
+
+
+/* New card */
+.m-card-new {
+  background: transparent;
+  border: 1.5px dashed var(--warm-2);
+  border-radius: 18px; cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 230px; gap: 10px;
+  transition: all .18s; color: var(--text-muted);
+}
+.m-card-new:hover { border-color: var(--sage); color: var(--sage); background: rgba(143,166,140,.04); }
+.m-card-new-icon { font-size: 24px; }
+.m-card-new-label { font-size: 13px; font-weight: 500; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<script src="./nav.js"></script>
+
+<div class="gallery-page">
+
+  <div class="gallery-header">
+    <h1 class="gallery-title">Gallery</h1>
+    <a href="#" class="new-btn">+ New mandala</a>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-tab" onclick="setFilter('active',this)">Active</button>
+    <button class="filter-tab" onclick="setFilter('complete',this)">Completed</button>
+  </div>
+
+  <div class="mandala-grid" id="grid"></div>
+
+</div>
+
+<script>
+const mandalas = [
+  { name: 'Morning Meditation', freq: 'Daily',    petals: 23, total: 30, color: '#8FA68C', status: 'active',   label: 'Completed Jan 2026' },
+  { name: 'Evening Run',        freq: '5×/week', petals: 18, total: 30, color: '#7B9BAF', status: 'active',   label: 'Completed Jan 2026' },
+  { name: 'Reading',            freq: 'Daily',   petals: 30, total: 30, color: '#C4887A', status: 'complete', label: 'Completed Jan 2026' },
+  { name: 'Journaling',         freq: 'Daily',   petals: 30, total: 30, color: '#C45A5A', status: 'complete', label: 'Completed Dec 2025' },
+  { name: 'Cold Shower',        freq: 'Daily',   petals: 7,  total: 30, color: '#9B8FA6', status: 'active',   label: 'Completed Jan 2026' },
+];
+
+function drawMini(svgEl, total, filled, color) {
+  const cx = 60, cy = 60, r = 44;
+  let h = '';
+  for (let i = 0; i < total; i++) {
+    const deg = (i * 360 / total) - 90;
+    const rad = deg * Math.PI / 180;
+    const x = (cx + r * Math.cos(rad)).toFixed(1);
+    const y = (cy + r * Math.sin(rad)).toFixed(1);
+    const f = i < filled;
+    h += `<ellipse cx="${x}" cy="${y}" rx="2.5" ry="8"
+      fill="${f ? color : 'rgba(44,40,37,0.07)'}"
+      opacity="${f ? 0.82 : 1}"
+      transform="rotate(${deg.toFixed(1)} ${x} ${y})"/>`;
+  }
+  h += `<circle cx="60" cy="60" r="10" fill="rgba(248,246,243,0.97)"/>`;
+  svgEl.innerHTML = h;
+}
+
+function renderGrid(filter) {
+  const grid = document.getElementById('grid');
+  const shown = filter === 'all' ? mandalas : mandalas.filter(m => m.status === filter);
+  grid.innerHTML = '';
+  shown.forEach((m, i) => {
+    const card = document.createElement('a');
+    card.href = './mandala.html';
+    card.className = 'm-card';
+    card.innerHTML = `
+      <div class="m-card-visual"><svg id="ms${i}" width="120" height="120" viewBox="0 0 120 120"></svg></div>
+      <div class="m-card-body">
+        <div class="m-card-name">${m.name}</div>
+        <div class="m-card-meta">
+          <span class="m-badge ${m.status}">${m.status === 'active' ? '● Active' : m.status === 'complete' ? '✓ Completed' : '⏸ Paused'}</span>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+    drawMini(document.getElementById(`ms${i}`), m.total, m.petals, m.color);
+  });
+  // New card
+  const newCard = document.createElement('div');
+  newCard.className = 'm-card-new';
+  newCard.innerHTML = `<div class="m-card-new-icon">+</div><div class="m-card-new-label">New mandala</div>`;
+  grid.appendChild(newCard);
+}
+
+function setFilter(f, el) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid(f);
+}
+
+renderGrid('all');
+</script>
+</body>
+</html>

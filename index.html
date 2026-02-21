@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetalProgress — Visualize Your Habits, Watch Them Bloom</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --blue:      #7B9BAF;
+  --coral:     #C45A5A;
+  --amber:     #C4887A;
+  --dark:      #1E1A17;
+  --dark-2:    #2A2420;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 52px;
+  background: rgba(248,246,243,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(212,206,199,0.5);
+  transition: all 0.3s;
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 500; color: var(--text);
+  text-decoration: none; letter-spacing: 0.01em;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-mark { font-size: 24px; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-link {
+  font-size: 13.5px; color: var(--text-soft); text-decoration: none;
+  transition: color 0.18s; letter-spacing: 0.01em;
+}
+.nav-link:hover { color: var(--text); }
+.nav-cta {
+  padding: 9px 22px; background: var(--text); color: var(--bg);
+  border-radius: 100px; font-size: 13px; text-decoration: none;
+  transition: all 0.2s; letter-spacing: 0.03em;
+}
+.nav-cta:hover { background: var(--dark); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 52px 80px;
+  position: relative; overflow: hidden;
+  background: var(--dark);
+}
+
+/* Grain overlay */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+
+/* Radial glow */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -20%; right: -10%;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(143,166,140,0.08) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center; position: relative; z-index: 1;
+}
+
+.hero-text { animation: fadeUp 0.8s ease both; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px; border-radius: 100px;
+  background: rgba(143,166,140,0.15); border: 1px solid rgba(143,166,140,0.3);
+  font-size: 11.5px; color: var(--sage); letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 22px;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 400; line-height: 1.15;
+  color: rgba(255,255,255,0.93);
+  margin-bottom: 22px; letter-spacing: -0.01em;
+}
+.hero-title em { font-style: italic; color: rgba(143,166,140,0.9); }
+
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.5);
+  line-height: 1.8; margin-bottom: 36px;
+  max-width: 440px; font-weight: 300;
+}
+
+.hero-ctas { display: flex; gap: 12px; align-items: center; }
+.btn-primary-hero {
+  padding: 14px 30px; background: var(--sage); color: white;
+  border-radius: 100px; font-size: 14px; text-decoration: none;
+  transition: all 0.22s; letter-spacing: 0.04em; font-weight: 500;
+  box-shadow: 0 8px 32px rgba(143,166,140,0.35);
+}
+.btn-primary-hero:hover { background: #7d9479; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(143,166,140,0.45); }
+.btn-ghost-hero {
+  padding: 14px 24px; color: rgba(255,255,255,0.55);
+  font-size: 14px; text-decoration: none; transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.btn-ghost-hero:hover { color: rgba(255,255,255,0.85); }
+
+/* Quote */
+.hero-quote {
+  margin-top: 48px; padding: 18px 22px;
+  border-left: 2px solid rgba(143,166,140,0.4);
+  background: rgba(255,255,255,0.03);
+  border-radius: 0 10px 10px 0;
+}
+.hero-quote-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-style: italic; font-weight: 300;
+  color: rgba(255,255,255,0.5); line-height: 1.75; margin-bottom: 5px;
+}
+.hero-quote-attr { font-size: 11px; color: rgba(255,255,255,0.25); letter-spacing: 0.06em; }
+
+/* Hero visual */
+.hero-visual {
+  display: flex; justify-content: center; align-items: center;
+  animation: fadeUp 0.8s 0.15s ease both; position: relative;
+}
+
+.mandala-hero-wrap {
+  position: relative; display: flex; justify-content: center; align-items: center;
+}
+.mandala-glow {
+  position: absolute; inset: -40px;
+  background: radial-gradient(circle, rgba(196,90,90,0.12) 0%, transparent 65%);
+  border-radius: 50%;
+}
+.hero-rings-lbl {
+  position: absolute; right: -80px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.ring-lbl {
+  font-size: 10.5px; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.06em; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+}
+.ring-lbl::before {
+  content: ''; width: 20px; height: 1px;
+  background: rgba(255,255,255,0.2); display: block;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.mandala-slow-spin {
+  animation: slowSpin 90s linear infinite;
+  transform-origin: center;
+}
+
+/* ── SECTION BASE ── */
+section { padding: 100px 52px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-muted); margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 48px); font-weight: 400;
+  line-height: 1.2; margin-bottom: 16px;
+}
+.section-title em { font-style: italic; color: var(--text-soft); }
+.section-desc {
+  font-size: 15px; color: var(--text-soft); line-height: 1.8;
+  max-width: 600px;
+}
+
+/* ── PHILOSOPHY SECTION ── */
+.philosophy { background: var(--bg); }
+
+.philosophy-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: start; margin-top: 64px;
+}
+
+.phil-left {}
+
+.vs-block {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 20px; align-items: center; margin-bottom: 36px;
+}
+.vs-card {
+  background: var(--surface); border: 1px solid var(--warm-1);
+  border-radius: 16px; padding: 22px;
+}
+.vs-card.system { border-color: var(--sage); background: rgba(143,166,140,0.05); }
+.vs-card-icon { font-size: 24px; margin-bottom: 10px; }
+.vs-card-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  font-weight: 400; margin-bottom: 6px;
+}
+.vs-card-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+.vs-sep {
+  font-family: 'Cormorant Garamond', serif; font-size: 18px;
+  color: var(--text-muted); font-style: italic; text-align: center;
+}
+
+.phil-callout {
+  background: var(--dark); border-radius: 16px; padding: 28px;
+  color: rgba(255,255,255,0.85);
+}
+.phil-callout-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px;
+  font-weight: 300; font-style: italic; margin-bottom: 12px;
+  color: rgba(255,255,255,0.7);
+}
+.phil-callout-text { font-size: 13.5px; line-height: 1.8; color: rgba(255,255,255,0.5); }
+
+.four-laws { margin-top: 0; }
+.four-laws-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted); margin-bottom: 16px;
+}
+.law-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 0; border-bottom: 1px solid var(--warm-1);
+}
+.law-row:last-child { border-bottom: none; }
+.law-n {
+  font-family: 'Cormorant Garamond', serif; font-size: 32px;
+  font-weight: 300; color: var(--warm-2); line-height: 1;
+  min-width: 28px;
+}
+.law-body {}
+.law-name-big {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px;
+  font-weight: 400; margin-bottom: 3px;
+}
+.law-desc { font-size: 12.5px; color: var(--text-soft); line-height: 1.65; }
+.law-app {
+  font-size: 11.5px; color: var(--sage); margin-top: 4px;
+  font-style: italic;
+}
+
+/* ── HOW IT WORKS ── */
+.how-it-works { background: var(--surface); }
+
+.hiw-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 2px; background: var(--warm-1); border-radius: 18px;
+  overflow: hidden; margin-top: 52px;
+}
+.hiw-card {
+  background: var(--surface); padding: 36px 32px;
+  transition: background 0.2s;
+}
+.hiw-card:hover { background: var(--bg); }
+.hiw-num {
+  font-family: 'Cormorant Garamond', serif; font-size: 56px;
+  font-weight: 300; color: var(--warm-2); line-height: 1;
+  margin-bottom: 14px;
+}
+.hiw-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  font-weight: 400; margin-bottom: 10px;
+}
+.hiw-desc { font-size: 13.5px; color: var(--text-soft); line-height: 1.75; }
+.hiw-tag {
+  display: inline-block; margin-top: 14px; padding: 4px 12px;
+  border-radius: 100px; font-size: 11px;
+  background: var(--warm-1); color: var(--text-muted);
+}
+
+/* ── MANDALA GALLERY ROW ── */
+.showcase { background: var(--bg); overflow: hidden; }
+.showcase-grid {
+  display: flex; gap: 18px; margin-top: 48px;
+  justify-content: center; flex-wrap: wrap;
+}
+.showcase-pin {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  cursor: pointer;
+  transition: transform 0.22s;
+}
+.showcase-pin:hover { transform: translateY(-6px); }
+.showcase-disc {
+  width: 140px; height: 140px; border-radius: 50%;
+  background: rgba(253,252,250,0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06), 0 14px 40px rgba(0,0,0,0.07);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.showcase-disc::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 45%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  border-radius: 50% 50% 0 0; pointer-events: none;
+}
+.showcase-lbl {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-style: italic; color: var(--text-soft);
+}
+
+/* ── READING THE MANDALA ── */
+.reading { background: var(--dark); padding: 100px 52px; color: white; }
+.reading .section-title { color: rgba(255,255,255,0.9); }
+.reading .section-desc { color: rgba(255,255,255,0.45); }
+
+.reading-rows {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-top: 52px;
+}
+.reading-row {
+  display: grid;
+  grid-template-columns: 110px repeat(6, 1fr);
+  gap: 10px; align-items: stretch;
+}
+.reading-row-lbl {
+  display: flex; align-items: center;
+  font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: rgba(255,255,255,0.55);
+  border-right: 1px solid rgba(255,255,255,0.07);
+  padding-right: 12px;
+}
+/* Every cell spans 2 of 6 cols (= 1/3 width)
+   3 cells → full row, 2 → 2/3, 1 → 1/3 */
+.rc { grid-column: span 2; }
+.read-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 28px;
+  transition: all 0.2s;
+}
+.read-card:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.14);
+}
+.read-icon-wrap {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; font-size: 20px;
+}
+.read-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  font-weight: 400; margin-bottom: 8px; color: rgba(255,255,255,0.85);
+}
+.read-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.75; }
+
+/* ── ADMIN SECTION ── */
+.admin-section { background: var(--warm-1); }
+
+.admin-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+}
+
+.admin-badge-row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.admin-badge {
+  padding: 4px 12px; border-radius: 100px; font-size: 11px;
+  letter-spacing: 0.07em; text-transform: uppercase;
+}
+.ab-trainer  { background: rgba(143,166,140,0.2); color: var(--sage); }
+.ab-gym      { background: rgba(123,155,175,0.2); color: var(--blue); }
+.ab-wellness { background: rgba(196,136,122,0.2); color: var(--amber); }
+
+.admin-features { display: flex; flex-direction: column; gap: 14px; margin: 28px 0; }
+.admin-feature {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px; background: var(--surface);
+  border-radius: 13px; border: 1px solid var(--warm-1);
+}
+.admin-feature-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--warm-1); display: flex; align-items: center;
+  justify-content: center; font-size: 15px; flex-shrink: 0;
+}
+.admin-feature-title { font-size: 13.5px; font-weight: 500; margin-bottom: 3px; }
+.admin-feature-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+.btn-admin-learn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; background: var(--dark); color: rgba(255,255,255,0.88);
+  border-radius: 100px; font-size: 13.5px; text-decoration: none;
+  transition: all 0.2s; letter-spacing: 0.03em;
+}
+.btn-admin-learn:hover { background: #111; transform: translateY(-2px); }
+
+/* Admin mockup */
+.admin-mockup {
+  background: var(--dark-2); border-radius: 18px; padding: 24px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.mock-topbar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+}
+.mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mock-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  color: rgba(255,255,255,0.6); margin-left: 8px;
+}
+.mock-badge-admin {
+  padding: 2px 8px; border-radius: 100px; font-size: 9.5px;
+  background: rgba(143,166,140,0.2); color: var(--sage);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.mock-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.mock-stat {
+  background: rgba(255,255,255,0.04); border-radius: 10px; padding: 12px;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.mock-stat-n {
+  font-family: 'Cormorant Garamond', serif; font-size: 26px;
+  font-weight: 300; color: rgba(255,255,255,0.85); line-height: 1;
+}
+.mock-stat-l { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.08em; }
+.mock-member-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 9px;
+  background: rgba(255,255,255,0.03); margin-bottom: 5px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.mock-av { width: 28px; height: 28px; border-radius: 50%; display:flex;align-items:center;justify-content:center;font-size:10px;color:white;flex-shrink:0; }
+.mock-name { font-size: 12px; color: rgba(255,255,255,0.65); flex: 1; }
+.mock-prog { display: flex; flex-direction: column; gap: 3px; }
+.mock-prog-bar { width: 60px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+.mock-prog-fill { height: 100%; border-radius: 2px; }
+.mock-pct { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* ── PRICING (HOME) ── */
+.pricing-home { background: var(--bg); padding: 100px 52px; }
+.pricing-home .section-title em { font-style: italic; color: var(--text-soft); }
+.pricing-cards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; max-width: 780px; margin: 52px auto 0;
+}
+/* Featured card — dark on light bg */
+.price-featured {
+  background: var(--dark) !important;
+  border-color: var(--dark) !important;
+  box-shadow: 0 16px 48px rgba(30,26,23,0.18);
+}
+.price-featured-pill {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  padding: 4px 16px; border-radius: 100px; font-size: 10.5px;
+  font-weight: 500; letter-spacing: 0.07em; white-space: nowrap;
+  background: var(--sage); color: white;
+}
+.price-amount-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 18px; }
+.price-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px; font-weight: 300; line-height: 1; color: var(--text);
+}
+.price-featured .price-big { color: rgba(255,255,255,0.9); }
+.price-per { font-size: 13px; color: var(--text-muted); }
+.price-featured .price-per { color: rgba(255,255,255,0.35); }
+.price-annual-hint { font-size: 11.5px; color: var(--sage); margin-bottom: 18px; min-height: 16px; }
+/* Feature list — extends .read-desc color logic */
+.price-feat-list { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 28px; }
+.price-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+.pf-dot {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; margin-top: 1px;
+  background: rgba(143,166,140,0.2); color: var(--sage);
+}
+.pf-dot.off { background: var(--warm-1); color: var(--warm-3); }
+.price-featured .pf-dot.off { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.22); }
+.pf-text { color: var(--text-soft); line-height: 1.5; }
+.pf-text strong { color: var(--text); font-weight: 500; }
+.price-featured .pf-text { color: rgba(255,255,255,0.5); }
+.price-featured .pf-text strong { color: rgba(255,255,255,0.85); }
+.pf-badge {
+  display: inline-flex; align-items: center; margin-left: 5px;
+  padding: 1px 7px; border-radius: 100px; font-size: 10.5px;
+  background: rgba(143,166,140,0.15); color: var(--sage);
+}
+/* CTA buttons */
+.btn-price-ghost {
+  display: block; width: 100%; padding: 12px; text-align: center;
+  border-radius: 12px; font-size: 13.5px; font-weight: 500; text-decoration: none;
+  border: 1.5px solid var(--warm-2); color: var(--text-soft);
+  transition: all 0.2s; letter-spacing: 0.03em;
+}
+.btn-price-ghost:hover { background: var(--warm-1); color: var(--text); }
+.btn-price-paid {
+  display: block; width: 100%; padding: 12px; text-align: center;
+  border-radius: 12px; font-size: 13.5px; font-weight: 500; text-decoration: none;
+  background: var(--sage); color: white;
+  box-shadow: 0 4px 16px rgba(143,166,140,0.35);
+  transition: all 0.22s; letter-spacing: 0.03em;
+}
+.btn-price-paid:hover { background: #7d9479; transform: translateY(-1px); box-shadow: 0 6px 22px rgba(143,166,140,0.45); }
+.pricing-see-more { text-align: center; margin-top: 24px; }
+.pricing-see-more a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.16s; }
+.pricing-see-more a:hover { color: var(--text-soft); }
+
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<script src="./nav.js"></script>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">🌸 Habit tracking, reimagined</div>
+      <h1 class="hero-title">
+        Fall in love with<br>
+        the <em>process</em> of<br>
+        showing up.
+      </h1>
+      <p class="hero-sub">PetalProgress turns your daily habits into a personalized mandala — a visual record of every day you showed up. Not a streak counter. A growing work of art.</p>
+      <div class="hero-ctas">
+        <a href="#" class="btn-primary-hero">Start free — no card needed</a>
+        <a href="#how-it-works" class="btn-ghost-hero">See how it works →</a>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(255,255,255,0.65);"><span style="color:var(--sage);font-size:13px;">✓</span> 3 habits, tracked for a full year</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(255,255,255,0.65);"><span style="color:var(--sage);font-size:13px;">✓</span> Free forever</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(255,255,255,0.65);"><span style="color:var(--sage);font-size:13px;">✓</span> No credit card</div>
+      </div>
+      <div class="hero-quote">
+        <div class="hero-quote-text">"You do not rise to the level of your goals. You fall to the level of your systems."</div>
+        <div class="hero-quote-attr">— James Clear, Atomic Habits</div>
+      </div>
+    </div>
+
+    <!-- Hero mandala SVG -->
+    <div class="hero-visual">
+      <div class="mandala-hero-wrap">
+        <div class="mandala-glow"></div>
+        <svg width="360" height="360" viewBox="0 0 360 360" fill="none">
+          <circle cx="180" cy="180" r="172" fill="rgba(30,26,23,0.6)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+          <!-- Outermost ring -->
+          <circle cx="180" cy="180" r="165" stroke="rgba(255,255,255,0.05)" stroke-width="0.75" stroke-dasharray="3 4"/>
+          <g id="heroR4"></g>
+          <g id="heroR3"></g>
+          <g id="heroR2"></g>
+          <g id="heroR1"></g>
+          <!-- Week ticks -->
+          <g id="heroTicks"></g>
+          <!-- Center -->
+          <circle cx="180" cy="180" r="30" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+          <circle cx="180" cy="180" r="20" fill="rgba(30,26,23,0.8)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+          <text x="180" y="188" text-anchor="middle" font-size="20">🌸</text>
+          <!-- Progress arc -->
+          <circle cx="180" cy="180" r="158"
+            fill="none" stroke="rgba(143,166,140,0.25)" stroke-width="2"
+            stroke-dasharray="628 1000"
+            stroke-linecap="round"
+            transform="rotate(-90 180 180)"/>
+        </svg>
+        <div class="hero-rings-lbl">
+          <div class="ring-lbl">Day arrows</div>
+          <div class="ring-lbl">Week markers</div>
+          <div class="ring-lbl">Month petals</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy">
+  <div class="section-inner">
+    <div class="section-eyebrow">The philosophy</div>
+    <h2 class="section-title">Build a <em>system.</em> Not just a goal.</h2>
+    <p class="section-desc">Goals give you direction. Systems give you progress. PetalProgress is built around the idea that the habit — not the outcome — is what to fall in love with.</p>
+
+    <div class="philosophy-grid">
+      <div class="phil-left">
+        <div class="vs-block">
+          <div class="vs-card">
+            <div class="vs-card-icon">🏆</div>
+            <div class="vs-card-title">Goal</div>
+            <div class="vs-card-desc">A destination. Motivating, but fragile — it ends when you arrive, and disappears when you miss.</div>
+          </div>
+          <div class="vs-sep">vs.</div>
+          <div class="vs-card system">
+            <div class="vs-card-icon">🌀</div>
+            <div class="vs-card-title">System</div>
+            <div class="vs-card-desc">A practice you return to. Your mandala is the system — it grows every time you show up, no finish line required.</div>
+          </div>
+        </div>
+
+        <div class="phil-callout">
+          <div class="phil-callout-title">Your mandala is your system made visible.</div>
+          <div class="phil-callout-text">Every petal that blooms is a day you chose the process over the result. Over time, the image that grows isn't just beautiful — it's proof of who you're becoming.</div>
+        </div>
+      </div>
+
+      <div class="four-laws">
+        <div class="four-laws-title">The Four Laws of Behavior Change</div>
+        <div class="law-row">
+          <div class="law-n">1</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Obvious</div>
+            <div class="law-desc">Name your habit with a clear cue — when and where you'll do it. Implementation intentions dramatically increase follow-through.</div>
+            <div class="law-app">In PetalProgress: specific habit naming + habit stacking prompts</div>
+          </div>
+        </div>
+        <div class="law-row">
+          <div class="law-n">2</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Easy</div>
+            <div class="law-desc">Start smaller than feels right. A habit you do reliably beats one you plan for but skip.</div>
+            <div class="law-app">In PetalProgress: gentle weekly goal nudges, two-minute rule reminder</div>
+          </div>
+        </div>
+        <div class="law-row">
+          <div class="law-n">3</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Attractive</div>
+            <div class="law-desc">Pair your habit with something you enjoy. The more beautiful the ritual, the easier it is to return.</div>
+            <div class="law-app">In PetalProgress: your mandala's colors and figure are yours to choose</div>
+          </div>
+        </div>
+        <div class="law-row">
+          <div class="law-n">4</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Satisfying</div>
+            <div class="law-desc">Immediate rewards reinforce behavior. Watching your mandala bloom is the reward.</div>
+            <div class="law-app">In PetalProgress: every check-in blooms a petal, visibly and immediately</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-eyebrow">How it works</div>
+    <h2 class="section-title">Pick a habit. <em>Show up.</em> Watch it bloom.</h2>
+    <p class="section-desc">A single habit tracked over a year becomes something beautiful. Each element of your mandala encodes your data in a way no spreadsheet can.</p>
+
+    <div class="hiw-grid">
+      <div class="hiw-card">
+        <div class="hiw-num">01</div>
+        <div class="hiw-title">Pick your habit</div>
+        <div class="hiw-desc">Walking, meditating, reading, playing guitar — or a theme you work toward in different ways. Single habits or multiple daily goals, it's up to you.</div>
+        <div class="hiw-tag">Obvious + Easy</div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-num">02</div>
+        <div class="hiw-title">Make it yours</div>
+        <div class="hiw-desc">Choose from 4 themes and 6 petal colors — 24 combinations. Add a center figure. Give your mandala a name. The more it feels like you, the more you'll return to it.</div>
+        <div class="hiw-tag">Attractive</div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-num">03</div>
+        <div class="hiw-title">Check in daily</div>
+        <div class="hiw-desc">Every day you complete your habit, a new layer blooms. Your weekly goal shapes the outer ring. Miss a day — it's okay. Just show up tomorrow.</div>
+        <div class="hiw-tag">Satisfying</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MANDALA GALLERY SHOWCASE -->
+<section class="showcase">
+  <div class="section-inner">
+    <div class="section-eyebrow">Your shape is your own</div>
+    <h2 class="section-title">Every mandala is <em>unique.</em></h2>
+    <p class="section-desc">Your data, your color choices, your figure — no two mandalas look the same. At the end of the year, you'll have a one-of-a-kind artifact of your practice.</p>
+
+    <div class="showcase-grid" id="showcaseGrid"></div>
+  </div>
+</section>
+
+<!-- READING THE MANDALA -->
+<section class="reading">
+  <div class="section-inner">
+    <div class="section-eyebrow" style="color:rgba(255,255,255,0.3)">Reading your mandala</div>
+    <h2 class="section-title">Every layer <em>means something.</em></h2>
+    <p class="section-desc">Your mandala is a data visualization — but one you can feel. Here's how to read it.</p>
+
+    <div class="reading-rows">
+
+      <!-- Yearly — 3 cells (each spans 2 of 6 cols) -->
+      <div class="reading-row">
+        <div class="reading-row-lbl">Yearly</div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◈</div>
+          <div class="read-title">Day Shapes</div>
+          <div class="read-desc">Each marker is one day of the year. 365 shapes fill the outer ring — highlighted days are ones you completed your habit.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◎</div>
+          <div class="read-title">Week Petals</div>
+          <div class="read-desc">52 week petals sit between each month segment. A petal blooms when you hit your weekly target — small wins, made visible.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">❋</div>
+          <div class="read-title">Month Petals</div>
+          <div class="read-desc">Each of the 12 petals represents a month. It blooms fully when you meet your monthly goal — a year of practice in one image.</div>
+        </div>
+      </div>
+
+      <!-- Quarterly — 2 cells -->
+      <div class="reading-row">
+        <div class="reading-row-lbl">Quarterly</div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◈</div>
+          <div class="read-title">Day Shapes</div>
+          <div class="read-desc">91 day markers fill the outer ring over one quarter. Each shape shows whether you checked in that day.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◎</div>
+          <div class="read-title">Week Petals</div>
+          <div class="read-desc">13 week petals mark the weeks of the quarter. Each petal highlights a week where you hit your weekly goal.</div>
+        </div>
+      </div>
+
+      <!-- Monthly — 2 cells -->
+      <div class="reading-row">
+        <div class="reading-row-lbl">Monthly</div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◈</div>
+          <div class="read-title">Day Shapes</div>
+          <div class="read-desc">28–31 day markers trace your daily completions. The clearest view of how consistently you showed up through the month.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◎</div>
+          <div class="read-title">Week Petals</div>
+          <div class="read-desc">4–5 week petals break the month into segments. Highlighted petals mark weeks where you met your weekly target.</div>
+        </div>
+      </div>
+
+      <!-- Weekly — 1 cell -->
+      <div class="reading-row">
+        <div class="reading-row-lbl">Weekly</div>
+        <div class="read-card rc">
+          <div class="read-icon-wrap">◈</div>
+          <div class="read-title">Daily Petals</div>
+          <div class="read-desc">Seven petals — one for each day of the week. The most focused mandala, where every single day has a shape.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN SECTION -->
+<section class="admin-section" id="teams">
+  <div class="section-inner">
+    <div class="admin-inner">
+      <div>
+        <div class="section-eyebrow">For teams & organizations</div>
+        <h2 class="section-title">Built for <em>coaches,</em> gyms, and wellness programs.</h2>
+        <p class="section-desc" style="margin-bottom:0">Assign habits to your clients, monitor progress, and let PetalProgress do the motivating for you — all without disrupting how your members use the app.</p>
+
+        <div class="admin-badge-row" style="margin-top:18px;">
+          <div class="admin-badge ab-trainer">Personal trainers</div>
+          <div class="admin-badge ab-gym">Gyms & studios</div>
+          <div class="admin-badge ab-wellness">Wellness coaches</div>
+        </div>
+
+        <div class="admin-features">
+          <div class="admin-feature">
+            <div class="admin-feature-icon">◎</div>
+            <div>
+              <div class="admin-feature-title">Assign or gift habits</div>
+              <div class="admin-feature-desc">Assign a habit to your clients with your settings, or give them access to set up their own. You control how much they can edit.</div>
+            </div>
+          </div>
+          <div class="admin-feature">
+            <div class="admin-feature-icon">◇</div>
+            <div>
+              <div class="admin-feature-title">Monitor without micromanaging</div>
+              <div class="admin-feature-desc">See streaks, weekly completion, and at-risk members at a glance. Get notified when someone hasn't checked in for a week.</div>
+            </div>
+          </div>
+          <div class="admin-feature">
+            <div class="admin-feature-icon">✦</div>
+            <div>
+              <div class="admin-feature-title">Generate printed mandalas</div>
+              <div class="admin-feature-desc">At the end of a program or year, generate a beautiful printed mandala for each member — a tangible record of their work.</div>
+            </div>
+          </div>
+          <div class="admin-feature">
+            <div class="admin-feature-icon">◈</div>
+            <div>
+              <div class="admin-feature-title">Independent user accounts</div>
+              <div class="admin-feature-desc">Members keep their accounts and mandalas forever — even if they leave your program. Their data is theirs.</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="#" class="btn-admin-learn">Learn more about Teams →</a>
+      </div>
+
+      <!-- Admin mockup -->
+      <div class="admin-mockup">
+        <div class="mock-topbar">
+          <div class="mock-dot" style="background:#C45A5A;opacity:0.7"></div>
+          <div class="mock-dot" style="background:#C4887A;opacity:0.5"></div>
+          <div class="mock-dot" style="background:#8FA68C;opacity:0.5"></div>
+          <div class="mock-title">Bloom Wellness Studio</div>
+          <div class="mock-badge-admin" style="margin-left:auto">Teams</div>
+        </div>
+
+        <div class="mock-stat-row">
+          <div class="mock-stat">
+            <div class="mock-stat-n">12</div>
+            <div class="mock-stat-l">Members</div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-n">71<span style="font-size:14px;color:rgba(255,255,255,0.4)">%</span></div>
+            <div class="mock-stat-l">Avg completion</div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-n" style="color:#C45A5A">3</div>
+            <div class="mock-stat-l">At risk</div>
+          </div>
+        </div>
+
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.25);margin-bottom:10px;">Members</div>
+
+        <div class="mock-member-row">
+          <div class="mock-av" style="background:#C45A5A">SK</div>
+          <div class="mock-name">Sarah K.</div>
+          <div class="mock-prog">
+            <div class="mock-prog-bar"><div class="mock-prog-fill" style="width:80%;background:#8FA68C"></div></div>
+            <div class="mock-pct">80% · 🔥 12 days</div>
+          </div>
+        </div>
+        <div class="mock-member-row">
+          <div class="mock-av" style="background:#8FA68C">MR</div>
+          <div class="mock-name">Maya R.</div>
+          <div class="mock-prog">
+            <div class="mock-prog-bar"><div class="mock-prog-fill" style="width:95%;background:#8FA68C"></div></div>
+            <div class="mock-pct">95% · 🔥 21 days</div>
+          </div>
+        </div>
+        <div class="mock-member-row">
+          <div class="mock-av" style="background:#C45A5A;opacity:0.6">AP</div>
+          <div class="mock-name" style="color:rgba(255,255,255,0.35)">Alex P.</div>
+          <div class="mock-prog">
+            <div class="mock-prog-bar"><div class="mock-prog-fill" style="width:0%;background:#C45A5A"></div></div>
+            <div class="mock-pct" style="color:#C45A5A">No check-in · 7 days</div>
+          </div>
+        </div>
+        <div class="mock-member-row">
+          <div class="mock-av" style="background:#7B9BAF">JT</div>
+          <div class="mock-name">Jordan T.</div>
+          <div class="mock-prog">
+            <div class="mock-prog-bar"><div class="mock-prog-fill" style="width:50%;background:#C4887A"></div></div>
+            <div class="mock-pct">50% · 🔥 4 days</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-home" id="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow" style="color:rgba(255,255,255,0.3)">Pricing</div>
+    <h2 class="section-title">Start free. <em>Bloom further</em> for $2.99.</h2>
+    <p class="section-desc">You don't need to subscribe to actually use PetalProgress. Track 3 habits for a full year — free, no expiry. Petal+ is for the people who want to go deeper.</p>
+
+    <div class="pricing-cards">
+
+      <!-- Free -->
+      <div class="vs-card" style="padding:32px;border-radius:22px">
+        <div class="hiw-title" style="margin-bottom:4px">Free</div>
+        <div class="price-amount-row">
+          <div class="price-big">$0</div>
+        </div>
+        <div class="price-annual-hint">&nbsp;</div>
+        <div class="hiw-desc">Everything you need to start a habit and watch it grow. No credit card required.</div>
+        <div class="price-feat-list">
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>3 active mandalas</strong> — full check-in &amp; gallery</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>All 4 themes + 6 petal colors</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Calendar view</strong> + weekly progress</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Mandala shop</strong> at full price</div></div>
+          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Email reminders</div></div>
+          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Year-end high-res export</div></div>
+        </div>
+        <a href="#" class="btn-price-ghost">Get started free</a>
+      </div>
+
+      <!-- Petal+ -->
+      <div class="price-featured" style="padding:32px;position:relative;border-radius:22px">
+        <div class="price-featured-pill">Most popular</div>
+        <div class="hiw-title" style="color:rgba(255,255,255,0.9);margin-bottom:4px">Petal+</div>
+        <div class="price-amount-row">
+          <div class="price-big">$2.99</div>
+          <div class="price-per">/mo</div>
+        </div>
+        <div class="price-annual-hint">Or $2.49/mo billed annually — 2 months free</div>
+        <div class="hiw-desc" style="color:rgba(255,255,255,0.45)">For the committed practitioner. Reminders, unlimited mandalas, and a discount every time you order from the shop.</div>
+        <div class="price-feat-list">
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Unlimited mandalas</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>All 4 themes + 6 petal colors</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Calendar view</strong> + weekly progress</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>20% off everything in the shop</strong><span class="pf-badge">Petal+ discount</span></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Email reminders</strong> — daily, weekly, or custom</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Year-end export</strong> — high-res PNG + SVG, free</div></div>
+        </div>
+        <a href="#" class="btn-price-paid">Start Petal+ free for 7 days</a>
+      </div>
+
+    </div>
+
+    <div class="pricing-see-more">
+      <a href="pricing.html">See full comparison including Teams &amp; Shop pricing →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<script src="./footer.js"></script>
+
+<script>
+// ── HERO MANDALA ──────────────────────────────────────
+function buildRing(gId, n, r, rx, ry, color, filledN, cx, cy, dark) {
+  const g = document.getElementById(gId);
+  if (!g) return;
+  let h = '';
+  for (let i=0;i<n;i++) {
+    const a=(i*(360/n))*Math.PI/180;
+    const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+    const filled = filledN===undefined || i<filledN;
+    const fill = filled ? color : (dark ? 'rgba(255,255,255,0.06)' : '#EDE9E3');
+    const op = filled ? 1 : 0.55;
+    h+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" fill="${fill}" opacity="${op}" transform="rotate(${(i*(360/n)).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+  }
+  g.innerHTML = h;
+}
+
+function buildHeroTicks(n, r1, r2, cx, cy) {
+  const g = document.getElementById('heroTicks');
+  let h = '';
+  for (let i=0;i<n;i++) {
+    const a=(i*(360/n))*Math.PI/180;
+    const major = i%4===0;
+    const r2b = major ? r2+3 : r2;
+    h+=`<line x1="${(cx+r1*Math.cos(a)).toFixed(1)}" y1="${(cy+r1*Math.sin(a)).toFixed(1)}" x2="${(cx+r2b*Math.cos(a)).toFixed(1)}" y2="${(cy+r2b*Math.sin(a)).toFixed(1)}" stroke="rgba(255,255,255,0.12)" stroke-width="${major?1.5:0.75}"/>`;
+  }
+  g.innerHTML = h;
+}
+
+buildHeroTicks(52, 152, 160, 180, 180);
+buildRing('heroR4', 24, 134, 6, 16, 'rgba(196,90,90,0.75)', 18, 180, 180, true);
+buildRing('heroR3', 16, 104, 5.5, 14, 'rgba(196,90,90,0.85)', 12, 180, 180, true);
+buildRing('heroR2', 12, 74, 5.5, 13, 'rgba(196,136,122,0.9)', 10, 180, 180, true);
+buildRing('heroR1', 8, 46, 5, 12, 'rgba(143,166,140,0.9)', undefined, 180, 180, true);
+
+// ── SHOWCASE MANDALAS ─────────────────────────────────
+const showcaseData = [
+  { color:'#C45A5A', fig:'🌸', name:'Morning Meditation', theme:'Ice Castle' },
+  { color:'#8FA68C', fig:'🌿', name:'Evening Walk',       theme:'Blooming Flowers' },
+  { color:'#7B9BAF', fig:'⭐', name:'Daily Reading',      theme:'Heat Wave' },
+  { color:'#C4887A', fig:'🌙', name:'Gratitude Journal',  theme:'Pumpkin Spice' },
+  { color:'#9B8FA6', fig:'✨', name:'Creative Practice',  theme:'Ice Castle' },
+];
+
+function showcaseMandala(c, sz=100) {
+  const cx=sz/2, cy=sz/2;
+  let p='';
+  const rings=[
+    {n:8, r:sz*0.38, rx:sz*0.04, ry:sz*0.13, fill:1},
+    {n:12,r:sz*0.27, rx:sz*0.035,ry:sz*0.10, fill:0.8},
+    {n:6, r:sz*0.17, rx:sz*0.03, ry:sz*0.08, fill:1},
+  ];
+  rings.forEach(ring=>{
+    for(let i=0;i<ring.n;i++){
+      const a=(i*(360/ring.n))*Math.PI/180;
+      const x=cx+ring.r*Math.cos(a), y=cy+ring.r*Math.sin(a);
+      const filled = Math.random()<ring.fill;
+      p+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${ring.rx.toFixed(2)}" ry="${ring.ry.toFixed(2)}" fill="${filled?c:'#EDE9E3'}" opacity="${filled?0.85:0.4}" transform="rotate(${(i*(360/ring.n)).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+    }
+  });
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">
+    <circle cx="${cx}" cy="${cy}" r="${sz/2-1}" fill="rgba(248,246,243,0.6)" stroke="#EDE9E3" stroke-width="0.5"/>
+    ${p}
+    <circle cx="${cx}" cy="${cy}" r="${sz*0.1}" fill="#FDFCFA"/>
+  </svg>`;
+}
+
+const grid = document.getElementById('showcaseGrid');
+grid.innerHTML = showcaseData.map(m=>`
+  <div class="showcase-pin">
+    <div class="showcase-disc">${showcaseMandala(m.color,130)}</div>
+    <div class="showcase-lbl">${m.name}</div>
+  </div>
+`).join('');
+</script>
+</body>
+</html>
