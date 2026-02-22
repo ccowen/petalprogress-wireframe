@@ -446,18 +446,25 @@ function nextCoach() {
 function dismissCoach() {
   document.getElementById('coachMark').style.display      = 'none';
   document.getElementById('coachSpotlight').style.display = 'none';
+  localStorage.setItem('ppAdminOnboarded', '1');
 }
 
 function saveOrg() {
   const val = document.getElementById('orgNameInput').value.trim();
   if (!val) { document.getElementById('orgNameInput').focus(); return; }
   document.getElementById('orgModal').style.display = 'none';
+  localStorage.setItem('ppAdminOnboarded', '1');
   setTimeout(function () { currentCoach = 0; showCoach(0); }, 200);
 }
 
 document.getElementById('orgNameInput').addEventListener('keydown', function (e) {
   if (e.key === 'Enter') saveOrg();
 });
+
+// Skip onboarding if already completed
+if (localStorage.getItem('ppAdminOnboarded')) {
+  document.getElementById('orgModal').style.display = 'none';
+}
 </script>
 
 </body>
