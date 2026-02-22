@@ -284,7 +284,7 @@ body {
     </div>
     <div class="hint-body" id="chipDesc" style="margin-bottom:14px;"></div>
     <input class="field" id="habitInput" type="text"
-      placeholder="e.g. 10 minutes of meditation after morning coffee"
+      placeholder="e.g. Morning Walk"
       oninput="updatePreview()">
     <div class="hint-toggle" onclick="toggleHint('habitHint',this)">
       <span class="hint-toggle-icon">▶</span> What makes a good habit name?
@@ -302,34 +302,41 @@ body {
   <!-- STEP 3: Timeframe -->
   <div class="step" id="step-3">
     <div class="step-eyebrow">Step 3 of 5 · Your Timeframe</div>
-    <div class="step-title">How long will you <em>commit?</em></div>
-    <div class="step-desc">Choose the span of your mandala. This shapes how your petals are arranged and what a complete mandala looks like.</div>
+    <div class="step-title">Start <em>smaller</em> than you think.</div>
+    <div class="step-desc">A shorter mandala is easier to complete — and completing one feels great. You can always start another once it's done.</div>
     <div class="timeframe-options">
-      <div class="tf-option on" onclick="selTF('yearly',this)">
+      <div class="tf-option on" onclick="selTF('weekly',this)">
         <div class="tf-radio"></div>
-        <div class="tf-label">Yearly</div>
-        <div class="tf-range">12 months · 52 weeks</div>
-      </div>
-      <div class="tf-option" onclick="selTF('quarterly',this)">
-        <div class="tf-radio"></div>
-        <div class="tf-label">Quarterly</div>
-        <div class="tf-range">3 months · 13 weeks</div>
+        <div class="tf-label">Weekly</div>
+        <div class="tf-range">7 days</div>
       </div>
       <div class="tf-option" onclick="selTF('monthly',this)">
         <div class="tf-radio"></div>
         <div class="tf-label">Monthly</div>
         <div class="tf-range">4 weeks · ~30 days</div>
       </div>
-      <div class="tf-option" onclick="selTF('weekly',this)">
+      <div class="tf-option" onclick="selTF('quarterly',this)">
         <div class="tf-radio"></div>
-        <div class="tf-label">Weekly</div>
-        <div class="tf-range">7 days</div>
+        <div class="tf-label">Quarterly</div>
+        <div class="tf-range">3 months · 13 weeks</div>
+      </div>
+      <div class="tf-option" onclick="selTF('yearly',this)">
+        <div class="tf-radio"></div>
+        <div class="tf-label">Yearly</div>
+        <div class="tf-range">12 months · 52 weeks</div>
       </div>
       <div class="tf-option" onclick="selTF('custom',this)">
         <div class="tf-radio"></div>
         <div class="tf-label">Custom</div>
         <div class="tf-range">You choose the dates</div>
       </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-inner">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">Once a mandala is <strong>complete</strong>, it leaves your active count — so on the free plan you can always start a fresh one. Completing mandalas doesn't use up your free habits.</div>
+      </div>
+      <div class="tip-dismiss" onclick="this.closest('.tip-card').style.display='none'">×</div>
     </div>
     <div class="date-row">
       <div class="date-field-wrap">
@@ -425,7 +432,7 @@ let currentStep = 0;
 let goalN = 3;
 let petalColor = '#7B9BAF';
 let petalShape = 'oval';
-let selectedTF = 'yearly';
+let selectedTF = 'weekly';
 
 const CHIP_DESC = {
   1: 'Make your habit visible and clear. A cue — a time of day, a place, or a small trigger — helps your brain know exactly when to act.',

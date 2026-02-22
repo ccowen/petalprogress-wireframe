@@ -387,7 +387,7 @@ nav {
 <!-- HERO -->
 <div class="pricing-hero">
   <div class="pricing-eyebrow">✦ Simple pricing</div>
-  <h1 class="pricing-title">Start free.<br><em>Bloom further</em> for $2.99.</h1>
+  <h1 class="pricing-title">Start free.<br><em>Bloom further</em> for $1.99.</h1>
   <p class="pricing-sub">You don't need to subscribe to use PetalProgress. The free plan lets you track 3 habits for a full year — no trial, no expiry, no credit card. Petal+ is for people who want to go deeper.</p>
 
   <!-- Billing toggle -->
@@ -429,6 +429,10 @@ nav {
       </div>
       <div class="feat">
         <div class="feat-check no">–</div>
+        <div class="feat-text" style="color:var(--text-muted)">Multiple habits per mandala option</div>
+      </div>
+      <div class="feat">
+        <div class="feat-check no">–</div>
         <div class="feat-text" style="color:var(--text-muted)">Email reminders</div>
       </div>
       <div class="feat">
@@ -445,7 +449,7 @@ nav {
     <div class="plan-pill">Most popular</div>
     <div class="plan-name">Petal+</div>
     <div class="plan-price-row">
-      <div class="plan-price" id="petalPrice">$2.99</div>
+      <div class="plan-price" id="petalPrice">$1.99</div>
       <div class="plan-price-per">/mo</div>
     </div>
     <div class="plan-price-annual" id="petalAnnualNote">&nbsp;</div>
@@ -470,6 +474,10 @@ nav {
           <strong>20% off everything in the shop</strong>
           <span class="feat-tag">Petal+ discount</span>
         </div>
+      </div>
+      <div class="feat">
+        <div class="feat-check yes">✓</div>
+        <div class="feat-text"><strong>Multiple habits per mandala option</strong></div>
       </div>
       <div class="feat">
         <div class="feat-check yes">✓</div>
@@ -506,6 +514,7 @@ nav {
       <tr class="ct-row"><td>Active mandalas</td><td class="ct-val">3</td><td class="ct-val ct-petal">Unlimited</td></tr>
       <tr class="ct-row"><td>Completed mandalas saved</td><td class="ct-check-y">✓</td><td class="ct-check-y ct-petal">✓</td></tr>
       <tr class="ct-row"><td>All themes & petal colors</td><td class="ct-check-y">✓</td><td class="ct-check-y ct-petal">✓</td></tr>
+      <tr class="ct-row"><td>Multiple habits per mandala option</td><td class="ct-check-n">–</td><td class="ct-check-y ct-petal">✓</td></tr>
       <tr class="ct-row"><td>Year-end high-res export</td><td class="ct-check-n">–</td><td class="ct-check-y ct-petal">✓ free</td></tr>
 
       <tr class="ct-section"><td colspan="3">Tracking</td></tr>
@@ -535,7 +544,7 @@ nav {
       <div class="ppb-icon">✦</div>
       <div class="ppb-text">
         <strong>Petal+ members get 20% off everything in the shop.</strong>
-        At $2.99/mo, one print order pays for itself.
+        At $1.99/mo, one print order pays for itself.
       </div>
     </div>
 
@@ -687,12 +696,12 @@ function setBilling(type, el) {
   const price = document.getElementById('petalPrice');
   const annualNote = document.getElementById('petalAnnualNote');
   if (type === 'annual') {
-    price.textContent = '$2.49';
-    annualNote.textContent = 'Billed $29.99/year — save $5.90';
+    price.textContent = '$1.66';
+    annualNote.textContent = 'Billed $19.90/year — save $3.98';
     note.textContent = '2 months free with annual billing';
     note.style.opacity = '1';
   } else {
-    price.textContent = '$2.99';
+    price.textContent = '$1.99';
     annualNote.innerHTML = '&nbsp;';
     note.textContent = '';
   }
