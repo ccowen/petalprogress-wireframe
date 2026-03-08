@@ -361,12 +361,54 @@ section { padding: 100px 52px; }
   gap: 10px; align-items: stretch;
 }
 .reading-row-lbl {
-  display: flex; align-items: center;
-  font-size: 10.5px; text-transform: uppercase;
-  letter-spacing: 0.1em; color: rgba(255,255,255,0.55);
-  border-right: 1px solid rgba(255,255,255,0.07);
-  padding-right: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10.5px; text-transform: uppercase; text-align: center;
+  letter-spacing: 0.1em; color: rgba(255,255,255,0.75);
+  border-right: none; padding: 6px 8px;
+  border-radius: 20px; background: rgba(255,255,255,0.08);
+  align-self: center; justify-self: center;
+  width: fit-content;
 }
+.quarterly-lbl-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  align-self: center; justify-self: center;
+}
+.q-toggle {
+  display: flex; align-items: center; gap: 0;
+  background: rgba(255,255,255,0.06); border-radius: 12px;
+  padding: 2px; cursor: pointer;
+}
+.q-toggle-opt {
+  font-size: 10px; font-weight: 600; padding: 3px 10px;
+  border-radius: 10px; color: rgba(255,255,255,0.4);
+  transition: all 0.2s;
+}
+.q-toggle-opt.active {
+  background: rgba(143,166,140,0.45); color: #c8d8c6;
+}
+.monthly-lbl-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  align-self: center; justify-self: center;
+}
+.m-toggle {
+  display: flex; align-items: center; gap: 0;
+  background: rgba(255,255,255,0.06); border-radius: 12px;
+  padding: 2px; cursor: pointer;
+}
+.m-toggle-opt {
+  font-size: 10px; font-weight: 600; padding: 3px 10px;
+  border-radius: 10px; color: rgba(255,255,255,0.4);
+  transition: all 0.2s;
+}
+.m-toggle-opt.active {
+  background: rgba(123,155,175,0.45); color: #b8ced9;
+}
+.reading-row--sage .read-icon-wrap  { background: rgba(143,166,140,0.35); }
+.reading-row--sage .reading-row-lbl { background: rgba(143,166,140,0.35); color: #c8d8c6; }
+.reading-row--blue .read-icon-wrap  { background: rgba(123,155,175,0.35); }
+.reading-row--blue .reading-row-lbl { background: rgba(123,155,175,0.35); color: #b8ced9; }
+.reading-row--amber .read-icon-wrap { background: rgba(196,136,122,0.35); }
+.reading-row--amber .reading-row-lbl { background: rgba(196,136,122,0.35); color: #dbbdb4; }
 /* Every cell spans 2 of 6 cols (= 1/3 width)
    3 cells → full row, 2 → 2/3, 1 → 1/3 */
 .rc { grid-column: span 2; }
@@ -380,15 +422,18 @@ section { padding: 100px 52px; }
   background: rgba(255,255,255,0.06);
   border-color: rgba(255,255,255,0.14);
 }
+.read-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+}
 .read-icon-wrap {
-  width: 52px; height: 52px; border-radius: 50%;
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
   background: rgba(255,255,255,0.06);
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 16px; font-size: 20px;
+  font-size: 15px;
 }
 .read-title {
   font-family: 'Cormorant Garamond', serif; font-size: 22px;
-  font-weight: 400; margin-bottom: 8px; color: rgba(255,255,255,0.85);
+  font-weight: 400; color: rgba(255,255,255,0.85);
 }
 .read-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.75; }
 
@@ -557,25 +602,20 @@ section { padding: 100px 52px; }
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-eyebrow">🌸 Habit tracking, reimagined</div>
       <h1 class="hero-title">
-        Fall in love with<br>
-        the <em>process</em> of<br>
-        showing up.
+        Visualize your habits<br>
+        with your own<br>
+        <em>personal</em> mandala.
       </h1>
       <p class="hero-sub">PetalProgress turns your daily habits into a personalized mandala — a visual record of every day you showed up. Not a streak counter. A growing work of art.</p>
       <div class="hero-ctas">
-        <a href="#" class="btn-primary-hero">Start free — no card needed</a>
+        <a href="#" class="btn-primary-hero">Create for free</a>
         <a href="#how-it-works" class="btn-ghost-hero">See how it works →</a>
       </div>
       <div style="margin-top:16px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(255,255,255,0.65);"><span style="color:var(--sage);font-size:13px;">✓</span> 3 habits, tracked for a full year</div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(255,255,255,0.65);"><span style="color:var(--sage);font-size:13px;">✓</span> Free forever</div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(255,255,255,0.65);"><span style="color:var(--sage);font-size:13px;">✓</span> No credit card</div>
-      </div>
-      <div class="hero-quote">
-        <div class="hero-quote-text">"You do not rise to the level of your goals. You fall to the level of your systems."</div>
-        <div class="hero-quote-attr">— James Clear, Atomic Habits</div>
       </div>
     </div>
 
@@ -608,74 +648,6 @@ section { padding: 100px 52px; }
           <div class="ring-lbl">Day arrows</div>
           <div class="ring-lbl">Week markers</div>
           <div class="ring-lbl">Month petals</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PHILOSOPHY -->
-<section class="philosophy">
-  <div class="section-inner">
-    <div class="section-eyebrow">The philosophy</div>
-    <h2 class="section-title">Build a <em>system.</em> Not just a goal.</h2>
-    <p class="section-desc">Goals give you direction. Systems give you progress. PetalProgress is built around the idea that the habit — not the outcome — is what to fall in love with.</p>
-
-    <div class="philosophy-grid">
-      <div class="phil-left">
-        <div class="vs-block">
-          <div class="vs-card">
-            <div class="vs-card-icon">🏆</div>
-            <div class="vs-card-title">Goal</div>
-            <div class="vs-card-desc">A destination. Motivating, but fragile — it ends when you arrive, and disappears when you miss.</div>
-          </div>
-          <div class="vs-sep">vs.</div>
-          <div class="vs-card system">
-            <div class="vs-card-icon">🌀</div>
-            <div class="vs-card-title">System</div>
-            <div class="vs-card-desc">A practice you return to. Your mandala is the system — it grows every time you show up, no finish line required.</div>
-          </div>
-        </div>
-
-        <div class="phil-callout">
-          <div class="phil-callout-title">Your mandala is your system made visible.</div>
-          <div class="phil-callout-text">Every petal that blooms is a day you chose the process over the result. Over time, the image that grows isn't just beautiful — it's proof of who you're becoming.</div>
-        </div>
-      </div>
-
-      <div class="four-laws">
-        <div class="four-laws-title">The Four Laws of Behavior Change</div>
-        <div class="law-row">
-          <div class="law-n">1</div>
-          <div class="law-body">
-            <div class="law-name-big">Make it Obvious</div>
-            <div class="law-desc">Name your habit with a clear cue — when and where you'll do it. Implementation intentions dramatically increase follow-through.</div>
-            <div class="law-app">In PetalProgress: specific habit naming + habit stacking prompts</div>
-          </div>
-        </div>
-        <div class="law-row">
-          <div class="law-n">2</div>
-          <div class="law-body">
-            <div class="law-name-big">Make it Easy</div>
-            <div class="law-desc">Start smaller than feels right. A habit you do reliably beats one you plan for but skip.</div>
-            <div class="law-app">In PetalProgress: gentle weekly goal nudges, two-minute rule reminder</div>
-          </div>
-        </div>
-        <div class="law-row">
-          <div class="law-n">3</div>
-          <div class="law-body">
-            <div class="law-name-big">Make it Attractive</div>
-            <div class="law-desc">Pair your habit with something you enjoy. The more beautiful the ritual, the easier it is to return.</div>
-            <div class="law-app">In PetalProgress: your mandala's colors and figure are yours to choose</div>
-          </div>
-        </div>
-        <div class="law-row">
-          <div class="law-n">4</div>
-          <div class="law-body">
-            <div class="law-name-big">Make it Satisfying</div>
-            <div class="law-desc">Immediate rewards reinforce behavior. Watching your mandala bloom is the reward.</div>
-            <div class="law-app">In PetalProgress: every check-in blooms a petal, visibly and immediately</div>
-          </div>
         </div>
       </div>
     </div>
@@ -732,66 +704,188 @@ section { padding: 100px 52px; }
 
     <div class="reading-rows">
 
-      <!-- Yearly — 3 cells (each spans 2 of 6 cols) -->
-      <div class="reading-row">
-        <div class="reading-row-lbl">Yearly</div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">◈</div>
-          <div class="read-title">Day Shapes</div>
-          <div class="read-desc">Each marker is one day of the year. 365 shapes fill the outer ring — highlighted days are ones you completed your habit.</div>
-        </div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">◎</div>
-          <div class="read-title">Week Petals</div>
-          <div class="read-desc">52 week petals sit between each month segment. A petal blooms when you hit your weekly target — small wins, made visible.</div>
-        </div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">❋</div>
-          <div class="read-title">Month Petals</div>
-          <div class="read-desc">Each of the 12 petals represents a month. It blooms fully when you meet your monthly goal — a year of practice in one image.</div>
-        </div>
-      </div>
-
-      <!-- Quarterly — 2 cells -->
-      <div class="reading-row">
-        <div class="reading-row-lbl">Quarterly</div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">◈</div>
-          <div class="read-title">Day Shapes</div>
-          <div class="read-desc">91 day markers fill the outer ring over one quarter. Each shape shows whether you checked in that day.</div>
-        </div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">◎</div>
-          <div class="read-title">Week Petals</div>
-          <div class="read-desc">13 week petals mark the weeks of the quarter. Each petal highlights a week where you hit your weekly goal.</div>
-        </div>
-      </div>
-
-      <!-- Monthly — 2 cells -->
-      <div class="reading-row">
-        <div class="reading-row-lbl">Monthly</div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">◈</div>
-          <div class="read-title">Day Shapes</div>
-          <div class="read-desc">28–31 day markers trace your daily completions. The clearest view of how consistently you showed up through the month.</div>
-        </div>
-        <div class="read-card rc">
-          <div class="read-icon-wrap">◎</div>
-          <div class="read-title">Week Petals</div>
-          <div class="read-desc">4–5 week petals break the month into segments. Highlighted petals mark weeks where you met your weekly target.</div>
-        </div>
-      </div>
-
       <!-- Weekly — 1 cell -->
-      <div class="reading-row">
+      <div class="reading-row reading-row--sage">
         <div class="reading-row-lbl">Weekly</div>
         <div class="read-card rc">
-          <div class="read-icon-wrap">◈</div>
-          <div class="read-title">Daily Petals</div>
+          <div class="read-header"><div class="read-icon-wrap">◈</div><div class="read-title">Daily Petals</div></div>
           <div class="read-desc">Seven petals — one for each day of the week. The most focused mandala, where every single day has a shape.</div>
         </div>
       </div>
 
+      <!-- Monthly (toggleable) -->
+      <div class="reading-row reading-row--blue" id="monthlyRow1">
+        <div class="monthly-lbl-wrap">
+          <div class="reading-row-lbl">Monthly</div>
+          <div class="m-toggle" onclick="toggleMonthly()">
+            <div class="m-toggle-opt active" id="mOpt1a">1</div>
+            <div class="m-toggle-opt" id="mOpt1b">2</div>
+          </div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◈</div><div class="read-title">Daily Shapes</div></div>
+          <div class="read-desc">28–31 day markers trace your daily completions. The clearest view of how consistently you showed up through the month.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◎</div><div class="read-title">Weekly Petals</div></div>
+          <div class="read-desc">4–5 week petals break the month into segments. Highlighted petals mark weeks where you met your weekly target.</div>
+        </div>
+      </div>
+      <div class="reading-row reading-row--blue" id="monthlyRow2" style="display:none;">
+        <div class="monthly-lbl-wrap">
+          <div class="reading-row-lbl">Monthly</div>
+          <div class="m-toggle" onclick="toggleMonthly()">
+            <div class="m-toggle-opt" id="mOpt2a">1</div>
+            <div class="m-toggle-opt active" id="mOpt2b">2</div>
+          </div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◈</div><div class="read-title">Daily Petals</div></div>
+          <div class="read-desc">28–31 day petals trace your daily completions. The simplest monthly mandala — every petal is a day you showed up.</div>
+        </div>
+      </div>
+
+      <!-- Quarterly (toggleable) -->
+      <div class="reading-row reading-row--sage" id="quarterlyRow1">
+        <div class="quarterly-lbl-wrap">
+          <div class="reading-row-lbl">Quarterly</div>
+          <div class="q-toggle" onclick="toggleQuarterly()">
+            <div class="q-toggle-opt active" id="qOpt1a">1</div>
+            <div class="q-toggle-opt" id="qOpt1b">2</div>
+          </div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◈</div><div class="read-title">Daily Shapes</div></div>
+          <div class="read-desc">91 day markers fill the outer ring over one quarter. Each shape shows whether you checked in that day.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◎</div><div class="read-title">Weekly Petals</div></div>
+          <div class="read-desc">13 week petals mark the weeks of the quarter. Each petal highlights a week where you hit your weekly goal.</div>
+        </div>
+      </div>
+      <div class="reading-row reading-row--sage" id="quarterlyRow2" style="display:none;">
+        <div class="quarterly-lbl-wrap">
+          <div class="reading-row-lbl">Quarterly</div>
+          <div class="q-toggle" onclick="toggleQuarterly()">
+            <div class="q-toggle-opt" id="qOpt2a">1</div>
+            <div class="q-toggle-opt active" id="qOpt2b">2</div>
+          </div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◈</div><div class="read-title">Daily Shapes</div></div>
+          <div class="read-desc">91 day markers fill the outer ring over one quarter. Each shape shows whether you checked in that day.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◎</div><div class="read-title">Weekly Markers</div></div>
+          <div class="read-desc">13 week markers for the weeks of the quarter. Each highlights a week where you hit your weekly goal.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">❋</div><div class="read-title">Monthly Petals</div></div>
+          <div class="read-desc">Each of the 3 petals represents a month. It blooms fully when you meet your monthly goal.</div>
+        </div>
+      </div>
+
+      <!-- Yearly — 3 cells (each spans 2 of 6 cols) -->
+      <div class="reading-row reading-row--blue">
+        <div class="reading-row-lbl">Yearly</div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◈</div><div class="read-title">Daily Shapes</div></div>
+          <div class="read-desc">Each marker is one day of the year. 365 shapes fill the outer ring — highlighted days are ones you completed your habit.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">◎</div><div class="read-title">Weekly Markers</div></div>
+          <div class="read-desc">52 weekly markers sit between each month segment. A marker highlights when you hit your weekly target — small wins, made visible.</div>
+        </div>
+        <div class="read-card rc">
+          <div class="read-header"><div class="read-icon-wrap">❋</div><div class="read-title">Monthly Petals</div></div>
+          <div class="read-desc">Each of the 12 petals represents a month. It blooms fully when you meet your monthly goal — a year of practice in one image.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleQuarterly() {
+  const r1 = document.getElementById('quarterlyRow1');
+  const r2 = document.getElementById('quarterlyRow2');
+  if (r1.style.display !== 'none') {
+    r1.style.display = 'none';
+    r2.style.display = '';
+  } else {
+    r1.style.display = '';
+    r2.style.display = 'none';
+  }
+}
+function toggleMonthly() {
+  const r1 = document.getElementById('monthlyRow1');
+  const r2 = document.getElementById('monthlyRow2');
+  if (r1.style.display !== 'none') {
+    r1.style.display = 'none';
+    r2.style.display = '';
+  } else {
+    r1.style.display = '';
+    r2.style.display = 'none';
+  }
+}
+</script>
+
+<!-- PRICING -->
+<section class="pricing-home" id="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow" style="color:rgba(255,255,255,0.3)">Pricing</div>
+    <h2 class="section-title">Create for free. <em>Bloom further</em> for $1.99.</h2>
+    <p class="section-desc">You don't need to subscribe to actually use PetalProgress. Track 3 habits for a full year — free, no expiry. Petal+ is for the people who want to go deeper.</p>
+
+    <div class="pricing-cards">
+
+      <!-- Free -->
+      <div class="vs-card" style="padding:32px;border-radius:22px">
+        <div class="hiw-title" style="margin-bottom:4px">Free</div>
+        <div class="price-amount-row">
+          <div class="price-big">$0</div>
+        </div>
+        <div class="price-annual-hint">&nbsp;</div>
+        <div class="hiw-desc">Everything you need to start a habit and watch it grow. No credit card required.</div>
+        <div class="price-feat-list">
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>3 active mandalas</strong> — full check-in &amp; gallery</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>All 4 themes + 6 petal colors</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Calendar view</strong> + weekly progress</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Mandala shop</strong> at full price</div></div>
+          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Multiple habits per mandala option</div></div>
+          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Email reminders</div></div>
+          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Year-end high-res export</div></div>
+        </div>
+        <a href="#" class="btn-price-ghost">Get started free</a>
+      </div>
+
+      <!-- Petal+ -->
+      <div class="price-featured" style="padding:32px;position:relative;border-radius:22px">
+        <div class="price-featured-pill">Most popular</div>
+        <div class="hiw-title" style="color:rgba(255,255,255,0.9);margin-bottom:4px">Petal+</div>
+        <div class="price-amount-row">
+          <div class="price-big">$1.99</div>
+          <div class="price-per">/mo</div>
+        </div>
+        <div class="price-annual-hint">Or $1.66/mo billed annually — 2 months free</div>
+        <div class="hiw-desc" style="color:rgba(255,255,255,0.45)">For the committed practitioner. Reminders, unlimited mandalas, and a discount every time you order from the shop.</div>
+        <div class="price-feat-list">
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Unlimited mandalas</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>All 4 themes + 6 petal colors</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Calendar view</strong> + weekly progress</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>20% off everything in the shop</strong><span class="pf-badge">Petal+ discount</span></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Multiple habits per mandala option</strong></div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Email reminders</strong> — daily, weekly, or custom</div></div>
+          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Year-end export</strong> — high-res PNG + SVG, free</div></div>
+        </div>
+        <a href="#" class="btn-price-paid">Start Petal+ free for 7 days</a>
+      </div>
+
+    </div>
+
+    <div class="pricing-see-more">
+      <a href="pricing.html">See full comparison including Teams &amp; Shop pricing →</a>
     </div>
   </div>
 </section>
@@ -802,7 +896,7 @@ section { padding: 100px 52px; }
     <div class="admin-inner">
       <div>
         <div class="section-eyebrow">For teams & organizations</div>
-        <h2 class="section-title">Built for <em>coaches,</em> gyms, and wellness programs.</h2>
+        <h2 class="section-title">Also available for <em>coaches,</em> gyms, and wellness programs.</h2>
         <p class="section-desc" style="margin-bottom:0">Assign habits to your clients, monitor progress, and let PetalProgress do the motivating for you — all without disrupting how your members use the app.</p>
 
         <div class="admin-badge-row" style="margin-top:18px;">
@@ -910,61 +1004,70 @@ section { padding: 100px 52px; }
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="pricing-home" id="pricing">
+<!-- PHILOSOPHY -->
+<section class="philosophy">
   <div class="section-inner">
-    <div class="section-eyebrow" style="color:rgba(255,255,255,0.3)">Pricing</div>
-    <h2 class="section-title">Start free. <em>Bloom further</em> for $1.99.</h2>
-    <p class="section-desc">You don't need to subscribe to actually use PetalProgress. Track 3 habits for a full year — free, no expiry. Petal+ is for the people who want to go deeper.</p>
+    <div class="section-eyebrow">The philosophy</div>
+    <h2 class="section-title">Build a <em>system.</em> Not just a goal.</h2>
+    <p class="section-desc">Goals give you direction. Systems give you progress. PetalProgress is built around the idea that the habit — not the outcome — is what to fall in love with.</p>
 
-    <div class="pricing-cards">
+    <div class="philosophy-grid">
+      <div class="phil-left">
+        <div class="vs-block">
+          <div class="vs-card">
+            <div class="vs-card-icon">🏆</div>
+            <div class="vs-card-title">Goal</div>
+            <div class="vs-card-desc">A destination. Motivating, but fragile — it ends when you arrive, and disappears when you miss.</div>
+          </div>
+          <div class="vs-sep">vs.</div>
+          <div class="vs-card system">
+            <div class="vs-card-icon">🌀</div>
+            <div class="vs-card-title">System</div>
+            <div class="vs-card-desc">A practice you return to. Your mandala is the system — it grows every time you show up, no finish line required.</div>
+          </div>
+        </div>
 
-      <!-- Free -->
-      <div class="vs-card" style="padding:32px;border-radius:22px">
-        <div class="hiw-title" style="margin-bottom:4px">Free</div>
-        <div class="price-amount-row">
-          <div class="price-big">$0</div>
+        <div class="phil-callout">
+          <div class="phil-callout-title">Your mandala is your system made visible.</div>
+          <div class="phil-callout-text">Every petal that blooms is a day you chose the process over the result. Over time, the image that grows isn't just beautiful — it's proof of who you're becoming.</div>
         </div>
-        <div class="price-annual-hint">&nbsp;</div>
-        <div class="hiw-desc">Everything you need to start a habit and watch it grow. No credit card required.</div>
-        <div class="price-feat-list">
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>3 active mandalas</strong> — full check-in &amp; gallery</div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>All 4 themes + 6 petal colors</strong></div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Calendar view</strong> + weekly progress</div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Mandala shop</strong> at full price</div></div>
-          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Multiple habits per mandala option</div></div>
-          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Email reminders</div></div>
-          <div class="price-feat"><div class="pf-dot off">–</div><div class="pf-text">Year-end high-res export</div></div>
-        </div>
-        <a href="#" class="btn-price-ghost">Get started free</a>
       </div>
 
-      <!-- Petal+ -->
-      <div class="price-featured" style="padding:32px;position:relative;border-radius:22px">
-        <div class="price-featured-pill">Most popular</div>
-        <div class="hiw-title" style="color:rgba(255,255,255,0.9);margin-bottom:4px">Petal+</div>
-        <div class="price-amount-row">
-          <div class="price-big">$1.99</div>
-          <div class="price-per">/mo</div>
+      <div class="four-laws">
+        <div class="four-laws-title">The Four Laws of Behavior Change</div>
+        <div class="law-row">
+          <div class="law-n">1</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Obvious</div>
+            <div class="law-desc">Name your habit with a clear cue — when and where you'll do it. Implementation intentions dramatically increase follow-through.</div>
+            <div class="law-app">In PetalProgress: specific habit naming + habit stacking prompts</div>
+          </div>
         </div>
-        <div class="price-annual-hint">Or $1.66/mo billed annually — 2 months free</div>
-        <div class="hiw-desc" style="color:rgba(255,255,255,0.45)">For the committed practitioner. Reminders, unlimited mandalas, and a discount every time you order from the shop.</div>
-        <div class="price-feat-list">
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Unlimited mandalas</strong></div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>All 4 themes + 6 petal colors</strong></div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Calendar view</strong> + weekly progress</div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>20% off everything in the shop</strong><span class="pf-badge">Petal+ discount</span></div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Multiple habits per mandala option</strong></div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Email reminders</strong> — daily, weekly, or custom</div></div>
-          <div class="price-feat"><div class="pf-dot">✓</div><div class="pf-text"><strong>Year-end export</strong> — high-res PNG + SVG, free</div></div>
+        <div class="law-row">
+          <div class="law-n">2</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Easy</div>
+            <div class="law-desc">Start smaller than feels right. A habit you do reliably beats one you plan for but skip.</div>
+            <div class="law-app">In PetalProgress: gentle weekly goal nudges, two-minute rule reminder</div>
+          </div>
         </div>
-        <a href="#" class="btn-price-paid">Start Petal+ free for 7 days</a>
+        <div class="law-row">
+          <div class="law-n">3</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Attractive</div>
+            <div class="law-desc">Pair your habit with something you enjoy. The more beautiful the ritual, the easier it is to return.</div>
+            <div class="law-app">In PetalProgress: your mandala's colors and figure are yours to choose</div>
+          </div>
+        </div>
+        <div class="law-row">
+          <div class="law-n">4</div>
+          <div class="law-body">
+            <div class="law-name-big">Make it Satisfying</div>
+            <div class="law-desc">Immediate rewards reinforce behavior. Watching your mandala bloom is the reward.</div>
+            <div class="law-app">In PetalProgress: every check-in blooms a petal, visibly and immediately</div>
+          </div>
+        </div>
       </div>
-
-    </div>
-
-    <div class="pricing-see-more">
-      <a href="pricing.html">See full comparison including Teams &amp; Shop pricing →</a>
     </div>
   </div>
 </section>
