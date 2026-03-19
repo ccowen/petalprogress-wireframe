@@ -233,43 +233,14 @@ body {
     <div class="step-desc">PetalProgress isn't about hitting targets. It's about falling in love with the process of showing up — and watching that process bloom over time.</div>
 <div class="step-desc" style="margin-bottom:0">We'll help you set up a habit, give it a home in your mandala, and build a rhythm that actually sticks. It takes about 3 minutes.</div>
     <div class="step-nav">
-      <button class="btn-next" onclick="goStep(1)">Get started →</button>
+      <button class="btn-next" onclick="goStep(2)">Get started →</button>
     </div>
   </div>
 
-  <!-- STEP 1: System vs Goal -->
-  <div class="step" id="step-1">
-    <div class="step-eyebrow">Step 1 of 5 · Foundation</div>
-    <div class="step-title">Set a <em>system,</em> not just a goal.</div>
-    <div class="step-desc">Goals are outcomes. Systems are the habits that get you there. In PetalProgress, your mandala <em>is</em> your system — each petal is a day you showed up.</div>
-    <div class="sys-goal-row">
-      <div class="sg-card" onclick="selSG(this)">
-        <div class="sg-icon">🏆</div>
-        <div class="sg-label">Goal</div>
-        <div class="sg-desc">A destination to reach. Useful for direction, but fragile — it ends when you arrive.</div>
-      </div>
-      <div class="sg-card on" onclick="selSG(this)">
-        <div class="sg-icon">🌀</div>
-        <div class="sg-label">System</div>
-        <div class="sg-desc">A process you return to, again and again. Your mandala grows from this — there's no finish line.</div>
-      </div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-card-inner">
-        <div class="tip-icon">💡</div>
-        <div class="tip-text">You can still have goals — just don't let them be the only thing. A goal gives you direction. Your system gives you progress, even on hard days.</div>
-      </div>
-      <div class="tip-dismiss" onclick="this.closest('.tip-card').style.display='none'">×</div>
-    </div>
-    <div class="step-nav">
-      <button class="btn-back" onclick="goStep(0)">Back</button>
-      <button class="btn-next" onclick="goStep(2)">Continue →</button>
-    </div>
-  </div>
 
   <!-- STEP 2: Define Habit -->
   <div class="step" id="step-2">
-    <div class="step-eyebrow">Step 2 of 5 · Your Habit</div>
+    <div class="step-eyebrow">Step 1 of 4 · Your Habit</div>
     <div class="step-title">What will you <em>practice?</em></div>
     <div class="step-desc">Name your habit. The clearer the description, the easier it is to follow through.</div>
     <div class="laws-mini">
@@ -290,14 +261,14 @@ body {
       <p>That said, there's no wrong way to name it. Start wherever feels natural to you.</p>
     </div>
     <div class="step-nav">
-      <button class="btn-back" onclick="goStep(1)">Back</button>
+      <button class="btn-back" onclick="goStep(0)">Back</button>
       <button class="btn-next" onclick="goStep(3)">Continue →</button>
     </div>
   </div>
 
   <!-- STEP 3: Timeframe -->
   <div class="step" id="step-3">
-    <div class="step-eyebrow">Step 3 of 5 · Your Timeframe</div>
+    <div class="step-eyebrow">Step 2 of 4 · Your Timeframe</div>
     <div class="step-title">Start <em>smaller</em> than you think.</div>
     <div class="step-desc">A shorter mandala is easier to complete — and completing one feels great. You can always start another once it's done.</div>
     <div class="timeframe-options">
@@ -352,7 +323,7 @@ body {
 
   <!-- STEP 4: Weekly target -->
   <div class="step" id="step-4">
-    <div class="step-eyebrow">Step 4 of 5 · Your Rhythm</div>
+    <div class="step-eyebrow">Step 3 of 4 · Your Rhythm</div>
     <div class="step-title">How often <em>feels right?</em></div>
     <div class="step-desc">Set a weekly target that feels achievable — not aspirational. You can always adjust it later.</div>
     <div class="law-badge law-easy">② Make it Easy</div>
@@ -388,12 +359,8 @@ body {
   <!-- STEP 6: Reveal -->
   <div class="step" id="step-6">
     <div class="step-eyebrow">You're all set</div>
-    <div class="step-title"><em>Congratulations</em> on starting your system.</div>
-    <div class="step-desc">Your mandala is ready. Every time you check in, your mandala is richer. The pattern that emerges over time is yours alone — a record of every day you showed up.</div>
-    <div class="quote-block">
-      <div class="quote-text">"Every action you take is a vote for the type of person you wish to become."</div>
-      <div class="quote-attr">— James Clear, Atomic Habits</div>
-    </div>
+    <div class="step-title"><em>Congratulations</em> — your mandala is ready.</div>
+    <div class="step-desc">Every time you check in, your mandala grows richer. The pattern that emerges over time is yours alone — a record of every day you showed up.</div>
     <div class="step-nav">
       <button class="btn-back" onclick="goStep(4)">Back</button>
       <button class="btn-next" onclick="finish()" style="background:var(--sage)">Open my mandala →</button>
@@ -423,7 +390,7 @@ body {
 </div><!-- end panels -->
 
 <script>
-const TOTAL = 6;
+const TOTAL = 5;
 let currentStep = 0;
 let goalN = 3;
 let petalColor = '#7B9BAF';
@@ -431,10 +398,10 @@ let petalShape = 'oval';
 let selectedTF = 'weekly';
 
 const CHIP_DESC = {
-  1: 'Make your habit visible and clear. A cue — a time of day, a place, or a small trigger — helps your brain know exactly when to act.',
-  2: 'Lower the barrier to start. The easier a habit is to begin, the more likely you are to do it, especially on harder days.',
-  3: 'Connect your habit to something you enjoy or look forward to. The more appealing it feels, the more you\'ll want to return.',
-  4: 'Give yourself a small sense of completion after each check-in. That feeling of progress is what keeps you coming back.',
+  1: 'Set a clear time and place for your habit so it becomes part of your routine.',
+  2: 'Start small — a habit you do reliably beats one you plan for but skip.',
+  3: 'Connect your habit to something you enjoy. The more appealing it feels, the more you\'ll want to return.',
+  4: 'Celebrate each check-in. That feeling of progress is what keeps you coming back.',
 };
 
 function selChip(n, el) {

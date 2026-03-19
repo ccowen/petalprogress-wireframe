@@ -222,49 +222,16 @@ body {
     <div class="step-eyebrow">Welcome</div>
     <div class="step-title">Your coach has set up <em>a habit for you.</em></div>
     <div class="step-desc">PetalProgress connects you directly to your coach's program. Your habit and timeframe are already set — all you need to do is show up each day and check in.</div>
-    <div class="quote-block">
-      <div class="quote-text">"You do not rise to the level of your goals. You fall to the level of your systems."</div>
-      <div class="quote-attr">— James Clear, Atomic Habits</div>
-    </div>
     <div class="step-desc" style="margin-bottom:0">We'll walk you through what's been set up and get your mandala ready. It only takes a moment.</div>
     <div class="step-nav">
-      <button class="btn-next" onclick="goStep(1)">Get started →</button>
+      <button class="btn-next" onclick="goStep(2)">Get started →</button>
     </div>
   </div>
 
-  <!-- STEP 1: System vs Goal -->
-  <div class="step" id="step-1">
-    <div class="step-eyebrow">Step 1 of 5 · Foundation</div>
-    <div class="step-title">Set a <em>system,</em> not just a goal.</div>
-    <div class="step-desc">Goals are outcomes. Systems are the habits that get you there. In PetalProgress, your mandala <em>is</em> your system — each petal is a day you showed up.</div>
-    <div class="sys-goal-row">
-      <div class="sg-card" onclick="selSG(this)">
-        <div class="sg-icon">🏆</div>
-        <div class="sg-label">Goal</div>
-        <div class="sg-desc">A destination to reach. Useful for direction, but fragile — it ends when you arrive.</div>
-      </div>
-      <div class="sg-card on" onclick="selSG(this)">
-        <div class="sg-icon">🌀</div>
-        <div class="sg-label">System</div>
-        <div class="sg-desc">A process you return to, again and again. Your mandala grows from this — there's no finish line.</div>
-      </div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-card-inner">
-        <div class="tip-icon">💡</div>
-        <div class="tip-text">You can still have goals — just don't let them be the only thing. A goal gives you direction. Your system gives you progress, even on hard days.</div>
-      </div>
-      <div class="tip-dismiss" onclick="this.closest('.tip-card').style.display='none'">×</div>
-    </div>
-    <div class="step-nav">
-      <button class="btn-back" onclick="goStep(0)">Back</button>
-      <button class="btn-next" onclick="goStep(2)">Continue →</button>
-    </div>
-  </div>
 
   <!-- STEP 2: Sponsored Habit (read-only) -->
   <div class="step" id="step-2">
-    <div class="step-eyebrow">Step 2 of 5 · Your Habit</div>
+    <div class="step-eyebrow">Step 1 of 4 · Your Habit</div>
     <div class="step-title">Your <em>sponsored habit.</em></div>
     <div class="step-desc">Your coach has assigned this habit to your account. It will appear in your mandala automatically — you just check in each day.</div>
 
@@ -285,14 +252,14 @@ body {
     </div>
 
     <div class="step-nav">
-      <button class="btn-back" onclick="goStep(1)">Back</button>
+      <button class="btn-back" onclick="goStep(0)">Back</button>
       <button class="btn-next" onclick="goStep(3)">Continue →</button>
     </div>
   </div>
 
   <!-- STEP 3: Sponsored Timeframe (read-only) -->
   <div class="step" id="step-3">
-    <div class="step-eyebrow">Step 3 of 5 · Your Timeframe</div>
+    <div class="step-eyebrow">Step 2 of 4 · Your Timeframe</div>
     <div class="step-title">Your <em>timeframe</em> for this habit.</div>
     <div class="step-desc">Your coach has set the duration of this program. Your mandala will cover this exact period.</div>
 
@@ -322,7 +289,7 @@ body {
 
   <!-- STEP 4: Rhythm -->
   <div class="step" id="step-4">
-    <div class="step-eyebrow">Step 4 of 5 · Your Rhythm</div>
+    <div class="step-eyebrow">Step 3 of 4 · Your Rhythm</div>
     <div class="step-title">How often <em>your coach recommends</em></div>
     <div class="step-desc">Your coach has set a recommended check-in frequency for this program.</div>
     <div class="timeframe-display-card">
@@ -341,12 +308,8 @@ body {
   <!-- STEP 6: Reveal -->
   <div class="step" id="step-6">
     <div class="step-eyebrow">You're all set</div>
-    <div class="step-title"><em>Congratulations</em> on starting your system.</div>
-    <div class="step-desc">Your mandala is ready. Every time you check in, your mandala is richer. Your coach can see your progress — and so can you.</div>
-    <div class="quote-block">
-      <div class="quote-text">"Every action you take is a vote for the type of person you wish to become."</div>
-      <div class="quote-attr">— James Clear, Atomic Habits</div>
-    </div>
+    <div class="step-title"><em>Congratulations</em> — your mandala is ready.</div>
+    <div class="step-desc">Every time you check in, your mandala grows richer. Your coach can see your progress — and so can you.</div>
     <div class="step-nav">
       <button class="btn-back" onclick="goStep(4)">Back</button>
       <button class="btn-next" onclick="finish()" style="background:var(--amber)">Open my mandala →</button>
@@ -392,7 +355,7 @@ const REFERRAL = {
 };
 
 // ── STEP STATE ────────────────────────────────────────────────
-const TOTAL = 6;
+const TOTAL = 5;
 let currentStep = 0;
 let goalN = 4;
 let petalColor = REFERRAL.petalColor;

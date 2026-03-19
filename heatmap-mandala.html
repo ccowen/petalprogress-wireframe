@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predictive Heatmap — Mandala Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg:        #F8F6F3;
+  --surface:   #FDFCFA;
+  --warm-1:    #EDE9E3;
+  --warm-2:    #D4CEC7;
+  --warm-3:    #9C958D;
+  --text:      #2C2825;
+  --text-soft: #6B6460;
+  --text-muted:#A09890;
+  --sage:      #8FA68C;
+  --blue:      #7B9BAF;
+  --coral:     #C4887A;
+  --red-petal: #C45A5A;
+  --toolbar-w: 64px;
+  --settings-w: 296px;
+  --right-w:   276px;
+  --top-h:     54px;
+  --ease:      cubic-bezier(0.4, 0, 0.2, 1);
+}
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  overflow: hidden; display: flex; flex-direction: column;
+  font-size: 13px;
+}
+
+/* ─── HEATMAP CONTROLS ─── */
+.heatmap-controls {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 9999; background: #1E1A17; color: rgba(255,255,255,0.9);
+  padding: 12px 24px; display: flex; align-items: center; gap: 20px;
+  font-size: 13px; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.heatmap-controls h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 400; margin-right: 12px;
+  color: white;
+}
+.hm-toggle {
+  padding: 6px 16px; border-radius: 100px; cursor: pointer;
+  font-size: 12px; border: 1px solid rgba(255,255,255,0.2);
+  background: transparent; color: rgba(255,255,255,0.6);
+  font-family: 'DM Sans', sans-serif; transition: all 0.18s;
+}
+.hm-toggle:hover { border-color: rgba(255,255,255,0.4); color: white; }
+.hm-toggle.active { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.4); }
+.hm-legend {
+  margin-left: auto; display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+}
+.hm-legend-bar {
+  width: 140px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #3B82F6 0%, #22D3EE 20%, #4ADE80 40%, #FACC15 60%, #F97316 80%, #EF4444 100%);
+}
+.hm-type-label {
+  font-size: 11px; color: rgba(255,255,255,0.4);
+  padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.05);
+}
+
+/* ─── HEATMAP OVERLAY SYSTEM ─── */
+.hm-zone {
+  position: absolute; border-radius: 12px;
+  pointer-events: none; z-index: 500;
+  transition: opacity 0.3s ease;
+}
+.hm-zone.attention { display: block; }
+.hm-zone.click { display: none; }
+.hm-zone.scroll { display: none; }
+.hm-zone.frustration { display: none; }
+
+/* Intensity levels */
+.hm-hot       { background: radial-gradient(ellipse at center, rgba(239,68,68,0.45) 0%, rgba(239,68,68,0.20) 40%, rgba(239,68,68,0) 70%); }
+.hm-warm      { background: radial-gradient(ellipse at center, rgba(249,115,22,0.40) 0%, rgba(249,115,22,0.15) 40%, rgba(249,115,22,0) 70%); }
+.hm-medium    { background: radial-gradient(ellipse at center, rgba(250,204,21,0.35) 0%, rgba(250,204,21,0.12) 40%, rgba(250,204,21,0) 70%); }
+.hm-cool      { background: radial-gradient(ellipse at center, rgba(74,222,128,0.30) 0%, rgba(74,222,128,0.10) 40%, rgba(74,222,128,0) 70%); }
+.hm-cold      { background: radial-gradient(ellipse at center, rgba(59,130,246,0.30) 0%, rgba(59,130,246,0.10) 40%, rgba(59,130,246,0) 70%); }
+
+/* Click-specific styles */
+.hm-click-hot  { background: radial-gradient(circle at center, rgba(239,68,68,0.55) 0%, rgba(239,68,68,0.25) 35%, rgba(239,68,68,0) 60%); }
+.hm-click-warm { background: radial-gradient(circle at center, rgba(249,115,22,0.45) 0%, rgba(249,115,22,0.18) 35%, rgba(249,115,22,0) 60%); }
+.hm-click-med  { background: radial-gradient(circle at center, rgba(250,204,21,0.40) 0%, rgba(250,204,21,0.15) 35%, rgba(250,204,21,0) 60%); }
+.hm-click-cool { background: radial-gradient(circle at center, rgba(74,222,128,0.35) 0%, rgba(74,222,128,0.12) 35%, rgba(74,222,128,0) 60%); }
+.hm-click-cold { background: radial-gradient(circle at center, rgba(59,130,246,0.30) 0%, rgba(59,130,246,0.10) 35%, rgba(59,130,246,0) 60%); }
+
+/* Frustration pulse */
+.hm-frustration-zone {
+  background: radial-gradient(circle at center, rgba(239,68,68,0.35) 0%, rgba(239,68,68,0.10) 50%, transparent 70%);
+  animation: frustPulse 2s ease-in-out infinite;
+}
+@keyframes frustPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Annotation labels */
+.hm-label {
+  position: absolute; z-index: 600;
+  background: #1E1A17; color: white;
+  font-size: 10.5px; padding: 5px 10px;
+  border-radius: 6px; pointer-events: none;
+  white-space: nowrap; letter-spacing: 0.02em;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  transition: opacity 0.3s ease;
+}
+.hm-label::after {
+  content: ''; position: absolute;
+  width: 6px; height: 6px; background: #1E1A17;
+  transform: rotate(45deg);
+}
+.hm-label.arrow-down::after { bottom: -3px; left: 50%; margin-left: -3px; }
+.hm-label.arrow-up::after { top: -3px; left: 50%; margin-left: -3px; }
+.hm-label.arrow-left::after { left: -3px; top: 50%; margin-top: -3px; }
+.hm-label.arrow-right::after { right: -3px; top: 50%; margin-top: -3px; }
+.hm-label .pct { color: #FACC15; font-weight: 600; }
+.hm-label .low-pct { color: #3B82F6; }
+.hm-label .warn { color: #EF4444; }
+
+/* ─── WIREFRAME (simplified reproduction) ─── */
+.topbar {
+  height: var(--top-h); background: var(--surface);
+  border-bottom: 1px solid var(--warm-1);
+  display: flex; align-items: center; flex-shrink: 0;
+  z-index: 100; padding: 0 24px; margin-top: 50px; /* offset for controls */
+  position: relative;
+}
+.logo-zone { min-width: var(--toolbar-w); display: flex; align-items: center; gap: 8px; }
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; }
+.logo-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+.nav-tabs { display: flex; gap: 2px; margin-left: 20px; }
+.nav-tab {
+  padding: 6px 18px; border-radius: 100px; font-size: 12.5px;
+  color: var(--text-soft); cursor: pointer; transition: all 0.18s;
+}
+.nav-tab.active { background: var(--text); color: var(--bg); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--warm-1); color: var(--text-soft);
+  font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.body-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+/* LEFT TOOLBAR */
+.toolbar {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  z-index: 200; width: var(--toolbar-w);
+  background: var(--surface); border: 1px solid var(--warm-1); border-radius: 22px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 0; gap: 2px;
+}
+.tbtn {
+  width: 46px; height: 46px; border-radius: 13px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; cursor: pointer; transition: all 0.18s; position: relative;
+}
+.tbtn:hover { background: var(--warm-1); }
+.tbtn.active { background: rgba(143,166,140,0.14); }
+.tbtn-icon { font-size: 15px; line-height: 1; }
+.tbtn-lbl { font-size: 9px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.tb-divider { width: 28px; height: 1px; background: var(--warm-1); margin: 4px 0; }
+
+/* SETTINGS PANEL */
+.settings-panel {
+  position: absolute; left: calc(var(--toolbar-w) + 28px); top: 50%;
+  transform: translateY(-50%);
+  z-index: 199; width: var(--settings-w);
+  background: var(--surface); border: 1px solid var(--warm-1); border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.11);
+  max-height: 82vh; overflow: hidden;
+}
+.sp-inner { padding: 24px 20px; max-height: 82vh; overflow-y: auto; }
+.sp-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 18px; }
+.sp-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; margin-bottom: 6px; }
+.sp-desc { font-size: 12px; color: var(--text-soft); line-height: 1.65; margin-bottom: 22px; }
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.theme-card { border-radius: 12px; padding: 11px; cursor: pointer; border: 2px solid transparent; transition: all 0.18s; }
+.theme-card.on { border-color: var(--text); }
+.theme-swatch { height: 50px; border-radius: 8px; margin-bottom: 7px; }
+.theme-name { font-size: 11px; color: var(--text-soft); text-align: center; }
+.petal-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.pswatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; display: flex; align-items: center; justify-content: center; }
+.pswatch.on { border-color: var(--text); padding: 3px; }
+.pswatch .pi { width: 100%; height: 100%; border-radius: 50%; }
+.petal-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; }
+
+/* CENTER */
+.center { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+.mandala-wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.mandala-title-disp { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic; color: var(--text-soft); }
+.mandala-date-range { font-size: 11.5px; color: var(--text-muted); text-align: center; margin-top: -12px; }
+.share-shop-toggle {
+  font-size: 12px; color: var(--text-muted); letter-spacing: 0.06em;
+  text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 6px;
+}
+
+/* RIGHT PANEL */
+.right-panel { width: var(--right-w); background: var(--surface); border-left: 1px solid var(--warm-1); flex-shrink: 0; position: relative; }
+.rp-inner { padding: 22px 18px; height: 100%; overflow-y: auto; }
+.rp-section-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 11px; margin-top: 18px; }
+.stat-card { background: var(--bg); border-radius: 14px; padding: 15px; margin-bottom: 10px; }
+.stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 7px; }
+.stat-big { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 300; line-height: 1; margin-bottom: 4px; }
+.stat-big span { font-size: 15px; color: var(--text-soft); }
+.stat-sm { font-size: 11.5px; color: var(--text-soft); }
+.prog-bar { height: 5px; background: var(--warm-1); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.prog-fill { height: 100%; border-radius: 3px; background: var(--sage); }
+.week-dots { display: flex; gap: 5px; margin-top: 11px; }
+.wd { flex: 1; height: 5px; border-radius: 3px; background: var(--warm-1); }
+.wd.done { background: var(--sage); }
+.wd.now { background: var(--coral); }
+.rp-today-card {
+  background: var(--bg); border: 1.5px solid var(--warm-1); border-radius: 14px;
+  padding: 14px 16px; cursor: pointer; margin-bottom: 4px; transition: all 0.2s;
+}
+.rp-today-meta { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; }
+.rp-today-row { display: flex; align-items: center; gap: 12px; }
+.rp-today-circle {
+  width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--warm-2);
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.rp-today-label { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 300; }
+
+/* Mini calendar */
+.rp-cal { background: var(--bg); border-radius: 14px; padding: 13px 12px 10px; margin-top: 12px; margin-bottom: 10px; border: 1px solid var(--warm-1); }
+.rp-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.rp-cal-month { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-soft); }
+.rp-cal-nav { width: 22px; height: 22px; border-radius: 6px; background: var(--warm-1); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px; color: var(--text-soft); }
+.rp-cal-dow { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+.rp-cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.rp-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 7px; font-size: 11px; cursor: pointer; color: var(--text-soft); }
+.rp-cal-day.checked { background: var(--coral); color: white; border-radius: 8px; }
+.rp-cal-note { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 9px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+
+/* ─── ANALYSIS PANEL ─── */
+.analysis-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
+  background: #1E1A17; color: rgba(255,255,255,0.85);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s var(--ease);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.analysis-panel.open { max-height: 340px; }
+.analysis-inner {
+  padding: 20px 28px 24px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;
+  font-size: 12px; line-height: 1.7;
+}
+.analysis-col h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 400; margin-bottom: 8px;
+  color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px;
+}
+.analysis-col ul { list-style: none; padding: 0; }
+.analysis-col li { padding: 3px 0; color: rgba(255,255,255,0.65); }
+.analysis-col li::before { content: '→ '; color: rgba(255,255,255,0.3); }
+.analysis-col .metric { color: #FACC15; font-weight: 500; }
+.analysis-col .warn-metric { color: #EF4444; font-weight: 500; }
+.analysis-col .cool-metric { color: #3B82F6; font-weight: 500; }
+.analysis-toggle {
+  position: fixed; bottom: 12px; right: 24px; z-index: 9999;
+  padding: 8px 18px; border-radius: 100px; cursor: pointer;
+  font-size: 12px; border: 1px solid rgba(255,255,255,0.2);
+  background: #1E1A17; color: rgba(255,255,255,0.7);
+  font-family: 'DM Sans', sans-serif; transition: all 0.18s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.analysis-toggle:hover { color: white; border-color: rgba(255,255,255,0.4); }
+
+/* Dim wireframe when heatmap active */
+body.heatmap-on .topbar,
+body.heatmap-on .body-layout { filter: saturate(0.3) brightness(0.85); }
+body.heatmap-on .hm-zone,
+body.heatmap-on .hm-label { display: block; }
+body:not(.heatmap-on) .hm-zone,
+body:not(.heatmap-on) .hm-label { opacity: 0 !important; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--warm-2); border-radius: 2px; }
+</style>
+</head>
+<body class="heatmap-on">
+
+<!-- ─── HEATMAP CONTROLS ─── -->
+<div class="heatmap-controls">
+  <h2>Predictive Heatmap</h2>
+  <button class="hm-toggle active" onclick="setMode('attention')">Attention</button>
+  <button class="hm-toggle" onclick="setMode('click')">Click Zones</button>
+  <button class="hm-toggle" onclick="setMode('frustration')">Frustration</button>
+  <span class="hm-type-label" id="modeLabel">Eye-tracking prediction based on F-pattern, visual hierarchy & Fitts's law</span>
+  <div class="hm-legend">
+    <span>Low</span>
+    <div class="hm-legend-bar"></div>
+    <span>High</span>
+  </div>
+</div>
+
+<!-- ─── WIREFRAME REPRODUCTION ─── -->
+<div class="topbar">
+  <div class="logo-zone"><span class="logo">𖢻</span><span class="logo-name">PetalProgress</span></div>
+  <div class="nav-tabs">
+    <div class="nav-tab active">Mandala</div>
+    <div class="nav-tab">Gallery</div>
+    <div class="nav-tab">All Calendars</div>
+  </div>
+  <div class="topbar-right">
+    <div class="avatar">C</div>
+  </div>
+
+  <!-- TOPBAR HEATMAP ZONES -->
+  <!-- ATTENTION -->
+  <div class="hm-zone attention hm-cool" style="left:0;top:0;width:180px;height:54px;border-radius:0;"></div>
+  <div class="hm-zone attention hm-medium" style="left:180px;top:0;width:260px;height:54px;border-radius:0;"></div>
+  <div class="hm-zone attention hm-cold" style="right:50px;top:0;width:160px;height:54px;border-radius:0;"></div>
+  <div class="hm-zone attention hm-cool" style="right:0;top:0;width:50px;height:54px;border-radius:50%;"></div>
+
+  <!-- CLICK -->
+  <div class="hm-zone click hm-click-cool" style="left:190px;top:2px;width:80px;height:50px;"></div>
+  <div class="hm-zone click hm-click-med" style="left:270px;top:2px;width:70px;height:50px;"></div>
+  <div class="hm-zone click hm-click-med" style="left:342px;top:2px;width:105px;height:50px;"></div>
+  <div class="hm-zone click hm-click-cool" style="right:4px;top:4px;width:46px;height:46px;border-radius:50%;"></div>
+
+  <!-- FRUSTRATION -->
+  <div class="hm-zone frustration hm-frustration-zone" style="right:0;top:0;width:60px;height:54px;border-radius:0;"></div>
+</div>
+
+<div class="body-layout">
+
+  <!-- LEFT TOOLBAR -->
+  <div class="toolbar" id="toolbar">
+    <div class="tb-divider"></div>
+    <div class="tbtn active">
+      <div class="tbtn-icon">◑</div><div class="tbtn-lbl">Theme</div>
+    </div>
+    <div class="tbtn">
+      <div class="tbtn-icon">❋</div><div class="tbtn-lbl">Petals</div>
+    </div>
+    <div class="tbtn">
+      <div class="tbtn-icon">△</div><div class="tbtn-lbl">Figure</div>
+    </div>
+    <div class="tb-divider"></div>
+
+    <!-- TOOLBAR HEATMAP -->
+    <div class="hm-zone attention hm-cool" style="left:0;top:0;width:100%;height:100%;border-radius:22px;"></div>
+    <div class="hm-zone click hm-click-warm" style="left:4px;top:18px;width:56px;height:52px;"></div>
+    <div class="hm-zone click hm-click-med" style="left:4px;top:70px;width:56px;height:52px;"></div>
+    <div class="hm-zone click hm-click-cool" style="left:4px;top:124px;width:56px;height:52px;"></div>
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-inner">
+      <div class="sp-eyebrow">Mandala Settings</div>
+      <div class="sp-title">Theme & Petal Color</div>
+      <div class="sp-desc">Sets the mood for your mandala's background rings and atmosphere.</div>
+      <div class="theme-grid">
+        <div class="theme-card"><div class="theme-swatch" style="background:linear-gradient(135deg,#D4845A,#C4622A,#8B4513);"></div><div class="theme-name">Pumpkin Spice</div></div>
+        <div class="theme-card on"><div class="theme-swatch" style="background:linear-gradient(135deg,#B8D4E8,#7BA7C4,#4A7FA0);"></div><div class="theme-name">Ice Castle</div></div>
+        <div class="theme-card"><div class="theme-swatch" style="background:linear-gradient(135deg,#E8A5B8,#C47A95,#8B5070);"></div><div class="theme-name">Blooming Flowers</div></div>
+        <div class="theme-card"><div class="theme-swatch" style="background:linear-gradient(135deg,#E8B84B,#D4821A,#C45A1A);"></div><div class="theme-name">Heat Wave</div></div>
+      </div>
+      <div class="petal-lbl">Petal Color</div>
+      <div class="petal-row">
+        <div class="pswatch on"><div class="pi" style="background:#C45A5A"></div></div>
+        <div class="pswatch"><div class="pi" style="background:#D4824A"></div></div>
+        <div class="pswatch"><div class="pi" style="background:#8FA68C"></div></div>
+        <div class="pswatch"><div class="pi" style="background:#7B9BAF"></div></div>
+        <div class="pswatch"><div class="pi" style="background:#6B5FA0"></div></div>
+        <div class="pswatch"><div class="pi" style="background:#C47A9A"></div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS HEATMAP -->
+    <div class="hm-zone attention hm-warm" style="left:0;top:10%;width:100%;height:50%;border-radius:20px;"></div>
+    <div class="hm-zone attention hm-medium" style="left:0;top:55%;width:100%;height:35%;border-radius:20px;"></div>
+    <div class="hm-zone click hm-click-hot" style="left:20px;top:115px;width:120px;height:75px;"></div>
+    <div class="hm-zone click hm-click-hot" style="left:150px;top:115px;width:120px;height:75px;"></div>
+    <div class="hm-zone click hm-click-warm" style="left:20px;top:195px;width:120px;height:75px;"></div>
+    <div class="hm-zone click hm-click-warm" style="left:150px;top:195px;width:120px;height:75px;"></div>
+    <div class="hm-zone click hm-click-hot" style="left:20px;top:305px;width:260px;height:46px;"></div>
+    <div class="hm-zone frustration hm-frustration-zone" style="left:10px;top:88%;width:276px;height:40px;border-radius:12px;"></div>
+  </div>
+
+  <!-- CENTER MANDALA -->
+  <div class="center" id="centerArea">
+    <div class="mandala-wrap">
+      <div class="mandala-title-disp">Morning Walk</div>
+      <div class="mandala-date-range">Mar 1, 2026 – Dec 31, 2026</div>
+      <svg id="mainMandala" width="390" height="390" viewBox="0 0 390 390" fill="none" style="filter:drop-shadow(0 20px 64px rgba(0,0,0,0.07))">
+        <circle cx="195" cy="195" r="186" fill="#FDFCFA" stroke="#EDE9E3" stroke-width="1"/>
+        <circle cx="195" cy="195" r="172" stroke="#D4CEC7" stroke-width="0.75" stroke-dasharray="4 5" opacity="0.5"/>
+        <circle cx="195" cy="195" r="165" fill="none" stroke="#7B9BAF" stroke-width="2" stroke-dasharray="707 1038" stroke-linecap="round" transform="rotate(-90 195 195)" opacity="0.35"/>
+        <g id="ring3"></g>
+        <g id="ring2"></g>
+        <g id="ring1"></g>
+        <circle cx="195" cy="195" r="32" fill="none" stroke="#EDE9E3" stroke-width="1.5"/>
+        <circle cx="195" cy="195" r="23" fill="#F8F6F3" stroke="#D4CEC7" stroke-width="1"/>
+        <text x="195" y="203" text-anchor="middle" font-size="24">🌸</text>
+      </svg>
+      <div class="share-shop-toggle">Share · Shop ↓</div>
+    </div>
+
+    <!-- CENTER HEATMAP -->
+    <div class="hm-zone attention hm-hot" style="left:50%;top:50%;width:420px;height:420px;transform:translate(-50%,-50%);border-radius:50%;"></div>
+    <div class="hm-zone attention hm-cool" style="left:50%;bottom:40px;width:120px;height:50px;transform:translateX(-50%);"></div>
+
+    <div class="hm-zone click hm-click-cool" style="left:50%;bottom:30px;width:140px;height:40px;transform:translateX(-50%);"></div>
+    <div class="hm-zone click hm-click-cold" style="left:50%;top:50%;width:390px;height:390px;transform:translate(-50%,-50%);border-radius:50%;"></div>
+
+    <div class="hm-zone frustration hm-frustration-zone" style="left:50%;top:50%;width:390px;height:390px;transform:translate(-50%,-50%);border-radius:50%;"></div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel" id="rightPanel">
+    <div class="rp-inner">
+      <div class="rp-today-card" id="todayCard">
+        <div class="rp-today-meta">Today</div>
+        <div class="rp-today-row">
+          <div class="rp-today-circle"></div>
+          <div class="rp-today-label">Check in today</div>
+        </div>
+      </div>
+      <div class="rp-cal">
+        <div class="rp-cal-head">
+          <div class="rp-cal-nav">‹</div>
+          <div class="rp-cal-month">March 2026</div>
+          <div class="rp-cal-nav">›</div>
+        </div>
+        <div class="rp-cal-dow">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="rp-cal-days" id="rpCalDays"></div>
+        <div class="rp-cal-note">Tap any day to mark it complete</div>
+      </div>
+      <div class="rp-section-lbl">This Week</div>
+      <div class="stat-card">
+        <div class="stat-lbl">Goal: 5 days</div>
+        <div class="stat-big">4<span> / 5</span></div>
+        <div class="stat-sm">1 day remaining to hit goal</div>
+        <div class="week-dots">
+          <div class="wd done"></div><div class="wd done"></div>
+          <div class="wd done"></div><div class="wd done"></div>
+          <div class="wd now"></div><div class="wd"></div><div class="wd"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL HEATMAP -->
+    <div class="hm-zone attention hm-hot" style="left:0;top:0;width:100%;height:80px;border-radius:0;"></div>
+    <div class="hm-zone attention hm-warm" style="left:0;top:80px;width:100%;height:200px;border-radius:0;"></div>
+    <div class="hm-zone attention hm-medium" style="left:0;top:280px;width:100%;height:120px;border-radius:0;"></div>
+    <div class="hm-zone attention hm-cool" style="left:0;bottom:0;width:100%;height:80px;border-radius:0;"></div>
+
+    <div class="hm-zone click hm-click-hot" style="left:14px;top:10px;width:248px;height:65px;"></div>
+    <div class="hm-zone click hm-click-warm" style="left:14px;top:86px;width:248px;height:195px;"></div>
+    <div class="hm-zone click hm-click-cool" style="left:14px;top:300px;width:248px;height:120px;"></div>
+
+    <div class="hm-zone frustration hm-frustration-zone" style="left:14px;top:10px;width:248px;height:65px;"></div>
+    <div class="hm-zone frustration hm-frustration-zone" style="left:50%;top:50%;width:250px;height:390px;transform:translate(-50%,-50%);border-radius:14px;opacity:0.3;"></div>
+  </div>
+
+</div>
+
+<!-- ─── ANNOTATION LABELS ─── -->
+<!-- ATTENTION LABELS -->
+<div class="hm-label arrow-down attention" style="left:50%;top:130px;transform:translateX(-50%);">
+  <span class="pct">92%</span> — Mandala SVG draws eye first (center-dominant layout)
+</div>
+<div class="hm-label arrow-left attention" style="right:290px;top:120px;">
+  <span class="pct">85%</span> — "Check in today" CTA gets high fixation
+</div>
+<div class="hm-label arrow-right attention" style="left:108px;top:48%;transform:translateY(-50%);">
+  <span class="pct">70%</span> — Theme swatches: strong color contrast pulls gaze
+</div>
+<div class="hm-label arrow-down attention" style="left:100px;top:68px;">
+  <span class="low-pct">35%</span> — Nav tabs: peripheral, scanned only
+</div>
+<div class="hm-label arrow-left attention" style="right:290px;top:380px;">
+  <span class="low-pct">45%</span> — Stats card below fold for some viewports
+</div>
+<div class="hm-label arrow-down attention" style="left:50%;bottom:80px;transform:translateX(-50%);">
+  <span class="low-pct">25%</span> — Share · Shop easily missed at bottom
+</div>
+
+<!-- CLICK LABELS -->
+<div class="hm-label arrow-down click" style="right:290px;top:105px;">
+  <span class="pct">89%</span> — #1 click target: daily check-in
+</div>
+<div class="hm-label arrow-right click" style="left:108px;top:38%;">
+  <span class="pct">72%</span> — Theme cards: high engagement, visual appeal
+</div>
+<div class="hm-label arrow-right click" style="left:108px;top:56%;">
+  <span class="metric">65%</span> — Petal color swatches
+</div>
+<div class="hm-label arrow-left click" style="right:290px;top:260px;">
+  <span class="metric">55%</span> — Calendar day cells for past check-ins
+</div>
+<div class="hm-label arrow-down click" style="left:50%;bottom:80px;transform:translateX(-50%);">
+  <span class="low-pct">12%</span> — Share/Shop: low discoverability
+</div>
+<div class="hm-label arrow-down click" style="left:50%;top:130px;transform:translateX(-50%);">
+  <span class="low-pct">8%</span> — Mandala is visual-only, no click affordance
+</div>
+
+<!-- FRUSTRATION LABELS -->
+<div class="hm-label arrow-down frustration" style="left:50%;top:130px;transform:translateX(-50%);">
+  <span class="warn">High</span> — Mandala looks clickable but isn't interactive
+</div>
+<div class="hm-label arrow-down frustration" style="right:290px;top:105px;">
+  <span class="warn">Medium</span> — No undo after checking in. Accidental taps?
+</div>
+<div class="hm-label arrow-right frustration" style="left:108px;top:70%;">
+  <span class="warn">Medium</span> — No save/apply button visible — did my change take effect?
+</div>
+<div class="hm-label arrow-down frustration" style="right:290px;top:380px;">
+  <span class="warn">Low-Med</span> — Stats lack context: "4/5 of what exactly?"
+</div>
+<div class="hm-label arrow-left frustration" style="right:10px;top:68px;">
+  <span class="warn">Low</span> — Avatar menu: no indicator it's a dropdown
+</div>
+
+<!-- ─── ANALYSIS TOGGLE ─── -->
+<button class="analysis-toggle" onclick="toggleAnalysis()">Analysis ↑</button>
+
+<!-- ─── ANALYSIS PANEL ─── -->
+<div class="analysis-panel" id="analysisPanel">
+  <div class="analysis-inner">
+    <div class="analysis-col">
+      <h3>Attention Summary</h3>
+      <ul>
+        <li>Users fixate on the <span class="metric">mandala SVG first</span> (center-bias + large visual weight)</li>
+        <li>F-pattern breaks at settings panel — left-side panel <span class="metric">captures gaze</span> before right panel</li>
+        <li>Right panel "Check in today" CTA benefits from <span class="metric">high contrast</span> and clear affordance</li>
+        <li>Navigation tabs receive <span class="cool-metric">low attention</span> — peripheral position, small type</li>
+        <li>Share/Shop toggle at bottom is in a <span class="cool-metric">dead zone</span> — below primary visual field</li>
+      </ul>
+    </div>
+    <div class="analysis-col">
+      <h3>Click Predictions</h3>
+      <ul>
+        <li><span class="metric">#1 target:</span> Check-in card (89% predicted click rate)</li>
+        <li><span class="metric">#2 target:</span> Theme swatches (72% — high visual appeal)</li>
+        <li><span class="metric">#3 target:</span> Petal color swatches (65%)</li>
+        <li>Calendar days see <span class="metric">moderate</span> clicks for retroactive check-ins</li>
+        <li>Mandala SVG gets <span class="warn-metric">rage clicks</span> — users expect interactivity</li>
+        <li>Share/Shop: only <span class="cool-metric">12%</span> predicted click-through</li>
+      </ul>
+    </div>
+    <div class="analysis-col">
+      <h3>Frustration Hotspots</h3>
+      <ul>
+        <li><span class="warn-metric">Mandala non-interactivity:</span> Largest element feels clickable but isn't</li>
+        <li><span class="warn-metric">No undo on check-in:</span> Single-click with no confirmation</li>
+        <li><span class="warn-metric">Settings auto-save ambiguity:</span> No visible save state or confirmation</li>
+        <li>Stats lack actionable context (what's "good"?)</li>
+        <li>Avatar dropdown has no visual cue that it's interactive</li>
+      </ul>
+    </div>
+    <div class="analysis-col">
+      <h3>Recommendations</h3>
+      <ul>
+        <li>Add <span class="metric">hover/click feedback</span> to mandala petals (tooltip with date/habit info)</li>
+        <li>Add <span class="metric">undo toast</span> after check-in: "Marked complete · Undo"</li>
+        <li>Show <span class="metric">save confirmation</span> in settings (auto-save badge or subtle toast)</li>
+        <li>Move Share/Shop into <span class="metric">toolbar or right panel</span> for discoverability</li>
+        <li>Add a <span class="metric">dropdown caret</span> to avatar for affordance</li>
+        <li>Add <span class="metric">motivational context</span> to stats: "You're on track!" / streak fire</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+// Build simplified mandala rings
+function buildRing(id, n, r, rx, ry, fill, op, filled, cx, cy) {
+  const g = document.getElementById(id);
+  if (!g) return;
+  let h = '';
+  for (let i = 0; i < n; i++) {
+    const a = (i * (360/n)) * Math.PI / 180;
+    const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+    const f = filled === undefined ? fill : (i < filled ? fill : '#EDE9E3');
+    const o = filled !== undefined && i >= filled ? 0.5 : 1;
+    h += `<ellipse cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" rx="${rx}" ry="${ry}" fill="${f}" opacity="${o}" transform="rotate(${(i*(360/n)).toFixed(1)}, ${x.toFixed(2)}, ${y.toFixed(2)})"/>`;
+  }
+  g.innerHTML = h;
+}
+buildRing('ring3', 16, 112, 6.5, 15, '#7B9BAF', 0.7, 11, 195, 195);
+buildRing('ring2', 12, 78, 6.5, 14, '#C45A5A', 1, 10, 195, 195);
+buildRing('ring1', 8, 48, 5.5, 13, '#C45A5A', 1, undefined, 195, 195);
+
+// Build mini calendar
+(function() {
+  const days = document.getElementById('rpCalDays');
+  const checked = [1,2,3,5,6,7,8,9,10,12,13];
+  let h = '';
+  // offset for March 2026 (starts on Sunday)
+  for (let d = 1; d <= 31; d++) {
+    const cls = checked.includes(d) ? ' checked' : '';
+    h += `<div class="rp-cal-day${cls}">${d}</div>`;
+  }
+  days.innerHTML = h;
+})();
+
+// Heatmap mode switching
+let currentMode = 'attention';
+
+function setMode(mode) {
+  currentMode = mode;
+  const labels = {
+    attention: 'Eye-tracking prediction based on F-pattern, visual hierarchy & Fitts\'s law',
+    click: 'Click probability based on affordance, size, contrast & position',
+    frustration: 'Predicted friction points based on missing feedback, ambiguous affordance & error-prone actions'
+  };
+  document.getElementById('modeLabel').textContent = labels[mode];
+
+  // Toggle button states
+  document.querySelectorAll('.hm-toggle').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Show/hide zones by type
+  ['attention', 'click', 'frustration'].forEach(type => {
+    document.querySelectorAll(`.hm-zone.${type}, .hm-label.${type}`).forEach(el => {
+      el.style.display = type === mode ? '' : 'none';
+    });
+  });
+}
+
+// Analysis panel toggle
+function toggleAnalysis() {
+  const panel = document.getElementById('analysisPanel');
+  const btn = document.querySelector('.analysis-toggle');
+  panel.classList.toggle('open');
+  btn.textContent = panel.classList.contains('open') ? 'Analysis ↓' : 'Analysis ↑';
+}
+
+// Initialize: show only attention zones
+setMode('attention');
+// Manually fix the button active state since we called it programmatically
+document.querySelectorAll('.hm-toggle').forEach(b => b.classList.remove('active'));
+document.querySelector('.hm-toggle').classList.add('active');
+</script>
+
+</body>
+</html>
